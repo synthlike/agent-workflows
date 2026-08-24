@@ -208,7 +208,7 @@ def inspect_skills(
             installed[name] = directory
             entry = manifest["skills"].get(name)
             if entry is None:
-                errors.append(f"installed skill is absent from the release manifest: {name}")
+                errors.append(f"installed skill is absent from the distribution manifest: {name}")
             else:
                 for relative in sorted(entry["files"]):
                     if not (directory / relative).is_file():
@@ -233,7 +233,7 @@ def inspect_skills(
         installed[name] = directory
         entry = manifest["skills"].get(name)
         if entry is None:
-            errors.append(f"installed skill is absent from the release manifest: {name}")
+            errors.append(f"installed skill is absent from the distribution manifest: {name}")
             continue
         expected = set(entry["files"])
         allowed_extra = set()
@@ -279,6 +279,12 @@ def inspect_skills(
     names = set(installed)
     if "configure-project" not in names:
         errors.append("installed skill set is missing required configure-project")
+    missing_distribution = set(manifest["skills"]) - names
+    if missing_distribution:
+        errors.append(
+            "complete distribution is missing installed skills: "
+            + ", ".join(sorted(missing_distribution))
+        )
     if check_dependencies:
         for name in sorted(names & manifest["skills"].keys()):
             missing = set(manifest["skills"][name]["dependencies"]) - names

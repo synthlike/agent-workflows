@@ -1,6 +1,6 @@
 # Workflow dependencies
 
-This is the human-readable dependency table for selective installations. Exact skill names in `SKILL.md` inline code are the authoritative dependency declarations; both this table and the [current release manifest](release-manifest.md) are verified against them.
+This is the human-readable dependency table used to calculate closure for explicitly selected workflows. Exact skill names in `SKILL.md` inline code are the authoritative dependency declarations; both this table and the [current distribution manifest](distribution-manifest.md) are verified against them.
 
 Every installation must include `configure-project`, the workflows selected by the consumer, and the complete transitive closure of their additional direct dependencies. Dependency cycles are valid. A generic installer may not resolve this table automatically, so the installer or operator must select the resulting closure.
 

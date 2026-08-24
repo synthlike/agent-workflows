@@ -113,7 +113,7 @@ for required in (
     "docs/choosing-a-workflow.md",
     "docs/artifact-model.md",
     "docs/workflow-dependencies.md",
-    "docs/release-manifest.md",
+    "docs/distribution-manifest.md",
     "docs/workflow-configuration.md",
     "docs/verifying-installation.md",
     "docs/issue-tracker-backends.md",

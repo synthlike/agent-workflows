@@ -12,6 +12,8 @@ related_rfcs:
 # Use configure-project as the lifecycle bootstrap
 
 > Refined by [ARP-0004](ARP-0004-ship-v0.2-for-fresh-project-adoption.md): v0.2 retains the fresh bootstrap, manifest, and schema-2 inventory, while reusable legacy bootstrap behavior is deferred to v0.3.
+>
+> Revised by [ARP-0007](ARP-0007-install-the-complete-skill-distribution.md): the embedded manifest, schema-2 inventory, and installed verification remain accepted, but the custom archive and missing-dependency application mechanism are removed.
 
 ## Context
 

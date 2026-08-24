@@ -24,12 +24,13 @@ class InstalledLifecycleTests(unittest.TestCase):
     def set_up_consumer(
         self,
         base: Path,
-        names: tuple[str, ...] = ("configure-project", "clarify-intent"),
+        names: tuple[str, ...] | None = None,
         split_locations: bool = False,
         selected: tuple[str, ...] = ("clarify-intent",),
     ) -> tuple[Path, list[Path]]:
         root = base / "consumer"
         root.mkdir()
+        names = names or tuple(MANIFEST["skills"])
         skill_dirs = copy_skills(
             ROOT,
             root,
@@ -52,7 +53,7 @@ class InstalledLifecycleTests(unittest.TestCase):
             result = self.verify(root, skill_dirs)
             self.assertEqual([], result.errors)
             self.assertEqual(["clarify-intent", "configure-project"], result.closure)
-            self.assertEqual(["clarify-intent", "configure-project"], result.installed)
+            self.assertEqual(sorted(MANIFEST["skills"]), result.installed)
 
     def test_copied_lifecycle_verifies_without_source_checkout(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -138,6 +139,7 @@ class InstalledLifecycleTests(unittest.TestCase):
                 selected=("develop-rfc",),
             )
             errors = self.verify(root, skill_dirs).errors
+            self.assertTrue(any("complete distribution is missing installed skills" in error for error in errors))
             self.assertTrue(any("missing installed dependencies" in error for error in errors))
             self.assertTrue(any("selected workflow closure is incomplete" in error for error in errors))
 

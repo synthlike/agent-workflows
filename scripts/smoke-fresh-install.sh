@@ -13,18 +13,12 @@ cleanup() {
 trap cleanup EXIT
 
 git -C "$consumer" init -q
-version="$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["version"])' "$root/release/metadata.json")"
-bundle="$consumer/agent-workflows-$version.tar.gz"
-plan="$consumer/fresh-plan.json"
 discovery="$consumer/pi-discovery.json"
-
-python3 -B "$root/skills/configure-project/references/lifecycle.py" \
-  build-bundle --root "$root" --output "$bundle"
 
 (
   cd "$consumer"
   npx --yes skills@latest add "$root" \
-    --skill configure-project frame-product-problem \
+    --skill '*' \
     --agent pi \
     --copy \
     -y
@@ -33,49 +27,38 @@ python3 -B "$root/skills/configure-project/references/lifecycle.py" \
 command="$consumer/.pi/skills/configure-project/references/lifecycle.py"
 test -f "$command"
 
-python3 -B "$command" plan-fresh "$bundle" \
-  --consumer-root "$consumer" \
-  --skills-root "$consumer/.pi/skills" \
-  --selected frame-product-problem \
-  --output "$plan" \
-  --json >/dev/null
-
-python3 -B "$command" apply-fresh "$bundle" \
-  --consumer-root "$consumer" \
-  --plan "$plan" \
-  --json >/dev/null
-
 pi_real="$(python3 -c 'import os, shutil; print(os.path.realpath(shutil.which("pi")))')"
 pi_package_root="$(cd "$(dirname "$pi_real")/../.." && pwd)"
 node "$root/scripts/pi-discover-skills.mjs" \
   "$pi_package_root/dist/index.js" \
   "$consumer" > "$discovery"
 
-python3 -B - "$consumer" "$plan" "$discovery" <<'PY'
+python3 -B - "$consumer" "$discovery" <<'PY'
 from pathlib import Path
 import json
 import sys
 
 root = Path(sys.argv[1])
-plan = json.loads(Path(sys.argv[2]).read_text())
-discovery = json.loads(Path(sys.argv[3]).read_text())
+discovery = json.loads(Path(sys.argv[2]).read_text())
 if discovery["diagnostics"]:
     raise SystemExit("Pi discovery diagnostics: " + "; ".join(discovery["diagnostics"]))
 discovered = {item["name"]: item["path"] for item in discovery["skills"]}
-if set(discovered) != set(plan["required_installed"]):
-    raise SystemExit(
-        f"Pi discovered {sorted(discovered)}, expected {plan['required_installed']}"
-    )
-fragment = plan["configuration"]
-selected = "\n".join(f"    - {name}" for name in fragment["installation"]["selected"])
+manifest = json.loads(
+    (root / ".pi/skills/configure-project/references/distribution-manifest.json").read_text()
+)
+expected = set(manifest["skills"])
+if set(discovered) != expected:
+    raise SystemExit(f"Pi discovered {sorted(discovered)}, expected {sorted(expected)}")
+selected = "    - frame-product-problem"
 skills = "\n".join(f"    {name}: {path}" for name, path in sorted(discovered.items()))
+distribution = manifest["distribution"]
 (root / ".agents").mkdir(exist_ok=True)
 (root / ".agents/workflows.yaml").write_text(
     f"""schema_version: 2
 
 distribution:
-  source: {fragment['distribution']['source']}
-  version: {fragment['distribution']['version']}
+  source: {distribution['source']}
+  version: {distribution['version']}
 
 installation:
   selected:
@@ -138,4 +121,4 @@ do
   fi
 done
 
-printf 'Fresh-install smoke test passed with skills@latest and Pi.\n'
+printf 'Complete-install smoke test passed with skills@latest and Pi.\n'

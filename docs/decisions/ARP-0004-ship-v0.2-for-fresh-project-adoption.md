@@ -12,6 +12,8 @@ related_rfcs:
 
 # Ship v0.2 for fresh-project adoption
 
+> Revised by [ARP-0007](ARP-0007-install-the-complete-skill-distribution.md): complete installation replaces the v0.2 archive-backed dependency completion mechanism; the manifest, schema-2 inventory, and installed verification remain accepted.
+
 ## Context
 
 The full v0.2 lifecycle design assumed an installed population needing reusable migration and transaction safety. In fact, there is one user and one v0.1.0 installation. The same user may adopt v0.2 in additional fresh Git-backed projects, but productizing a one-time migration and generalized updater would delay fresh-project improvements.

@@ -48,7 +48,7 @@ From the consumer repository root, tell your agent:
 
 > Use `configure-project` to configure this fresh repository. Select `frame-product-problem` as my initial workflow, inventory every installed skill, show me the complete dry run, and ask before writing anything.
 
-`configure-project` inspects the repository, records explicit workflow intent separately from the complete installed inventory, and checks dependency closure. It then guides you through project configuration, installed verification, and the first commit. It does not replace existing skill directories or silently modify consumer-owned content. Because the complete skill set is already present, normal fresh setup does not require a release bundle.
+`configure-project` inspects the repository, records explicit workflow intent separately from the complete installed inventory, and checks dependency closure. It then guides you through project configuration, installed verification, and the first commit. It does not create, replace, or remove skill directories and does not silently modify consumer-owned content.
 
 Read [Fresh-project configuration](docs/fresh-project-configuration.md) for the complete procedure and safety behavior. For a repository that already has conventions or artifacts, use [Adopting in an existing project](docs/adopting-in-existing-project.md) instead.
 
@@ -90,7 +90,7 @@ Research, prototypes, questionnaires, meetings, investigations, reviews, baselin
 - Issue operations follow the configured [issue-tracker backend](docs/issue-tracker-backends.md).
 - Projects choose and own artifact paths; optional directories are created only when needed.
 
-The current workflow behavior is defined by the [project-foundation and feedback specification](docs/specifications/v0.3-project-foundation-and-feedback-workflows.md). Distribution behavior is documented in [Release manifest and bundle](docs/release-manifest.md), [Workflow configuration schema 2](docs/workflow-configuration.md), and [Verifying a consumer installation](docs/verifying-installation.md).
+The current workflow behavior is defined by the [project-foundation and feedback specification](docs/specifications/v0.3-project-foundation-and-feedback-workflows.md). Distribution behavior is documented in [Distribution manifest](docs/distribution-manifest.md), [Workflow configuration schema 2](docs/workflow-configuration.md), and [Verifying a consumer installation](docs/verifying-installation.md).
 
 ## Documentation
 
@@ -106,7 +106,7 @@ The current workflow behavior is defined by the [project-foundation and feedback
 - [Artifact model](docs/artifact-model.md)
 - [Workflow dependencies](docs/workflow-dependencies.md)
 - [Issue-tracker backends](docs/issue-tracker-backends.md)
-- [Release manifest and bundle](docs/release-manifest.md)
+- [Distribution manifest](docs/distribution-manifest.md)
 - [Workflow configuration schema 2](docs/workflow-configuration.md)
 - [Verifying a consumer installation](docs/verifying-installation.md)
 - [Customizing a project](docs/customizing.md)

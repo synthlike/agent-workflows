@@ -1,25 +1,17 @@
 #!/usr/bin/env python3
-"""Generate and validate Agent Workflows release manifests and bundles."""
+"""Generate manifests and verify complete Agent Workflows installations."""
 
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
-import gzip
 import hashlib
-import io
 import json
 from pathlib import Path, PurePosixPath
 import re
-import shutil
 import sys
-import tarfile
 from typing import Any
-from urllib.parse import urlparse
-from urllib.request import urlopen
 
 from consumer import dependency_closure, inspect_skills, verify_consumer
-from fresh_install import FreshInstallError, apply_fresh_install, plan_fresh_install
 
 
 MANIFEST_FORMAT = 1
@@ -29,22 +21,10 @@ MANIFEST_RELATIVE_PATH = PurePosixPath(
 IGNORED_NAMES = {".DS_Store", "__pycache__"}
 INLINE_CODE = re.compile(r"`([a-z0-9]+(?:-[a-z0-9]+)+)`")
 VERSION = re.compile(r"v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)")
-MAX_DOWNLOAD_BYTES = 128 * 1024 * 1024
-MAX_UNCOMPRESSED_BYTES = 256 * 1024 * 1024
-MAX_ARCHIVE_MEMBERS = 10_000
 
 
 class LifecycleError(ValueError):
-    """A release or bundle violates the lifecycle contract."""
-
-
-@dataclass(frozen=True)
-class ValidatedBundle:
-    digest: str
-    manifest: dict[str, Any]
-    root_name: str
-    files: dict[PurePosixPath, bytes]
-    modes: dict[PurePosixPath, int]
+    """A manifest or installation violates the lifecycle contract."""
 
 
 def canonical_json(value: Any) -> bytes:
@@ -313,197 +293,6 @@ def check_manifest(root: Path) -> list[str]:
     return errors
 
 
-def _archive_root(version: str) -> str:
-    return f"agent-workflows-{version}"
-
-
-def _tar_bytes(root: Path, manifest_bytes: bytes) -> bytes:
-    manifest = parse_json(manifest_bytes, "generated manifest")
-    version = manifest["distribution"]["version"]
-    prefix = _archive_root(version)
-    source_files: dict[PurePosixPath, tuple[bytes, int]] = {
-        PurePosixPath("CHANGELOG.md"): ((root / "CHANGELOG.md").read_bytes(), 0o644)
-    }
-    for name, entry in manifest["skills"].items():
-        for relative in entry["files"]:
-            path = root / "skills" / name / relative
-            mode = 0o755 if path.stat().st_mode & 0o111 else 0o644
-            source_files[PurePosixPath("skills") / name / relative] = (path.read_bytes(), mode)
-    source_files[PurePosixPath("skills") / MANIFEST_RELATIVE_PATH] = (manifest_bytes, 0o644)
-
-    output = io.BytesIO()
-    with gzip.GzipFile(fileobj=output, mode="wb", filename="", mtime=0) as compressed:
-        with tarfile.open(fileobj=compressed, mode="w", format=tarfile.USTAR_FORMAT) as archive:
-            for relative, (data, mode) in sorted(source_files.items(), key=lambda item: item[0].as_posix()):
-                info = tarfile.TarInfo(f"{prefix}/{relative.as_posix()}")
-                info.size = len(data)
-                info.mode = mode
-                info.mtime = 0
-                info.uid = info.gid = 0
-                info.uname = info.gname = ""
-                archive.addfile(info, io.BytesIO(data))
-    return output.getvalue()
-
-
-def build_bundle(root: Path) -> bytes:
-    errors = check_manifest(root)
-    if errors:
-        raise LifecycleError("; ".join(errors))
-    data = manifest_path(root).read_bytes()
-    first = _tar_bytes(root, data)
-    second = _tar_bytes(root, data)
-    if first != second:
-        raise LifecycleError("release archive generation is not deterministic")
-    validate_bundle_bytes(first)
-    return first
-
-
-def _safe_member_name(name: str) -> PurePosixPath:
-    path = PurePosixPath(name)
-    if (
-        path.is_absolute()
-        or not path.parts
-        or ".." in path.parts
-        or "\\" in name
-        or path.as_posix() != name
-    ):
-        raise LifecycleError(f"unsafe archive member path: {name}")
-    return path
-
-
-def validate_bundle_bytes(data: bytes) -> ValidatedBundle:
-    if len(data) > MAX_DOWNLOAD_BYTES:
-        raise LifecycleError("compressed release archive exceeds the size limit")
-    digest = sha256(data)
-    files: dict[PurePosixPath, bytes] = {}
-    modes: dict[PurePosixPath, int] = {}
-    try:
-        with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as archive:
-            seen: set[str] = set()
-            total_size = 0
-            members = archive.getmembers()
-            if len(members) > MAX_ARCHIVE_MEMBERS:
-                raise LifecycleError("release archive contains too many members")
-            for member in members:
-                if member.name in seen:
-                    raise LifecycleError(f"duplicate archive member: {member.name}")
-                seen.add(member.name)
-                path = _safe_member_name(member.name)
-                if not member.isfile():
-                    raise LifecycleError(f"archive member is not a regular file: {member.name}")
-                if member.mode not in {0o644, 0o755}:
-                    raise LifecycleError(f"archive member has invalid permissions: {member.name}")
-                if member.size < 0 or member.size > MAX_UNCOMPRESSED_BYTES:
-                    raise LifecycleError(f"archive member is too large: {member.name}")
-                total_size += member.size
-                if total_size > MAX_UNCOMPRESSED_BYTES:
-                    raise LifecycleError("release archive expands beyond the size limit")
-                extracted = archive.extractfile(member)
-                if extracted is None:
-                    raise LifecycleError(f"cannot read archive member: {member.name}")
-                files[path] = extracted.read()
-                modes[path] = member.mode
-    except (tarfile.TarError, OSError) as error:
-        raise LifecycleError(f"invalid release archive: {error}") from error
-    if not files:
-        raise LifecycleError("release archive is empty")
-    roots = {path.parts[0] for path in files}
-    if len(roots) != 1:
-        raise LifecycleError("release archive must contain exactly one root directory")
-    root_name = next(iter(roots))
-    manifest_member = PurePosixPath(root_name) / "skills" / MANIFEST_RELATIVE_PATH
-    if manifest_member not in files:
-        raise LifecycleError("release archive is missing its manifest")
-    manifest = parse_json(files[manifest_member], "release archive manifest")
-    errors = validate_manifest(manifest)
-    if errors:
-        raise LifecycleError("; ".join(errors))
-    expected_root = _archive_root(manifest["distribution"]["version"])
-    if root_name != expected_root:
-        raise LifecycleError(f"archive root must be {expected_root}")
-    expected = {PurePosixPath(root_name) / "CHANGELOG.md", manifest_member}
-    for name, entry in manifest["skills"].items():
-        for relative, expected_digest in entry["files"].items():
-            member = PurePosixPath(root_name) / "skills" / name / relative
-            expected.add(member)
-            if member not in files:
-                raise LifecycleError(f"release archive is missing {member}")
-            if sha256(files[member]) != expected_digest:
-                raise LifecycleError(f"release archive digest mismatch for {member}")
-    names = set(manifest["skills"])
-    for name in sorted(names):
-        skill_file = PurePosixPath(root_name) / "skills" / name / "SKILL.md"
-        try:
-            skill_text = files[skill_file].decode()
-        except UnicodeDecodeError as error:
-            raise LifecycleError(f"{skill_file} is not UTF-8: {error}") from error
-        declared = sorted(
-            {
-                target
-                for target in INLINE_CODE.findall(skill_text)
-                if target in names and target not in {name, "configure-project"}
-            }
-        )
-        if declared != manifest["skills"][name]["dependencies"]:
-            raise LifecycleError(f"manifest dependencies do not match {skill_file}")
-    extra = set(files) - expected
-    if extra:
-        raise LifecycleError(
-            "release archive contains unexpected files: "
-            + ", ".join(path.as_posix() for path in sorted(extra))
-        )
-    missing = expected - set(files)
-    if missing:
-        raise LifecycleError(
-            "release archive is missing files: "
-            + ", ".join(path.as_posix() for path in sorted(missing))
-        )
-    return ValidatedBundle(
-        digest=digest,
-        manifest=manifest,
-        root_name=root_name,
-        files=files,
-        modes=modes,
-    )
-
-
-def load_bundle(location: str) -> bytes:
-    parsed = urlparse(location)
-    if parsed.scheme:
-        if parsed.scheme != "https":
-            raise LifecycleError("bundle URL must use HTTPS")
-        try:
-            with urlopen(location) as response:  # noqa: S310 - HTTPS is required above
-                if urlparse(response.geturl()).scheme != "https":
-                    raise LifecycleError("bundle download redirected away from HTTPS")
-                data = response.read(MAX_DOWNLOAD_BYTES + 1)
-        except OSError as error:
-            raise LifecycleError(f"cannot download release bundle: {error}") from error
-        if len(data) > MAX_DOWNLOAD_BYTES:
-            raise LifecycleError("release bundle exceeds the download limit")
-        return data
-    try:
-        return Path(location).read_bytes()
-    except OSError as error:
-        raise LifecycleError(f"cannot read release bundle: {error}") from error
-
-
-def stage_bundle(bundle: ValidatedBundle, destination: Path) -> None:
-    if destination.exists() and (not destination.is_dir() or any(destination.iterdir())):
-        raise LifecycleError(f"staging destination is not an empty directory: {destination}")
-    destination.mkdir(parents=True, exist_ok=True)
-    try:
-        for member, data in sorted(bundle.files.items(), key=lambda item: item[0].as_posix()):
-            relative = PurePosixPath(*member.parts[1:])
-            path = destination / Path(relative)
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(data)
-            path.chmod(bundle.modes[member])
-    except Exception:
-        shutil.rmtree(destination, ignore_errors=True)
-        raise
-
-
 def _default_root() -> Path:
     candidate = Path(__file__).resolve().parents[3]
     if (candidate / "skills").is_dir() and (candidate / "release/metadata.json").is_file():
@@ -548,40 +337,6 @@ def _consumer_skill_dirs(args: argparse.Namespace) -> list[Path]:
     return args.skill_dir
 
 
-def _destination_overrides(values: list[str] | None) -> dict[str, Path]:
-    overrides: dict[str, Path] = {}
-    for value in values or []:
-        if "=" not in value:
-            raise LifecycleError(f"destination override must use SKILL=PATH: {value}")
-        name, path = value.split("=", 1)
-        if not name or not path or name in overrides:
-            raise LifecycleError(f"invalid or duplicate destination override: {value}")
-        overrides[name] = Path(path)
-    return overrides
-
-
-def _print_fresh_plan(plan: dict[str, Any]) -> None:
-    print(f"Fresh configuration plan: {plan['plan_id']}")
-    print(f"Release: {plan['release']['source']}@{plan['release']['version']}")
-    print("Selected: " + ", ".join(plan["selected"]))
-    print("Closure: " + ", ".join(plan["closure"]))
-    print("Discovered: " + ", ".join(plan["discovered"]))
-    print("Unexpected: " + (", ".join(plan["unexpected"]) or "none"))
-    print("Missing: " + (", ".join(plan["missing"]) or "none"))
-    print(f"Bundle SHA-256: {plan['bundle_sha256']}")
-    for action in plan["actions"]:
-        print(
-            f"- create {action['skill']} from {action['source']} at "
-            f"{action['destination']} ({len(action['files'])} files)"
-        )
-    print("Configuration: schema 2 with distribution identity and installation inventory")
-    print("Guidance: " + ", ".join(plan["guidance_changes"]))
-    if plan["errors"]:
-        print("Blocking errors:")
-        for error in plan["errors"]:
-            print(f"- {error}")
-
-
 def _print_result(result: dict[str, Any], as_json: bool, success: str) -> None:
     if as_json:
         sys.stdout.buffer.write(canonical_json(result))
@@ -605,14 +360,9 @@ def _print_result(result: dict[str, Any], as_json: bool, success: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
-    for command in ("generate-release", "check-release", "build-bundle"):
+    for command in ("generate-release", "check-release"):
         subparser = subparsers.add_parser(command)
         subparser.add_argument("--root", type=Path, default=_default_root())
-        if command == "build-bundle":
-            subparser.add_argument("--output", required=True, type=Path)
-    validate_parser = subparsers.add_parser("validate-bundle")
-    validate_parser.add_argument("bundle", help="local path or HTTPS URL")
-    validate_parser.add_argument("--stage", type=Path)
     show_parser = subparsers.add_parser("show-manifest")
     show_parser.add_argument("--json", action="store_true", help="emit canonical JSON")
     closure_parser = subparsers.add_parser("closure")
@@ -622,26 +372,6 @@ def main() -> int:
     _add_consumer_arguments(inspect_parser)
     verify_parser = subparsers.add_parser("verify-consumer")
     _add_consumer_arguments(verify_parser)
-    plan_parser = subparsers.add_parser("plan-fresh")
-    plan_parser.add_argument("bundle", help="current release bundle path or HTTPS URL")
-    plan_parser.add_argument(
-        "--selected",
-        action="append",
-        required=True,
-        help="one explicitly selected workflow; repeat for each",
-    )
-    _add_consumer_arguments(plan_parser)
-    plan_parser.add_argument(
-        "--destination",
-        action="append",
-        help="override one missing skill destination as SKILL=PATH",
-    )
-    plan_parser.add_argument("--output", type=Path, help="write canonical plan JSON")
-    apply_parser = subparsers.add_parser("apply-fresh")
-    apply_parser.add_argument("bundle", help="same current release bundle used for planning")
-    apply_parser.add_argument("--plan", required=True, type=Path)
-    apply_parser.add_argument("--consumer-root", required=True, type=Path)
-    apply_parser.add_argument("--json", action="store_true", help="emit canonical JSON")
     args = parser.parse_args()
     try:
         if args.command == "generate-release":
@@ -651,24 +381,7 @@ def main() -> int:
             errors = check_manifest(args.root)
             if errors:
                 raise LifecycleError("; ".join(errors))
-            bundle = build_bundle(args.root)
-            print(
-                f"Verified release manifest and deterministic bundle "
-                f"({sha256(bundle)})."
-            )
-        elif args.command == "build-bundle":
-            bundle = build_bundle(args.root)
-            args.output.parent.mkdir(parents=True, exist_ok=True)
-            args.output.write_bytes(bundle)
-            print(f"Wrote {args.output} ({sha256(bundle)}).")
-        elif args.command == "validate-bundle":
-            bundle = validate_bundle_bytes(load_bundle(args.bundle))
-            if args.stage:
-                stage_bundle(bundle, args.stage)
-            print(
-                f"Verified {bundle.manifest['distribution']['version']} bundle "
-                f"({bundle.digest})."
-            )
+            print("Verified canonical distribution manifest.")
         elif args.command == "show-manifest":
             manifest = installed_manifest()
             if args.json:
@@ -703,10 +416,10 @@ def main() -> int:
                 "ok": not inspection.errors,
                 "release": manifest["distribution"]["version"],
             }
-            _print_result(result, args.json, "Installed skills match the release manifest.")
+            _print_result(result, args.json, "Installed skills match the distribution manifest.")
             if inspection.errors:
                 return 1
-        elif args.command == "verify-consumer":
+        else:
             manifest = installed_manifest()
             skill_dirs = _consumer_skill_dirs(args)
             verification = verify_consumer(args.consumer_root, skill_dirs, manifest)
@@ -717,55 +430,6 @@ def main() -> int:
             )
             if verification.errors:
                 return 1
-        elif args.command == "plan-fresh":
-            manifest = installed_manifest()
-            bundle = validate_bundle_bytes(load_bundle(args.bundle))
-            skill_dirs = _consumer_skill_dirs(args)
-            plan = plan_fresh_install(
-                args.consumer_root,
-                skill_dirs,
-                set(args.selected),
-                manifest,
-                bundle,
-                _destination_overrides(args.destination),
-            )
-            if args.output:
-                args.output.parent.mkdir(parents=True, exist_ok=True)
-                args.output.write_bytes(canonical_json(plan))
-            if args.json:
-                sys.stdout.buffer.write(canonical_json(plan))
-            else:
-                _print_fresh_plan(plan)
-            if plan["errors"]:
-                return 1
-        else:
-            manifest = installed_manifest()
-            bundle = validate_bundle_bytes(load_bundle(args.bundle))
-            try:
-                plan = parse_json(args.plan.read_bytes(), f"fresh-install plan {args.plan}")
-            except OSError as error:
-                raise LifecycleError(f"cannot read fresh-install plan {args.plan}: {error}") from error
-            try:
-                created = apply_fresh_install(
-                    plan,
-                    args.consumer_root,
-                    bundle,
-                    manifest,
-                )
-            except FreshInstallError as error:
-                raise LifecycleError(str(error)) from error
-            result = {
-                "created": created,
-                "ok": True,
-                "plan_id": plan["plan_id"],
-                "requires_harness_discovery_confirmation": True,
-            }
-            if args.json:
-                sys.stdout.buffer.write(canonical_json(result))
-            else:
-                print(f"Applied fresh configuration plan {plan['plan_id']}.")
-                print("Created: " + (", ".join(created) or "none"))
-                print("Confirm harness discovery before writing final configuration.")
     except LifecycleError as error:
         print(f"Lifecycle error: {error}", file=sys.stderr)
         return 1

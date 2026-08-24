@@ -62,14 +62,13 @@
     "configure-project": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "a039770d35f9876833652da72247b97dae0e4da40a15769e0e0b2486d558f286",
+        "SKILL.md": "285532653c18028de454adec538ed85b13d5077767b1f482da51bb9433f8e4f8",
         "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
-        "references/consumer.py": "3d38d9a5e576b5ee0a0258f3b9fea49b8f081b20261a2353a89ad25aed1a1325",
-        "references/fresh_install.py": "e3b034af256dc847e7a31b0e03cdd38882eefa60a51e20f4fb358b3984aa9355",
+        "references/consumer.py": "ace42f19eb67ffc91ac40e20a9be2ba5de6bfc6f83de7521209813038f72bf41",
         "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
         "references/issue-tracker-github.md": "de9e3a59c869da263b05517a337aa22f86e9fa5bfd8406cdcaa91ed96fbf2c30",
         "references/issue-tracker-local-markdown.md": "918cd42abc92a36a03083076d09f79f7aea24c9b05d4cd618ace72eeecb20e14",
-        "references/lifecycle.py": "21fa77165e5827595559e91a58be3b6c4c25ffe121d8f9e2d89fbdd3d665c784",
+        "references/lifecycle.py": "5c8c2c94b5268c80d83d0ff973513b43a361d9bd4425f8402bd300d76affd210",
         "references/workflow-config.example.yaml": "9bf87e4b69060cf4dcce0f4f56a75b112e66c3528183515d3af951655cd06ba6"
       }
     },

@@ -11,7 +11,7 @@ Inspect first, propose second, and write only after confirmation. Installation m
 
 ## Lifecycle assets
 
-v0.2 release identity, dependencies, and file integrity are defined by the bundled [distribution manifest](references/distribution-manifest.json). Use the deterministic [lifecycle command](references/lifecycle.py) for manifest, closure, bundle, fresh-install planning and apply, and installed verification; keep human intent, dry-run review, write approval, and harness discovery confirmation in this skill.
+Release identity, complete skill inventory, dependencies, and file integrity are defined by the embedded [distribution manifest](references/distribution-manifest.json). Use the deterministic [lifecycle command](references/lifecycle.py) for manifest inspection, closure, and installed verification; keep human intent, dry-run review, write approval, and harness discovery confirmation in this skill.
 
 ## Explore
 
@@ -42,28 +42,27 @@ Prefer existing conventions. For a new project, recommend:
 
 Ask one decision at a time. Do not ask for facts available in the repository. If distribution identity cannot be established from installation metadata or the repository, ask for it rather than proposing a mutable value such as a branch name, `latest`, or `unreleased`.
 
-Use the lifecycle command to calculate the selected closure and inspect the exact harness-discovered directories. If dependencies are missing, obtain the matching current-release bundle by local path or HTTPS URL and generate a fresh-install plan. Default each missing skill beside discovered `configure-project`; ask only about desired destination overrides or blocking conflicts. Never propose replacing or removing an existing skill directory.
+Use the lifecycle command to calculate the selected closure and inspect the exact harness-discovered directories. Require the complete distribution, even when the user explicitly selects only a subset of workflows. If any skill is absent, stop and list every missing skill. Ask the user to complete installation through their external installer or an intact manual copy, then confirm harness discovery and inspect again. Never create, replace, or remove a skill directory.
 
 ## Confirm
 
 Show a dry run containing:
 
-1. release-bundle identity and SHA-256 when missing skills must be added;
-2. user-selected workflows, calculated closure, discovered and unexpected skills, and missing skills;
-3. every skill source and repository-contained destination, including overrides;
-4. every skill-directory create action and blocking conflict;
-5. `.agents/workflows.yaml`, based on [the example](references/workflow-config.example.yaml), with schema 2, exact distribution identity, selected workflows, and complete discovered skill-path inventory;
-6. the selected issue-backend instructions;
-7. `docs/agents/workflows.md`, including the preserved project writing policy or the default plain-language documentation style;
-8. the concise agent-instructions block; and
-9. every other directory or file that would be created or changed.
+1. exact distribution identity;
+2. user-selected workflows, calculated closure, and the complete discovered skill inventory;
+3. any missing, unexpected, duplicate, incomplete, or modified skill and every blocking conflict;
+4. `.agents/workflows.yaml`, based on [the example](references/workflow-config.example.yaml), with schema 2, exact distribution identity, selected workflows, and complete discovered skill-path inventory;
+5. the selected issue-backend instructions;
+6. `docs/agents/workflows.md`, including the preserved project writing policy or the default plain-language documentation style;
+7. the concise agent-instructions block; and
+8. every other directory or file that would be created or changed.
 
 Wait for explicit approval.
 
 ## Write
 
-- For an approved missing-skill plan, invoke lifecycle apply with the exact plan and matching bundle. It may create only absent skill directories. If apply fails, stop and report its cleanup guidance.
-- Ask the harness to rediscover skills. Continue only after it confirms every skill in the closure at the planned paths.
+- Never write project configuration while the complete distribution is absent or fails integrity inspection.
+- Ask the harness to rediscover skills after external installation changes. Continue only after it confirms every distributed skill at its repository-contained path.
 - Write `.agents/workflows.yaml` as the canonical schema-2 configuration. Never write a placeholder or mutable distribution version.
 - Copy the selected bundled adapter, [GitHub](references/issue-tracker-github.md) or [local Markdown](references/issue-tracker-local-markdown.md), to `docs/agents/issue-tracker.md`. Both implement the bundled [backend contract](references/issue-tracker-contract.md).
 - Write `docs/agents/workflows.md` with the artifact authority table, configured paths, optional features, a pointer to the issue backend, and a `## Documentation style` section. Preserve an existing project policy. Otherwise write: "Write clear, direct documentation. Prefer active voice, short sentences, explicit references, and established domain terms. Avoid idioms, unnecessary synonyms, and ambiguous pronouns. Use one action per procedural step."

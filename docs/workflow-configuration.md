@@ -30,7 +30,7 @@ artifacts:
 
 ## Installation inventory
 
-- `selected` records user intent, not the calculated dependency set. Names are unique and must exist in the installed release manifest.
+- `selected` records user intent, not the calculated dependency set. Names are unique and must exist in the installed distribution manifest.
 - `skills` maps every harness-discovered installed skill to its repository-relative directory.
 - Skill paths are unique, remain inside the consumer root, and end with the corresponding skill name.
 - The mapped skill set includes `configure-project` and the complete transitive closure of `selected`.

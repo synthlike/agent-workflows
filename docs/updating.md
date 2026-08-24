@@ -25,4 +25,4 @@ Changing recorded distribution identity after accepting an update is an explicit
 7. After accepting the installed source, update `distribution.source`, `distribution.version`, and schema-2 skill inventory through a reviewed consumer change.
 8. Run installed verification from the new `configure-project` and commit the reviewed update.
 
-Do not proceed when an installer cannot surface conflicts or preserve consumer-owned files. `plan-fresh` and `apply-fresh` are only for adding absent dependencies during initial configuration; they are not update commands. Migration, when required, remains separate explicit work. General update transactions and recovery remain future work and may be reprioritized when adoption or demonstrated update pain warrants it.
+Do not proceed when an installer cannot surface conflicts or preserve consumer-owned files. `configure-project` verifies installations but never installs or replaces skill directories. Migration, when required, remains separate explicit work. General update transactions and recovery remain future work and may be reprioritized when adoption or demonstrated update pain warrants it.
