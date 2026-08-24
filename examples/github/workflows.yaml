@@ -1,8 +1,13 @@
 # Incomplete example: configure-project must replace both REQUIRED values.
-schema_version: 1
+schema_version: 2
 distribution:
   source: REQUIRED_DISTRIBUTION_SOURCE
   version: REQUIRED_EXACT_VERSION_OR_COMMIT_SHA
+installation:
+  selected: [REQUIRED_SELECTED_SKILL]
+  skills:
+    configure-project: REQUIRED_CONFIGURE_PROJECT_PATH
+    REQUIRED_SELECTED_SKILL: REQUIRED_SELECTED_SKILL_PATH
 issue_tracker:
   backend: github
 artifacts:

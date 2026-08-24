@@ -18,6 +18,8 @@ from typing import Any
 from urllib.parse import urlparse
 from urllib.request import urlopen
 
+from consumer import dependency_closure, inspect_skills, verify_consumer
+
 
 MANIFEST_FORMAT = 1
 MANIFEST_RELATIVE_PATH = PurePosixPath(
@@ -508,6 +510,63 @@ def _default_root() -> Path:
     return Path.cwd()
 
 
+def installed_manifest() -> dict[str, Any]:
+    path = Path(__file__).resolve().parent / "distribution-manifest.json"
+    try:
+        manifest = parse_json(path.read_bytes(), f"installed manifest {path}")
+    except OSError as error:
+        raise LifecycleError(f"cannot read installed manifest {path}: {error}") from error
+    errors = validate_manifest(manifest)
+    if errors:
+        raise LifecycleError("; ".join(errors))
+    return manifest
+
+
+def _add_consumer_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--consumer-root", required=True, type=Path)
+    selection = parser.add_mutually_exclusive_group(required=True)
+    selection.add_argument(
+        "--skills-root",
+        type=Path,
+        help="directory whose immediate children are harness-discovered skills",
+    )
+    selection.add_argument(
+        "--skill-dir",
+        action="append",
+        type=Path,
+        help="one harness-discovered skill directory; repeat for each skill",
+    )
+    parser.add_argument("--json", action="store_true", help="emit canonical JSON")
+
+
+def _consumer_skill_dirs(args: argparse.Namespace) -> list[Path]:
+    if args.skills_root:
+        if not args.skills_root.is_dir():
+            raise LifecycleError(f"skills root not found: {args.skills_root}")
+        return sorted(path for path in args.skills_root.iterdir() if path.is_dir())
+    return args.skill_dir
+
+
+def _print_result(result: dict[str, Any], as_json: bool, success: str) -> None:
+    if as_json:
+        sys.stdout.buffer.write(canonical_json(result))
+        return
+    if result.get("errors"):
+        print("Verification failed:")
+        for error in result["errors"]:
+            print(f"- {error}")
+    else:
+        print(success)
+    if "release" in result:
+        print(f"Release: {result['release']}")
+    if "selected" in result:
+        print("Selected: " + ", ".join(result["selected"]))
+    if "closure" in result:
+        print("Closure: " + ", ".join(result["closure"]))
+    if "installed" in result:
+        print("Installed: " + ", ".join(result["installed"]))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -519,6 +578,15 @@ def main() -> int:
     validate_parser = subparsers.add_parser("validate-bundle")
     validate_parser.add_argument("bundle", help="local path or HTTPS URL")
     validate_parser.add_argument("--stage", type=Path)
+    show_parser = subparsers.add_parser("show-manifest")
+    show_parser.add_argument("--json", action="store_true", help="emit canonical JSON")
+    closure_parser = subparsers.add_parser("closure")
+    closure_parser.add_argument("skills", nargs="+", help="user-selected workflow names")
+    closure_parser.add_argument("--json", action="store_true", help="emit canonical JSON")
+    inspect_parser = subparsers.add_parser("inspect")
+    _add_consumer_arguments(inspect_parser)
+    verify_parser = subparsers.add_parser("verify-consumer")
+    _add_consumer_arguments(verify_parser)
     args = parser.parse_args()
     try:
         if args.command == "generate-release":
@@ -538,7 +606,7 @@ def main() -> int:
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_bytes(bundle)
             print(f"Wrote {args.output} ({sha256(bundle)}).")
-        else:
+        elif args.command == "validate-bundle":
             bundle = validate_bundle_bytes(load_bundle(args.bundle))
             if args.stage:
                 stage_bundle(bundle, args.stage)
@@ -546,6 +614,54 @@ def main() -> int:
                 f"Verified {bundle.manifest['distribution']['version']} bundle "
                 f"({bundle.digest})."
             )
+        elif args.command == "show-manifest":
+            manifest = installed_manifest()
+            if args.json:
+                sys.stdout.buffer.write(canonical_json(manifest))
+            else:
+                print(
+                    f"Manifest {manifest['manifest_version']}: "
+                    f"{manifest['distribution']['source']}@"
+                    f"{manifest['distribution']['version']} "
+                    f"({len(manifest['skills'])} skills)"
+                )
+        elif args.command == "closure":
+            manifest = installed_manifest()
+            selected = sorted(set(args.skills))
+            try:
+                required = sorted(dependency_closure(set(selected), manifest))
+            except ValueError as error:
+                raise LifecycleError(str(error)) from error
+            result = {
+                "closure": required,
+                "release": manifest["distribution"]["version"],
+                "selected": selected,
+            }
+            _print_result(result, args.json, "Calculated dependency closure.")
+        elif args.command == "inspect":
+            manifest = installed_manifest()
+            skill_dirs = _consumer_skill_dirs(args)
+            inspection = inspect_skills(args.consumer_root, skill_dirs, manifest)
+            result = {
+                "errors": sorted(set(inspection.errors)),
+                "installed": sorted(inspection.installed),
+                "ok": not inspection.errors,
+                "release": manifest["distribution"]["version"],
+            }
+            _print_result(result, args.json, "Installed skills match the release manifest.")
+            if inspection.errors:
+                return 1
+        else:
+            manifest = installed_manifest()
+            skill_dirs = _consumer_skill_dirs(args)
+            verification = verify_consumer(args.consumer_root, skill_dirs, manifest)
+            _print_result(
+                verification.as_dict(),
+                args.json,
+                "Verified schema-2 consumer installation.",
+            )
+            if verification.errors:
+                return 1
     except LifecycleError as error:
         print(f"Lifecycle error: {error}", file=sys.stderr)
         return 1

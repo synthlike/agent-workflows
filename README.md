@@ -50,6 +50,7 @@ From the consumer's Git root, invoke `configure-project` before any other instal
 - [Artifact model](docs/artifact-model.md)
 - [Workflow dependencies](docs/workflow-dependencies.md)
 - [Release manifest and bundle](docs/release-manifest.md)
+- [Workflow configuration schema 2](docs/workflow-configuration.md)
 - [Verifying a consumer installation](docs/verifying-installation.md)
 - [Issue-tracker backends](docs/issue-tracker-backends.md)
 - [Starting a new project](docs/starting-a-new-project.md)

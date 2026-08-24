@@ -44,11 +44,12 @@
       "files": {
         "SKILL.md": "7398f2e9249e551515be86efee35a6408220f936abb1248878cfe3fbb746abe3",
         "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
+        "references/consumer.py": "04502623c0e127739bc95fe9bdb05bb2aac93be36deadb50bfa916ef7e31909d",
         "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
         "references/issue-tracker-github.md": "1213773752ff95356905038822b1f9eff019be607f3be0399b1186b2a28d32d2",
         "references/issue-tracker-local-markdown.md": "918cd42abc92a36a03083076d09f79f7aea24c9b05d4cd618ace72eeecb20e14",
-        "references/lifecycle.py": "dc80f394f0ec23f0c1a6c343517f98b6b9938500a0253a36c9c890215372e249",
-        "references/workflow-config.example.yaml": "58dc24b927c42f57c8b5d55de1bc76d4d0b9571844491551dc95f3247dfee0b0"
+        "references/lifecycle.py": "4b2efa97873bc28d22e5612fbe3d951a349d4b4896f8876790cf4c1e386f5f66",
+        "references/workflow-config.example.yaml": "9bf87e4b69060cf4dcce0f4f56a75b112e66c3528183515d3af951655cd06ba6"
       }
     },
     "develop-rfc": {

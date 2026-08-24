@@ -1,6 +1,20 @@
 # Verifying a consumer installation
 
-Run consumer verification from the Agent Workflows distribution and pass the consumer repository root plus the skill directories discovered by its agent harness.
+## v0.2 installed verification
+
+A schema-2 consumer verifies itself with the lifecycle command carried by its installed `configure-project` skill. Pass the consumer root plus the exact skill directories discovered by its harness:
+
+```bash
+python3 PATH/TO/configure-project/references/lifecycle.py verify-consumer \
+  --consumer-root /path/to/consumer \
+  --skills-root /path/to/discoverable/skills
+```
+
+Use repeated `--skill-dir` arguments when the harness discovers skills from several parents. Add `--json` for deterministic machine-readable output. See [Workflow configuration schema 2](workflow-configuration.md) for the inventory contract.
+
+## Schema-1 migration verification
+
+Until the known v0.1.0 installation migrates, source-checkout verification remains available. Run it from the Agent Workflows distribution and pass the consumer repository root plus the skill directories discovered by its agent harness.
 
 When discoverable skills share a parent directory:
 

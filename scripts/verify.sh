@@ -72,7 +72,15 @@ config_examples = [
 ]
 for path in config_examples:
     text = path.read_text()
-    for field in ("distribution:", "source:", "version:"):
+    for field in (
+        "schema_version: 2",
+        "distribution:",
+        "source:",
+        "version:",
+        "installation:",
+        "selected:",
+        "skills:",
+    ):
         if field not in text:
             errors.append(f"{path.relative_to(root)}: missing {field.rstrip(':')}")
     if "REQUIRED_" in text and "Incomplete" not in text:
