@@ -14,6 +14,11 @@ import consumer  # noqa: E402
 import lifecycle  # noqa: E402
 
 
+MANIFEST = lifecycle.installed_manifest()
+DISTRIBUTION_SOURCE = MANIFEST["distribution"]["source"]
+DISTRIBUTION_VERSION = MANIFEST["distribution"]["version"]
+
+
 POINTERS = """# Agent guidance
 
 Workflow configuration is in `.agents/workflows.yaml`. Before significant design or planning work, read `docs/agents/workflows.md`. Perform issue operations according to `docs/agents/issue-tracker.md`.
@@ -46,8 +51,8 @@ class InstalledLifecycleTests(unittest.TestCase):
             f"""schema_version: 2
 
 distribution:
-  source: github.com/synthlike/agent-workflows
-  version: v0.2.0
+  source: {DISTRIBUTION_SOURCE}
+  version: {DISTRIBUTION_VERSION}
 
 installation:
   selected:
@@ -109,7 +114,7 @@ artifacts:
             self.assertEqual(0, completed.returncode, completed.stderr)
             output = json.loads(completed.stdout)
             self.assertTrue(output["ok"])
-            self.assertEqual("v0.2.0", output["release"])
+            self.assertEqual(DISTRIBUTION_VERSION, output["release"])
             self.assertEqual(["clarify-intent", "configure-project"], output["closure"])
 
     def test_manifest_closure_inspection_and_verification_have_json_output(self) -> None:
@@ -227,7 +232,7 @@ artifacts:
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(Path(directory))
             config = root / ".agents/workflows.yaml"
-            config.write_text(config.read_text().replace("v0.2.0", "latest"))
+            config.write_text(config.read_text().replace(DISTRIBUTION_VERSION, "latest"))
             errors = self.verify(root, skill_dirs).errors
             self.assertIn("distribution.version must be immutable", errors)
             self.assertIn("configured distribution identity does not match installed manifest", errors)
@@ -235,7 +240,7 @@ artifacts:
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(Path(directory))
             config = root / ".agents/workflows.yaml"
-            config.write_text(config.read_text().replace("v0.2.0", "v0.2.1"))
+            config.write_text(config.read_text().replace(DISTRIBUTION_VERSION, "v9.9.9"))
             self.assertIn(
                 "configured distribution identity does not match installed manifest",
                 self.verify(root, skill_dirs).errors,

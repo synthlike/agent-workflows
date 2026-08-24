@@ -2,7 +2,7 @@ schema_version: 2
 
 distribution:
   source: github.com/synthlike/agent-workflows
-  version: v0.2.0
+  version: v0.3.0
 
 installation:
   selected:
@@ -10,6 +10,7 @@ installation:
     - capture-meeting
     - clarify-intent
     - develop-rfc
+    - establish-technical-baseline
     - model-domain
     - plan-implementation
     - plan-initiative
@@ -24,6 +25,7 @@ installation:
     clarify-intent: skills/clarify-intent
     configure-project: skills/configure-project
     develop-rfc: skills/develop-rfc
+    establish-technical-baseline: skills/establish-technical-baseline
     model-domain: skills/model-domain
     plan-implementation: skills/plan-implementation
     plan-initiative: skills/plan-initiative

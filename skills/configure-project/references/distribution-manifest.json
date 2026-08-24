@@ -8,7 +8,7 @@
   },
   "distribution": {
     "source": "github.com/synthlike/agent-workflows",
-    "version": "v0.2.0"
+    "version": "v0.3.0"
   },
   "manifest_version": 1,
   "skills": {
@@ -64,6 +64,17 @@
       "files": {
         "SKILL.md": "7053da851553cca2244e270f9ea48668a97d65f4fe1e5b70de560d430e9b0e05",
         "references/rfc-template.md": "c8db27ddbed10cf5f975b400bdcf64de947d4bde7fd1c5258d69af4091bd8955"
+      }
+    },
+    "establish-technical-baseline": {
+      "dependencies": [
+        "develop-rfc",
+        "record-arp",
+        "research-question"
+      ],
+      "files": {
+        "SKILL.md": "30bdbaa327ac7fbfdf6ea32a11bf52417eb4fad498d6559799dc954ccdf2673b",
+        "references/technical-baseline-template.md": "533f55813ae86b5f812bf983f1a31ba8fe2a98b1b34796df0a17cca76e7158e2"
       }
     },
     "model-domain": {

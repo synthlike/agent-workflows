@@ -5,12 +5,12 @@ Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows
 ## Distribution
 
 - Source: `github.com/synthlike/agent-workflows`
-- Version: `v0.2.0`
+- Version: `v0.3.0`
 - Configuration schema: `2`
 
 ## Installation inventory
 
-All 12 workflows are explicitly selected. The complete 13-skill closure, including mandatory `configure-project`, is discovered under `skills/<skill-name>`.
+All 13 current workflows are explicitly selected. The complete 14-skill closure, including mandatory `configure-project`, is discovered under `skills/<skill-name>`.
 
 ## Artifact authority
 

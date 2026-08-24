@@ -9,6 +9,7 @@
     "clarify-intent",
     "configure-project",
     "develop-rfc",
+    "establish-technical-baseline",
     "model-domain",
     "plan-implementation",
     "plan-initiative",
@@ -19,5 +20,5 @@
     "research-question"
   ],
   "source": "github.com/synthlike/agent-workflows",
-  "version": "v0.2.0"
+  "version": "v0.3.0"
 }
