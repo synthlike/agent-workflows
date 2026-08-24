@@ -65,10 +65,25 @@ for source_name, bundled_name in (
     if not copy.exists() or source.read_text() != copy.read_text():
         errors.append(f"{copy.relative_to(root)}: bundled backend copy is missing or stale")
 
+config_examples = [
+    root / "skills/configure-project/references/workflow-config.example.yaml",
+    root / "examples/github/workflows.yaml",
+    root / "examples/local-markdown/workflows.yaml",
+]
+for path in config_examples:
+    text = path.read_text()
+    for field in ("distribution:", "source:", "version:"):
+        if field not in text:
+            errors.append(f"{path.relative_to(root)}: missing {field.rstrip(':')}")
+    if "REQUIRED_" in text and "Incomplete" not in text:
+        errors.append(f"{path.relative_to(root)}: placeholders are not marked as incomplete")
+
 if errors:
     print("Verification failed:", file=sys.stderr)
     for error in errors:
         print(f"- {error}", file=sys.stderr)
     raise SystemExit(1)
-print(f"Verified {len(skills)} skills and {len(list((root / 'backends/issue-tracker').glob('*.md'))) - 1} backends.")
+print(f"Verified {len(skills)} skills, {len(list((root / 'backends/issue-tracker').glob('*.md'))) - 1} backends, and {len(config_examples)} configuration examples.")
 PY
+python3 -B "$root/scripts/verify_workflow_config.py" "$root/.agents/workflows.yaml"
+python3 -B -m unittest discover -s "$root/tests" -p 'test_*.py'

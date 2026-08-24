@@ -2,9 +2,9 @@
 id: ISSUE-0001
 title: Record immutable distribution identity during project configuration
 kind: task
-status: open
+status: resolved
 created: 2026-08-24
-assignee:
+assignee: synthlike
 parent: ../../docs/specifications/v0.1-installation-and-consumer-project-contract.md
 blocked_by: []
 labels: [v0.1, installation]
@@ -22,12 +22,12 @@ Make distribution identity a consistent, verifiable result of configuring a cons
 
 ## Acceptance criteria
 
-- [ ] The canonical workflow configuration template requires `distribution.source` and `distribution.version`.
-- [ ] Bundled examples represent a valid immutable distribution identity or are explicitly marked as incomplete examples that setup must replace.
-- [ ] Consumer configuration verification accepts exact release identifiers and immutable commit SHAs.
-- [ ] Consumer configuration verification rejects mutable identities such as `latest`, branch names, and `unreleased` for completed installations.
-- [ ] Existing consumer-owned configuration is changed only through an approved `configure-project` dry run.
-- [ ] Relevant structural verification and fixture tests pass.
+- [x] The canonical workflow configuration template requires `distribution.source` and `distribution.version`.
+- [x] Bundled examples represent a valid immutable distribution identity or are explicitly marked as incomplete examples that setup must replace.
+- [x] Consumer configuration verification accepts exact release identifiers and immutable commit SHAs.
+- [x] Consumer configuration verification rejects mutable identities such as `latest`, branch names, and `unreleased` for completed installations.
+- [x] Existing consumer-owned configuration is changed only through an approved `configure-project` dry run.
+- [x] Relevant structural verification and fixture tests pass.
 
 ## Blocked by
 
@@ -40,3 +40,5 @@ Creating the first release tag, implementing updates, or defining a package regi
 ## Comments
 
 ## Resolution
+
+Resolved on 2026-08-24. `configure-project` now requires immutable distribution identity in exploration, dry runs, and writes. Templates and examples expose required placeholders and identify themselves as incomplete. `scripts/verify_workflow_config.py` accepts exact semantic release versions or 40/64-character commit SHAs and rejects mutable or placeholder values; source verification and five identity tests pass.

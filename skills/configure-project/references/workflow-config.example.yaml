@@ -1,8 +1,9 @@
+# Incomplete template: configure-project must replace both REQUIRED values.
 schema_version: 1
 
 distribution:
-  source: github.com/OWNER/agent-workflows
-  version: unreleased
+  source: REQUIRED_DISTRIBUTION_SOURCE
+  version: REQUIRED_EXACT_VERSION_OR_COMMIT_SHA
 
 issue_tracker:
   backend: local-markdown
