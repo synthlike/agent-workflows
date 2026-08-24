@@ -10,6 +10,7 @@ installation:
     - capture-meeting
     - capture-regression
     - clarify-intent
+    - close-initiative
     - develop-rfc
     - establish-technical-baseline
     - investigate-failure
@@ -28,6 +29,7 @@ installation:
     capture-meeting: skills/capture-meeting
     capture-regression: skills/capture-regression
     clarify-intent: skills/clarify-intent
+    close-initiative: skills/close-initiative
     configure-project: skills/configure-project
     develop-rfc: skills/develop-rfc
     establish-technical-baseline: skills/establish-technical-baseline

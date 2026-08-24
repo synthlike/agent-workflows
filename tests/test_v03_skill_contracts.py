@@ -213,6 +213,40 @@ class V03SkillContractTests(unittest.TestCase):
         ):
             self.assertIn(required, template)
 
+    def test_initiative_closure_verifies_evidence_and_reconciles_work(self) -> None:
+        text = self.skill("close-initiative")
+        for required in (
+            "## Load the initiative",
+            "Do not assume that issue status proves delivery",
+            "## Verify outcomes",
+            "Reconcile every unresolved, blocked, cancelled, and deferred item",
+            "Do not present cancelled, deferred, or merely planned scope as delivered",
+        ):
+            self.assertIn(required, text)
+
+    def test_initiative_closure_returns_one_outcome_after_approval(self) -> None:
+        text = self.skill("close-initiative")
+        for outcome in ("**Achieved:**", "**Partially achieved:**", "**Abandoned:**"):
+            self.assertIn(outcome, text)
+        self.assertIn("Wait for explicit approval", text)
+        self.assertIn("Do not create a separate canonical closure-report type", text)
+        self.assertIn("do not close the initiative", text)
+
+    def test_initiative_closure_template_preserves_partial_and_abandoned_gaps(self) -> None:
+        template = (
+            SKILLS / "close-initiative" / "references/initiative-closure-template.md"
+        ).read_text()
+        for required in (
+            "## Outcome evidence",
+            "## Delivered value",
+            "## Gaps and limitations",
+            "## Work reconciliation",
+            "## Proposed follow-up work",
+            "## Lessons and authority routing",
+            "## Proposed artifact operations",
+        ):
+            self.assertIn(required, template)
+
 
 if __name__ == "__main__":
     unittest.main()

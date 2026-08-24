@@ -47,6 +47,19 @@
         "SKILL.md": "5387c7c1b8511bb3f2e7333314a9cca75c8ab4ba31c9beb1529c3865163218e0"
       }
     },
+    "close-initiative": {
+      "dependencies": [
+        "author-specification",
+        "model-domain",
+        "record-arp",
+        "review-implementation",
+        "triage-issue"
+      ],
+      "files": {
+        "SKILL.md": "d768053b5c37adf8e0c2fba80f15a68c19f5a7fca9f05245dd3282ea114cdab7",
+        "references/initiative-closure-template.md": "550923ddb3902658d621f4afc7375db9e5d06a0c59b12d42d672bfdfe92ef153"
+      }
+    },
     "configure-project": {
       "dependencies": [],
       "files": {

@@ -10,6 +10,7 @@ Every installation must include `configure-project`, the workflows selected by t
 | `capture-meeting` | `author-specification`, `develop-rfc`, `model-domain`, `record-arp` |
 | `capture-regression` | `investigate-failure` |
 | `clarify-intent` | None |
+| `close-initiative` | `author-specification`, `model-domain`, `record-arp`, `review-implementation`, `triage-issue` |
 | `configure-project` | None |
 | `develop-rfc` | `author-specification`, `clarify-intent`, `prototype-design`, `record-arp`, `research-question` |
 | `establish-technical-baseline` | `develop-rfc`, `record-arp`, `research-question` |
