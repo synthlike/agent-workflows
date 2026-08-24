@@ -135,6 +135,46 @@ class V03SkillContractTests(unittest.TestCase):
         self.assertIn("policy prohibits a failing commit", text)
         self.assertIn("land atomically", text)
 
+    def test_issue_triage_checks_duplicates_and_separates_claims_from_evidence(self) -> None:
+        text = self.skill("triage-issue")
+        for required in (
+            "## Load the project contract",
+            "## Check prior work",
+            "exact or functional duplicates",
+            "Reported impact",
+            "Verified evidence",
+            "Do not invent urgency, severity",
+        ):
+            self.assertIn(required, text)
+
+    def test_issue_triage_routes_uncertainty_and_requires_approval(self) -> None:
+        text = self.skill("triage-issue")
+        for route in (
+            "`investigate-failure`",
+            "`research-question`",
+            "`clarify-intent`",
+            "`develop-rfc`",
+            "`plan-implementation`",
+        ):
+            self.assertIn(route, text)
+        self.assertIn("Before any issue creation or material rewrite", text)
+        self.assertIn("Wait for approval", text)
+        self.assertIn("Perform only the approved operations", text)
+
+    def test_issue_triage_template_supports_non_issue_dispositions(self) -> None:
+        template = (
+            SKILLS / "triage-issue" / "references/triage-proposal-template.md"
+        ).read_text()
+        for required in (
+            "## Existing and authoritative context",
+            "## Evidence and missing information",
+            "## Recommended disposition",
+            "duplicate or covered",
+            "route to another workflow",
+            "## Proposed backend operations",
+        ):
+            self.assertIn(required, template)
+
 
 if __name__ == "__main__":
     unittest.main()

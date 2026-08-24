@@ -166,6 +166,19 @@
       "files": {
         "SKILL.md": "223c966020f1e7d607a1de27151b1fe050e844dfc618022274d254adb0d39a38"
       }
+    },
+    "triage-issue": {
+      "dependencies": [
+        "clarify-intent",
+        "develop-rfc",
+        "investigate-failure",
+        "plan-implementation",
+        "research-question"
+      ],
+      "files": {
+        "SKILL.md": "2dc19fef656c8c612092c0df14795024c4f2a5307b55b1bc1e2231008c5291bd",
+        "references/triage-proposal-template.md": "1fdf8d11bd1bb69608a42e5fe247b2c9238f168b61115fccecc471a8f27727b7"
+      }
     }
   }
 }

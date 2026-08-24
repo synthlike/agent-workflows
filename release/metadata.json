@@ -19,7 +19,8 @@
     "prepare-questionnaire",
     "prototype-design",
     "record-arp",
-    "research-question"
+    "research-question",
+    "triage-issue"
   ],
   "source": "github.com/synthlike/agent-workflows",
   "version": "v0.3.0"
