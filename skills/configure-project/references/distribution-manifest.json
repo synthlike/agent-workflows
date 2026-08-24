@@ -167,6 +167,17 @@
         "SKILL.md": "223c966020f1e7d607a1de27151b1fe050e844dfc618022274d254adb0d39a38"
       }
     },
+    "review-implementation": {
+      "dependencies": [
+        "capture-regression",
+        "investigate-failure",
+        "triage-issue"
+      ],
+      "files": {
+        "SKILL.md": "666edb469d6e0710e826d82f6cbeb318119366bf0f8d1e1e272e4535e3d380ea",
+        "references/implementation-review-template.md": "e61a8cccb5afee4594d1ff5ee9483332eccfce09a512dfddc104f830a6825402"
+      }
+    },
     "triage-issue": {
       "dependencies": [
         "clarify-intent",

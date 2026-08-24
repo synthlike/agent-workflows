@@ -22,6 +22,7 @@ Every installation must include `configure-project`, the workflows selected by t
 | `prototype-design` | None |
 | `record-arp` | `develop-rfc` |
 | `research-question` | None |
+| `review-implementation` | `capture-regression`, `investigate-failure`, `triage-issue` |
 | `triage-issue` | `clarify-intent`, `develop-rfc`, `investigate-failure`, `plan-implementation`, `research-question` |
 
 A direct dependency is declared when a `SKILL.md` names another distributed skill in inline code. Cross-skill routing must use that form so verification can keep release metadata synchronized. Artifact references such as RFCs, ARPs, specifications, issues, research, and prototypes do not create dependencies unless the source skill explicitly names another skill.

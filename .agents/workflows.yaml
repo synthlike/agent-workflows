@@ -21,6 +21,7 @@ installation:
     - prototype-design
     - record-arp
     - research-question
+    - review-implementation
     - triage-issue
   skills:
     author-specification: skills/author-specification
@@ -39,6 +40,7 @@ installation:
     prototype-design: skills/prototype-design
     record-arp: skills/record-arp
     research-question: skills/research-question
+    review-implementation: skills/review-implementation
     triage-issue: skills/triage-issue
 
 issue_tracker:

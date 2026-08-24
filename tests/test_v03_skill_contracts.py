@@ -175,6 +175,44 @@ class V03SkillContractTests(unittest.TestCase):
         ):
             self.assertIn(required, template)
 
+    def test_implementation_review_uses_authority_and_actual_evidence(self) -> None:
+        text = self.skill("review-implementation")
+        for required in (
+            "## Establish scope",
+            "specifications define agreed behavior",
+            "accepted ARPs constrain",
+            "issues define the executable slice",
+            "actual code and configuration",
+            "A passing test suite is evidence, not proof",
+        ):
+            self.assertIn(required, text)
+
+    def test_implementation_review_is_read_only_and_returns_one_verdict(self) -> None:
+        text = self.skill("review-implementation")
+        self.assertIn("Do not edit code, configuration, tests", text)
+        self.assertIn("Return exactly one verdict", text)
+        for verdict in ("Conforms:", "Conforms with follow-up:", "Does not conform:"):
+            self.assertIn(verdict, text)
+        self.assertIn("Present the complete review and verdict before any issue operation", text)
+
+    def test_implementation_review_template_requires_concrete_findings_and_limits(self) -> None:
+        template = (
+            SKILLS
+            / "review-implementation"
+            / "references/implementation-review-template.md"
+        ).read_text()
+        for required in (
+            "## Authoritative intent",
+            "## Implementation evidence",
+            "## Verification performed",
+            "**Expectation:**",
+            "**Evidence:**",
+            "**Impact:**",
+            "**Recommended disposition:**",
+            "## Limitations and confidence",
+        ):
+            self.assertIn(required, template)
+
 
 if __name__ == "__main__":
     unittest.main()

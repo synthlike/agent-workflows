@@ -10,7 +10,7 @@ Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows
 
 ## Installation inventory
 
-All 16 current workflows are explicitly selected. The complete 17-skill closure, including mandatory `configure-project`, is discovered under `skills/<skill-name>`.
+All 17 current workflows are explicitly selected. The complete 18-skill closure, including mandatory `configure-project`, is discovered under `skills/<skill-name>`.
 
 ## Artifact authority
 

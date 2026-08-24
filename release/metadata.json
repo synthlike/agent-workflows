@@ -20,6 +20,7 @@
     "prototype-design",
     "record-arp",
     "research-question",
+    "review-implementation",
     "triage-issue"
   ],
   "source": "github.com/synthlike/agent-workflows",
