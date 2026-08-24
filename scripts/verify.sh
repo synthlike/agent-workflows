@@ -86,4 +86,5 @@ if errors:
 print(f"Verified {len(skills)} skills, {len(list((root / 'backends/issue-tracker').glob('*.md'))) - 1} backends, and {len(config_examples)} configuration examples.")
 PY
 python3 -B "$root/scripts/verify_workflow_config.py" "$root/.agents/workflows.yaml"
+python3 -B "$root/scripts/verify_workflow_dependencies.py"
 python3 -B -m unittest discover -s "$root/tests" -p 'test_*.py'

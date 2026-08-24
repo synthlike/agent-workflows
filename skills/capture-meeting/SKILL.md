@@ -23,10 +23,10 @@ Read `.agents/workflows.yaml`. If meeting notes are disabled, ask before enablin
 
 After drafting, ask which extracted items should become authoritative:
 
-- technical ambiguity -> RFC;
-- consequential accepted technical decision -> ARP;
-- agreed behavior or requirement -> specification;
-- action or implementation slice -> issue; and
-- resolved terminology -> domain model.
+- technical ambiguity -> `develop-rfc`;
+- consequential accepted technical decision -> `record-arp`;
+- agreed behavior or requirement -> `author-specification`;
+- action or implementation slice -> the configured issue backend; and
+- resolved terminology -> `model-domain`.
 
 Create promoted artifacts only after confirmation, then link them from the minutes. A fact appearing only in meeting notes remains non-authoritative.
