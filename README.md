@@ -32,7 +32,7 @@ Research, prototypes, questionnaires, meetings, investigations, reviews, baselin
 
 ## Install
 
-v0.3 vendors skills into each consumer repository. Start with `configure-project` and the workflows you explicitly want; the initial copy may omit transitive dependencies.
+Agent Workflows vendors skills into each consumer repository. Start with `configure-project` and the workflows you explicitly want; the initial copy may omit transitive dependencies.
 
 An Agent Skills-compatible installer may perform the copy. For example:
 
@@ -40,7 +40,7 @@ An Agent Skills-compatible installer may perform the copy. For example:
 npx skills@latest add synthlike/agent-workflows
 ```
 
-This command is illustrative; v0.3 does not guarantee a third-party installer's syntax, destination, or update behavior. An equivalent intact manual copy is supported at any repository-contained location the consumer's harness discovers.
+This command is illustrative; Agent Workflows does not guarantee a third-party installer's syntax, destination, or update behavior. An equivalent intact manual copy is supported at any repository-contained location the consumer's harness discovers.
 
 From the consumer Git root, invoke `configure-project` before another workflow. Its installed lifecycle command reads the [release manifest](docs/release-manifest.md), calculates closure, and produces a complete dry run. When dependencies are missing, supply the matching release bundle, approve every source and destination, apply the non-destructive plan, and confirm harness discovery. Then approve schema-2 configuration and guidance, run [installed verification](docs/verifying-installation.md), and commit before creating artifacts.
 
@@ -73,7 +73,7 @@ The v0.1 [RFC](docs/rfcs/RFC-0001-v0.1-installation-and-consumer-project-contrac
 
 ## Status
 
-Active early development. v0.3 covers product-problem framing, project foundations, planning and design knowledge, defect evidence, implementation conformance review, and initiative closure. It does not implement application code or automated cross-version maintenance.
+Active early development. The current workflow set covers product-problem framing, project foundations, planning and design knowledge, defect evidence, implementation conformance review, and initiative closure. It does not implement application code or automated cross-version maintenance.
 
 ## Attribution
 

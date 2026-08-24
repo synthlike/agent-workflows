@@ -110,39 +110,29 @@ for path in documentation:
 
 readme = (root / "README.md").read_text()
 for required in (
-    "docs/rfcs/RFC-0001-v0.1-installation-and-consumer-project-contract.md",
-    "docs/decisions/ARP-0001-use-a-vendored-consumer-owned-installation-boundary.md",
-    "docs/specifications/v0.1-installation-and-consumer-project-contract.md",
+    "docs/choosing-a-workflow.md",
+    "docs/artifact-model.md",
     "docs/workflow-dependencies.md",
-    "docs/verifying-installation.md",
-    "docs/rfcs/RFC-0003-reduce-v0.2-to-fresh-project-lifecycle.md",
-    "docs/decisions/ARP-0004-ship-v0.2-for-fresh-project-adoption.md",
-    "docs/specifications/v0.2-fresh-project-lifecycle.md",
     "docs/release-manifest.md",
     "docs/workflow-configuration.md",
+    "docs/verifying-installation.md",
+    "docs/issue-tracker-backends.md",
+    "docs/starting-a-new-project.md",
     "docs/fresh-project-configuration.md",
-    "docs/rfcs/RFC-0004-focus-v0.3-on-project-feedback-workflows.md",
-    "docs/decisions/ARP-0005-focus-v0.3-on-project-feedback-workflows.md",
-    "docs/specifications/v0.3-project-foundation-and-feedback-workflows.md",
-    "docs/rfcs/RFC-0005-add-product-problem-framing-to-v0.3.md",
-    "docs/decisions/ARP-0006-add-product-problem-framing-to-v0.3.md",
+    "docs/adopting-in-existing-project.md",
 ):
     if f"]({required})" not in readme:
-        errors.append(f"README.md: missing contract link {required}")
+        errors.append(f"README.md: missing operational link {required}")
 
+import json
+metadata = json.loads((root / "release/metadata.json").read_text())
+version = metadata["version"].removeprefix("v")
 changelog = (root / "CHANGELOG.md").read_text()
-for required in (
-    "deterministic v0.2 release manifests",
-    "dependency-complete fresh-project",
-    "Defer reusable update transactions",
-    "frame-product-problem",
-    "establish-technical-baseline",
-    "diagnosis-only failure investigation",
-    "implementation conformance review",
-    "defer transactional maintenance automation to v0.4",
-):
-    if required not in changelog:
-        errors.append(f"CHANGELOG.md: missing v0.2 release coverage {required!r}")
+unreleased = changelog.split("## Unreleased", 1)[-1].split("\n## ", 1)[0]
+if f"## {version} " not in changelog and not re.search(r"(?m)^- ", unreleased):
+    errors.append(
+        "CHANGELOG.md: needs a dated current-release section or an Unreleased entry"
+    )
 
 if errors:
     print("Verification failed:", file=sys.stderr)

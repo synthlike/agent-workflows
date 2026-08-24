@@ -11,7 +11,7 @@ Each release publishes a deterministic JSON manifest at `skills/configure-projec
   "manifest_version": 1,
   "distribution": {
     "source": "github.com/OWNER/agent-workflows",
-    "version": "v0.3.0"
+    "version": "vMAJOR.MINOR.PATCH"
   },
   "configuration": {
     "current_schema": 2,
@@ -48,7 +48,7 @@ The canonical JSON encoding uses UTF-8, sorted object keys, two-space indentatio
 The canonical release asset is `agent-workflows-vMAJOR.MINOR.PATCH.tar.gz`. It contains regular files only under one root named `agent-workflows-vMAJOR.MINOR.PATCH/`:
 
 ```text
-agent-workflows-v0.3.0/
+agent-workflows-vMAJOR.MINOR.PATCH/
 ├── CHANGELOG.md
 └── skills/
     ├── configure-project/
@@ -65,14 +65,14 @@ The lifecycle command accepts local files or HTTPS URLs:
 
 ```bash
 python3 skills/configure-project/references/lifecycle.py validate-bundle \
-  agent-workflows-v0.3.0.tar.gz
+  agent-workflows-vMAJOR.MINOR.PATCH.tar.gz
 ```
 
 To stage validated files without using `tar` extraction:
 
 ```bash
 python3 skills/configure-project/references/lifecycle.py validate-bundle \
-  agent-workflows-v0.3.0.tar.gz \
+  agent-workflows-vMAJOR.MINOR.PATCH.tar.gz \
   --stage /temporary/empty/directory
 ```
 
@@ -94,5 +94,5 @@ Build the release asset:
 
 ```bash
 python3 skills/configure-project/references/lifecycle.py build-bundle \
-  --output dist/agent-workflows-v0.3.0.tar.gz
+  --output dist/agent-workflows-vMAJOR.MINOR.PATCH.tar.gz
 ```

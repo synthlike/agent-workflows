@@ -1,6 +1,6 @@
 # Starting a new project
 
-v0.3 supports one configured consumer root per Git repository.
+Agent Workflows supports one configured consumer root per Git repository.
 
 1. Select the workflows you want and install them with `configure-project`. The initial selection may omit transitive dependencies.
 2. Preserve each installed skill directory intact and place it where the consumer's agent can discover it. No particular parent directory is required.
@@ -15,6 +15,6 @@ v0.3 supports one configured consumer root per Git repository.
 11. When a founder has an early product idea, invoke `frame-product-problem` before treating it as requirements. Approve a project-owned discovery location, challenge the problem and audience, and plan non-leading customer validation.
 12. When the principal application stack is already selected, invoke `establish-technical-baseline` before product-dependent architecture work. Approve a project-owned documentation location and keep unknown product questions deferred.
 
-`.agents/workflows.yaml` is the repository's single canonical workflow configuration. It records immutable distribution identity, user-selected workflows, and every harness-discovered skill path. Monorepos may choose suitable repository-contained paths, but v0.3 does not support nested configurations or inheritance.
+`.agents/workflows.yaml` is the repository's single canonical workflow configuration. It records immutable distribution identity, user-selected workflows, and every harness-discovered skill path. Monorepos may choose suitable repository-contained paths, but nested configurations and inheritance are not supported.
 
 Directories for optional artifacts and local issues are created only when their first content is written.

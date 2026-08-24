@@ -1,6 +1,5 @@
 from pathlib import Path
 import json
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -13,16 +12,12 @@ sys.path.insert(0, str(REFERENCES))
 import consumer  # noqa: E402
 import lifecycle  # noqa: E402
 
+sys.path.insert(0, str(ROOT / "tests"))
+from consumer_fixture import copy_skills, write_guidance, write_schema2_config  # noqa: E402
+
 
 MANIFEST = lifecycle.installed_manifest()
-DISTRIBUTION_SOURCE = MANIFEST["distribution"]["source"]
 DISTRIBUTION_VERSION = MANIFEST["distribution"]["version"]
-
-
-POINTERS = """# Agent guidance
-
-Workflow configuration is in `.agents/workflows.yaml`. Before significant design or planning work, read `docs/agents/workflows.md`. Perform issue operations according to `docs/agents/issue-tracker.md`.
-"""
 
 
 class InstalledLifecycleTests(unittest.TestCase):
@@ -35,47 +30,17 @@ class InstalledLifecycleTests(unittest.TestCase):
     ) -> tuple[Path, list[Path]]:
         root = base / "consumer"
         root.mkdir()
-        skill_dirs = []
-        inventory: dict[str, str] = {}
-        for index, name in enumerate(names):
-            parent = root / (f"location-{index}" if split_locations else ".skills")
-            parent.mkdir(parents=True, exist_ok=True)
-            target = parent / name
-            shutil.copytree(ROOT / "skills" / name, target)
-            skill_dirs.append(target)
-            inventory[name] = target.relative_to(root).as_posix()
-        (root / ".agents").mkdir()
-        selected_lines = "\n".join(f"    - {name}" for name in selected)
-        skill_lines = "\n".join(f"    {name}: {path}" for name, path in sorted(inventory.items()))
-        (root / ".agents/workflows.yaml").write_text(
-            f"""schema_version: 2
-
-distribution:
-  source: {DISTRIBUTION_SOURCE}
-  version: {DISTRIBUTION_VERSION}
-
-installation:
-  selected:
-{selected_lines}
-  skills:
-{skill_lines}
-
-issue_tracker:
-  backend: local-markdown
-  root: .project
-
-artifacts:
-  domain: {{enabled: true, path: docs/domain}}
-  arps: {{enabled: true, path: docs/decisions, prefix: ARP}}
-  rfcs: {{enabled: true, path: docs/rfcs, prefix: RFC}}
-  meetings: {{enabled: false, path: docs/meetings}}
-  specifications: {{enabled: true, path: docs/specifications}}
-"""
+        skill_dirs = copy_skills(
+            ROOT,
+            root,
+            names,
+            split_locations=split_locations,
         )
-        (root / "docs/agents").mkdir(parents=True)
-        (root / "docs/agents/workflows.md").write_text("# Workflows\n")
-        (root / "docs/agents/issue-tracker.md").write_text("# Local Markdown\n")
-        (root / "AGENTS.md").write_text(POINTERS)
+        inventory = {
+            path.name: path.relative_to(root).as_posix() for path in skill_dirs
+        }
+        write_schema2_config(root, MANIFEST["distribution"], selected, inventory)
+        write_guidance(root)
         return root, skill_dirs
 
     def verify(self, root: Path, skill_dirs: list[Path]) -> consumer.Verification:

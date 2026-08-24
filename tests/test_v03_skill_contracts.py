@@ -6,312 +6,123 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
 
+SKILL_EXPECTATIONS = {
+    "establish-technical-baseline": (
+        "## Establish the boundary", "## Verify the stack", "## Assess applicable foundations",
+        "## Choose a location", "## Confirm", "## Write and report", "Wait for explicit approval",
+        "every changed file", "do not claim that a baseline is established", "Verified fact",
+        "Approved convention", "Recommendation", "Accepted decision", "Open decision",
+        "Deferred product question", "supporting index", "link the ARP instead of copying",
+        "Prefer an existing project-approved", "If none exists, propose",
+        "Preserve existing documentation and conventions",
+    ),
+    "investigate-failure": (
+        "## Bound the investigation", "## Reproduce", "## Test hypotheses", "## Control probes",
+        "## Conclude", "## Confirm publication", "supported, weakened, falsified, or untested",
+        "bounded uncertainty", "do not create a permanent test or implement a production fix",
+        "Track every probe", "Remove it before completion", "Present the findings before writing",
+        "Do not create follow-up work, change issue status",
+    ),
+    "capture-regression": (
+        "## Verify the starting point", "accepted and either reliably reproduced",
+        "stop and use `investigate-failure`", "## Select the test seam", "## Confirm",
+        "Wait for explicit approval before writing", "fails before the production fix",
+        "Change only approved test and fixture files", "Do not change production code",
+        "fails at the intended assertion or observable signal",
+        "unrelated setup or environment errors do not explain it", "Do not commit automatically",
+        "If durable automation is impractical", "policy prohibits a failing commit", "land atomically",
+    ),
+    "triage-issue": (
+        "## Load the project contract", "## Check prior work", "exact or functional duplicates",
+        "Reported impact", "Verified evidence", "Do not invent urgency, severity",
+        "`investigate-failure`", "`research-question`", "`clarify-intent`", "`develop-rfc`",
+        "`plan-implementation`", "Before any issue creation or material rewrite", "Wait for approval",
+        "Perform only the approved operations",
+    ),
+    "review-implementation": (
+        "## Establish scope", "specifications define agreed behavior", "accepted ARPs constrain",
+        "issues define the executable slice", "actual code and configuration",
+        "A passing test suite is evidence, not proof", "Do not edit code, configuration, tests",
+        "Return exactly one verdict", "Conforms:", "Conforms with follow-up:", "Does not conform:",
+        "Present the complete review and verdict before any issue operation",
+    ),
+    "close-initiative": (
+        "## Load the initiative", "Do not assume that issue status proves delivery",
+        "## Verify outcomes", "Reconcile every unresolved, blocked, cancelled, and deferred item",
+        "Do not present cancelled, deferred, or merely planned scope as delivered", "**Achieved:**",
+        "**Partially achieved:**", "**Abandoned:**", "Wait for explicit approval",
+        "Do not create a separate canonical closure-report type", "do not close the initiative",
+    ),
+    "frame-product-problem": (
+        "Ask exactly one question at a time", "the proposed solution",
+        "current behavior, alternatives, and workarounds", "Founder belief", "Direct observation",
+        "External evidence", "Interpretation", "Unknown", "counter-hypotheses",
+        "Prefer an existing project-approved", "Never assume a fixed consumer path",
+        "Wait for explicit approval before writing", "supporting evidence",
+        "ask about concrete past behavior", "avoid pitching the solution",
+        "avoid hypothetical compliments", "respect consent, privacy, confidentiality",
+        "Do not fabricate participants", "cannot substitute for customer or behavioral evidence",
+        "`Unexamined`", "`Supported`", "`Weakened`", "`Contradicted`", "`Inconclusive`",
+        "continue, narrow, reframe, pivot, or stop", "The founder decides",
+        "Never label the product idea or problem “validated”",
+    ),
+}
+
+REFERENCE_EXPECTATIONS = {
+    "establish-technical-baseline/references/technical-baseline-template.md": (
+        "## Fixed technology constraints", "## Compatibility and prerequisites",
+        "## Approved conventions", "## Recommendations awaiting approval", "## Open decisions",
+        "## Deferred product questions", "## Verification and operating commands", "## References",
+    ),
+    "investigate-failure/references/failure-findings-template.md": (
+        "## Expected and observed behavior", "## Environment and reproduction", "## Evidence",
+        "## Hypotheses", "a supported root cause", "bounded uncertainty",
+        "## Probes and repository state", "## Recommended next action",
+    ),
+    "triage-issue/references/triage-proposal-template.md": (
+        "## Existing and authoritative context", "## Evidence and missing information",
+        "## Recommended disposition", "duplicate or covered", "route to another workflow",
+        "## Proposed backend operations",
+    ),
+    "review-implementation/references/implementation-review-template.md": (
+        "## Authoritative intent", "## Implementation evidence", "## Verification performed",
+        "**Expectation:**", "**Evidence:**", "**Impact:**", "**Recommended disposition:**",
+        "## Limitations and confidence",
+    ),
+    "close-initiative/references/initiative-closure-template.md": (
+        "## Outcome evidence", "## Delivered value", "## Gaps and limitations",
+        "## Work reconciliation", "## Proposed follow-up work", "## Lessons and authority routing",
+        "## Proposed artifact operations",
+    ),
+    "frame-product-problem/references/problem-framing-template.md": (
+        "## Proposed solution", "## Problem hypothesis", "## Actors and audience segments",
+        "## Current behavior, alternatives, and workarounds", "## Claims and evidence",
+        "## Counter-hypotheses", "## Risky assumptions and validation plan",
+        "## Evidence log and reassessment", "## Current recommendation",
+    ),
+}
+
 
 class V03SkillContractTests(unittest.TestCase):
-    def skill(self, name: str) -> str:
-        return (SKILLS / name / "SKILL.md").read_text()
+    def test_skill_contracts(self) -> None:
+        for name, expected in SKILL_EXPECTATIONS.items():
+            text = (SKILLS / name / "SKILL.md").read_text()
+            for value in expected:
+                with self.subTest(skill=name, value=value):
+                    self.assertIn(value, text)
 
-    def test_technical_baseline_covers_common_contract(self) -> None:
-        text = self.skill("establish-technical-baseline")
-        for required in (
-            "## Establish the boundary",
-            "## Verify the stack",
-            "## Assess applicable foundations",
-            "## Choose a location",
-            "## Confirm",
-            "## Write and report",
-            "Wait for explicit approval",
-            "every changed file",
-            "do not claim that a baseline is established",
-        ):
-            self.assertIn(required, text)
+    def test_reference_contracts(self) -> None:
+        for relative, expected in REFERENCE_EXPECTATIONS.items():
+            text = (SKILLS / relative).read_text()
+            for value in expected:
+                with self.subTest(reference=relative, value=value):
+                    self.assertIn(value, text)
 
-    def test_technical_baseline_preserves_authority(self) -> None:
-        text = self.skill("establish-technical-baseline")
-        for classification in (
-            "Verified fact",
-            "Approved convention",
-            "Recommendation",
-            "Accepted decision",
-            "Open decision",
-            "Deferred product question",
-        ):
-            self.assertIn(classification, text)
-        self.assertIn("supporting index", text)
-        self.assertIn("link the ARP instead of copying", text)
-
-    def test_technical_baseline_handles_new_and_existing_projects(self) -> None:
-        text = self.skill("establish-technical-baseline")
-        self.assertIn("Prefer an existing project-approved", text)
-        self.assertIn("If none exists, propose", text)
-        self.assertIn("Preserve existing documentation and conventions", text)
-        self.assertNotRegex(text, re.compile(r"docs/(?:architecture|engineering)/"))
-
-    def test_technical_baseline_template_separates_decision_states(self) -> None:
-        template = (
-            SKILLS
-            / "establish-technical-baseline"
-            / "references/technical-baseline-template.md"
-        ).read_text()
-        for heading in (
-            "## Fixed technology constraints",
-            "## Compatibility and prerequisites",
-            "## Approved conventions",
-            "## Recommendations awaiting approval",
-            "## Open decisions",
-            "## Deferred product questions",
-            "## Verification and operating commands",
-            "## References",
-        ):
-            self.assertIn(heading, template)
-
-    def test_failure_investigation_is_diagnostic_and_hypothesis_driven(self) -> None:
-        text = self.skill("investigate-failure")
-        for required in (
-            "## Bound the investigation",
-            "## Reproduce",
-            "## Test hypotheses",
-            "## Control probes",
-            "## Conclude",
-            "## Confirm publication",
-            "supported, weakened, falsified, or untested",
-            "bounded uncertainty",
-            "do not create a permanent test or implement a production fix",
-        ):
-            self.assertIn(required, text)
-
-    def test_failure_investigation_controls_probes_and_issue_writes(self) -> None:
-        text = self.skill("investigate-failure")
-        self.assertIn("Track every probe", text)
-        self.assertIn("Remove it before completion", text)
-        self.assertIn("Present the findings before writing", text)
-        self.assertIn("Do not create follow-up work, change issue status", text)
-
-    def test_failure_findings_template_supports_reproduced_and_uncertain_results(self) -> None:
-        template = (
-            SKILLS
-            / "investigate-failure"
-            / "references/failure-findings-template.md"
-        ).read_text()
-        for required in (
-            "## Expected and observed behavior",
-            "## Environment and reproduction",
-            "## Evidence",
-            "## Hypotheses",
-            "a supported root cause",
-            "bounded uncertainty",
-            "## Probes and repository state",
-            "## Recommended next action",
-        ):
-            self.assertIn(required, template)
-
-    def test_regression_capture_requires_an_established_defect_and_approval(self) -> None:
-        text = self.skill("capture-regression")
-        for required in (
-            "## Verify the starting point",
-            "accepted and either reliably reproduced",
-            "stop and use `investigate-failure`",
-            "## Select the test seam",
-            "## Confirm",
-            "Wait for explicit approval before writing",
-        ):
-            self.assertIn(required, text)
-
-    def test_regression_capture_proves_the_pre_fix_failure_without_production_changes(self) -> None:
-        text = self.skill("capture-regression")
-        for required in (
-            "fails before the production fix",
-            "Change only approved test and fixture files",
-            "Do not change production code",
-            "fails at the intended assertion or observable signal",
-            "unrelated setup or environment errors do not explain it",
-            "Do not commit automatically",
-        ):
-            self.assertIn(required, text)
-
-    def test_regression_capture_handles_impractical_automation_and_red_policy(self) -> None:
-        text = self.skill("capture-regression")
-        self.assertIn("If durable automation is impractical", text)
-        self.assertIn("policy prohibits a failing commit", text)
-        self.assertIn("land atomically", text)
-
-    def test_issue_triage_checks_duplicates_and_separates_claims_from_evidence(self) -> None:
-        text = self.skill("triage-issue")
-        for required in (
-            "## Load the project contract",
-            "## Check prior work",
-            "exact or functional duplicates",
-            "Reported impact",
-            "Verified evidence",
-            "Do not invent urgency, severity",
-        ):
-            self.assertIn(required, text)
-
-    def test_issue_triage_routes_uncertainty_and_requires_approval(self) -> None:
-        text = self.skill("triage-issue")
-        for route in (
-            "`investigate-failure`",
-            "`research-question`",
-            "`clarify-intent`",
-            "`develop-rfc`",
-            "`plan-implementation`",
-        ):
-            self.assertIn(route, text)
-        self.assertIn("Before any issue creation or material rewrite", text)
-        self.assertIn("Wait for approval", text)
-        self.assertIn("Perform only the approved operations", text)
-
-    def test_issue_triage_template_supports_non_issue_dispositions(self) -> None:
-        template = (
-            SKILLS / "triage-issue" / "references/triage-proposal-template.md"
-        ).read_text()
-        for required in (
-            "## Existing and authoritative context",
-            "## Evidence and missing information",
-            "## Recommended disposition",
-            "duplicate or covered",
-            "route to another workflow",
-            "## Proposed backend operations",
-        ):
-            self.assertIn(required, template)
-
-    def test_implementation_review_uses_authority_and_actual_evidence(self) -> None:
-        text = self.skill("review-implementation")
-        for required in (
-            "## Establish scope",
-            "specifications define agreed behavior",
-            "accepted ARPs constrain",
-            "issues define the executable slice",
-            "actual code and configuration",
-            "A passing test suite is evidence, not proof",
-        ):
-            self.assertIn(required, text)
-
-    def test_implementation_review_is_read_only_and_returns_one_verdict(self) -> None:
-        text = self.skill("review-implementation")
-        self.assertIn("Do not edit code, configuration, tests", text)
-        self.assertIn("Return exactly one verdict", text)
-        for verdict in ("Conforms:", "Conforms with follow-up:", "Does not conform:"):
-            self.assertIn(verdict, text)
-        self.assertIn("Present the complete review and verdict before any issue operation", text)
-
-    def test_implementation_review_template_requires_concrete_findings_and_limits(self) -> None:
-        template = (
-            SKILLS
-            / "review-implementation"
-            / "references/implementation-review-template.md"
-        ).read_text()
-        for required in (
-            "## Authoritative intent",
-            "## Implementation evidence",
-            "## Verification performed",
-            "**Expectation:**",
-            "**Evidence:**",
-            "**Impact:**",
-            "**Recommended disposition:**",
-            "## Limitations and confidence",
-        ):
-            self.assertIn(required, template)
-
-    def test_initiative_closure_verifies_evidence_and_reconciles_work(self) -> None:
-        text = self.skill("close-initiative")
-        for required in (
-            "## Load the initiative",
-            "Do not assume that issue status proves delivery",
-            "## Verify outcomes",
-            "Reconcile every unresolved, blocked, cancelled, and deferred item",
-            "Do not present cancelled, deferred, or merely planned scope as delivered",
-        ):
-            self.assertIn(required, text)
-
-    def test_initiative_closure_returns_one_outcome_after_approval(self) -> None:
-        text = self.skill("close-initiative")
-        for outcome in ("**Achieved:**", "**Partially achieved:**", "**Abandoned:**"):
-            self.assertIn(outcome, text)
-        self.assertIn("Wait for explicit approval", text)
-        self.assertIn("Do not create a separate canonical closure-report type", text)
-        self.assertIn("do not close the initiative", text)
-
-    def test_initiative_closure_template_preserves_partial_and_abandoned_gaps(self) -> None:
-        template = (
-            SKILLS / "close-initiative" / "references/initiative-closure-template.md"
-        ).read_text()
-        for required in (
-            "## Outcome evidence",
-            "## Delivered value",
-            "## Gaps and limitations",
-            "## Work reconciliation",
-            "## Proposed follow-up work",
-            "## Lessons and authority routing",
-            "## Proposed artifact operations",
-        ):
-            self.assertIn(required, template)
-
-    def test_product_problem_framing_interviews_and_challenges_the_founder(self) -> None:
-        text = self.skill("frame-product-problem")
-        for required in (
-            "Ask exactly one question at a time",
-            "the proposed solution",
-            "current behavior, alternatives, and workarounds",
-            "Founder belief",
-            "Direct observation",
-            "External evidence",
-            "Interpretation",
-            "Unknown",
-            "counter-hypotheses",
-        ):
-            self.assertIn(required, text)
-
-    def test_product_problem_framing_requires_location_and_write_approval(self) -> None:
-        text = self.skill("frame-product-problem")
-        self.assertIn("Prefer an existing project-approved", text)
-        self.assertIn("Never assume a fixed consumer path", text)
-        self.assertIn("Wait for explicit approval before writing", text)
-        self.assertIn("supporting evidence", text)
-        self.assertNotIn("docs/product/", text)
-
-    def test_product_validation_is_non_leading_and_evidence_based(self) -> None:
-        text = self.skill("frame-product-problem")
-        for required in (
-            "ask about concrete past behavior",
-            "avoid pitching the solution",
-            "avoid hypothetical compliments",
-            "respect consent, privacy, confidentiality",
-            "Do not fabricate participants",
-            "cannot substitute for customer or behavioral evidence",
-        ):
-            self.assertIn(required, text)
-
-    def test_product_problem_reassessment_preserves_uncertainty_and_founder_decision(self) -> None:
-        text = self.skill("frame-product-problem")
-        for state in (
-            "`Unexamined`",
-            "`Supported`",
-            "`Weakened`",
-            "`Contradicted`",
-            "`Inconclusive`",
-        ):
-            self.assertIn(state, text)
-        self.assertIn("continue, narrow, reframe, pivot, or stop", text)
-        self.assertIn("The founder decides", text)
-        self.assertIn("Never label the product idea or problem “validated”", text)
-
-    def test_product_problem_template_separates_solution_evidence_and_validation(self) -> None:
-        template = (
-            SKILLS / "frame-product-problem" / "references/problem-framing-template.md"
-        ).read_text()
-        for required in (
-            "## Proposed solution",
-            "## Problem hypothesis",
-            "## Actors and audience segments",
-            "## Current behavior, alternatives, and workarounds",
-            "## Claims and evidence",
-            "## Counter-hypotheses",
-            "## Risky assumptions and validation plan",
-            "## Evidence log and reassessment",
-            "## Current recommendation",
-        ):
-            self.assertIn(required, template)
+    def test_project_owned_locations_are_not_hardcoded(self) -> None:
+        baseline = (SKILLS / "establish-technical-baseline/SKILL.md").read_text()
+        product = (SKILLS / "frame-product-problem/SKILL.md").read_text()
+        self.assertNotRegex(baseline, re.compile(r"docs/(?:architecture|engineering)/"))
+        self.assertNotIn("docs/product/", product)
 
 
 if __name__ == "__main__":

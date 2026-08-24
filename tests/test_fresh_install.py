@@ -15,6 +15,9 @@ import consumer  # noqa: E402
 import fresh_install  # noqa: E402
 import lifecycle  # noqa: E402
 
+sys.path.insert(0, str(ROOT / "tests"))
+from consumer_fixture import copy_skills, write_guidance, write_schema2_config  # noqa: E402
+
 
 class FreshInstallTests(unittest.TestCase):
     @classmethod
@@ -33,13 +36,7 @@ class FreshInstallTests(unittest.TestCase):
             shutil.copytree(ROOT / "tests/fixtures" / fixture, root)
         else:
             root.mkdir()
-        skill_root = root / ".claude/skills"
-        skill_root.mkdir(parents=True)
-        paths = []
-        for name in installed:
-            target = skill_root / name
-            shutil.copytree(ROOT / "skills" / name, target)
-            paths.append(target)
+        paths = copy_skills(ROOT, root, installed, parent=".claude/skills")
         return root, paths
 
     def plan(
@@ -60,47 +57,13 @@ class FreshInstallTests(unittest.TestCase):
 
     def configure_from_plan(self, root: Path, plan: dict) -> None:
         fragment = plan["configuration"]
-        selected = "\n".join(f"    - {name}" for name in fragment["installation"]["selected"])
-        skills = "\n".join(
-            f"    {name}: {path}"
-            for name, path in sorted(fragment["installation"]["skills"].items())
+        write_schema2_config(
+            root,
+            fragment["distribution"],
+            fragment["installation"]["selected"],
+            fragment["installation"]["skills"],
         )
-        (root / ".agents").mkdir(exist_ok=True)
-        (root / ".agents/workflows.yaml").write_text(
-            f"""schema_version: 2
-
-distribution:
-  source: {fragment['distribution']['source']}
-  version: {fragment['distribution']['version']}
-
-installation:
-  selected:
-{selected}
-  skills:
-{skills}
-
-issue_tracker:
-  backend: local-markdown
-  root: .project
-
-artifacts:
-  domain: {{enabled: true, path: docs/domain}}
-  arps: {{enabled: true, path: docs/decisions, prefix: ARP}}
-  rfcs: {{enabled: true, path: docs/rfcs, prefix: RFC}}
-  meetings: {{enabled: false, path: docs/meetings}}
-  specifications: {{enabled: true, path: docs/specifications}}
-"""
-        )
-        (root / "docs/agents").mkdir(parents=True, exist_ok=True)
-        (root / "docs/agents/workflows.md").write_text("# Workflows\n")
-        (root / "docs/agents/issue-tracker.md").write_text("# Local Markdown\n")
-        agents = root / "AGENTS.md"
-        original = agents.read_text() if agents.exists() else "# Agent guidance\n"
-        agents.write_text(
-            original.rstrip()
-            + "\n\nWorkflow configuration is in `.agents/workflows.yaml`. "
-            + "Read `docs/agents/workflows.md` and `docs/agents/issue-tracker.md`.\n"
-        )
+        write_guidance(root, preserve_agents=True)
 
     def test_plan_reports_complete_dry_run_and_default_destination(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

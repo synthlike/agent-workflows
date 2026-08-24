@@ -7,7 +7,7 @@ schema_version: 2
 
 distribution:
   source: github.com/synthlike/agent-workflows
-  version: v0.3.0
+  version: vMAJOR.MINOR.PATCH
 
 installation:
   selected:

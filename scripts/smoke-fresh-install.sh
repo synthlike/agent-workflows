@@ -13,7 +13,8 @@ cleanup() {
 trap cleanup EXIT
 
 git -C "$consumer" init -q
-bundle="$consumer/agent-workflows-v0.3.0.tar.gz"
+version="$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["version"])' "$root/release/metadata.json")"
+bundle="$consumer/agent-workflows-$version.tar.gz"
 plan="$consumer/fresh-plan.json"
 discovery="$consumer/pi-discovery.json"
 

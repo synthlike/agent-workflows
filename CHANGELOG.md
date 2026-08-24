@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Remove the unused schema-1 compatibility verifier and retain schema 2 as the sole supported configuration.
+- Make operational documentation, smoke testing, and release verification less version-specific.
+- Consolidate repeated consumer fixtures and skill-contract assertions.
+- Ignore generated release assets and Python or test caches.
+
 ## 0.3.0 - 2026-08-24
 
 - Add `frame-product-problem` for founder interviews, problem briefs, customer-validation planning, and evidence reassessment.

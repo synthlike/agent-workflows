@@ -1,6 +1,6 @@
 # Updating
 
-Skills are vendored and versioned with the consumer repository. v0.3 automates fresh-project dependency completion and installed verification, but does not provide reusable update planning, replacement, rollback, interruption recovery, configuration migration, or artifact migration. Those lifecycle guarantees are provisionally deferred to v0.4.
+Skills are vendored and versioned with the consumer repository. The installed lifecycle automates fresh-project dependency completion and verification, but does not provide reusable update planning, replacement, rollback, interruption recovery, configuration migration, or artifact migration.
 
 ## Ownership boundary
 
@@ -16,7 +16,7 @@ Changing recorded distribution identity after accepting an update is an explicit
 
 ## Reviewed update procedure
 
-1. From the currently installed `configure-project`, [verify the installation](verifying-installation.md) against its embedded manifest. Stop if verification surfaces locally added, missing, or modified skill files; v0.3 will not merge them automatically.
+1. From the currently installed `configure-project`, [verify the installation](verifying-installation.md) against its embedded manifest. Stop if verification surfaces locally added, missing, or modified skill files; the lifecycle will not merge them automatically.
 2. Compare `.agents/workflows.yaml`'s exact `distribution.source` and `distribution.version` with the proposed release and review the intervening changelog entries.
 3. Use an Agent Skills-compatible installer or an equivalent manual copy to replace only the intact, dependency-closed vendored skill selection. Third-party installer update behavior is not guaranteed.
 4. Review the complete diff. Consumer-owned configuration, guidance, backend state, and artifacts must remain unchanged.
@@ -25,4 +25,4 @@ Changing recorded distribution identity after accepting an update is an explicit
 7. After accepting the installed source, update `distribution.source`, `distribution.version`, and schema-2 skill inventory through a reviewed consumer change.
 8. Run installed verification from the new `configure-project` and commit the reviewed update.
 
-Do not proceed when an installer cannot surface conflicts or preserve consumer-owned files. `plan-fresh` and `apply-fresh` are only for adding absent dependencies during initial configuration; they are not update commands. Migration, when required, remains separate explicit work. General update transactions and recovery are provisional v0.4 work and may be reprioritized when adoption or demonstrated update pain warrants it.
+Do not proceed when an installer cannot surface conflicts or preserve consumer-owned files. `plan-fresh` and `apply-fresh` are only for adding absent dependencies during initial configuration; they are not update commands. Migration, when required, remains separate explicit work. General update transactions and recovery remain future work and may be reprioritized when adoption or demonstrated update pain warrants it.
