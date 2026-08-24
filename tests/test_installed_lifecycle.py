@@ -291,7 +291,7 @@ artifacts:
             self.assertTrue(any("broken relative reference" in error for error in errors))
             self.assertIn("missing required guidance: docs/agents/issue-tracker.md", errors)
 
-    def test_rejects_duplicate_selected_values_and_schema_1(self) -> None:
+    def test_rejects_duplicate_selected_values_and_unsupported_schema(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(Path(directory))
             config = root / ".agents/workflows.yaml"
@@ -309,7 +309,7 @@ artifacts:
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(Path(directory))
             config = root / ".agents/workflows.yaml"
-            config.write_text(config.read_text().replace("schema_version: 2", "schema_version: 1"))
+            config.write_text(config.read_text().replace("schema_version: 2", "schema_version: 999"))
             self.assertIn("schema_version must be 2", self.verify(root, skill_dirs).errors)
 
 

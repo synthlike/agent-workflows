@@ -13,7 +13,7 @@ class WorkflowConfigIdentityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "workflows.yaml"
             path.write_text(
-                "schema_version: 1\n"
+                "schema_version: 2\n"
                 "distribution:\n"
                 f"  source: {source}\n"
                 f"  version: {version}\n"
@@ -38,7 +38,7 @@ class WorkflowConfigIdentityTests(unittest.TestCase):
     def test_rejects_missing_distribution_values(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "workflows.yaml"
-            path.write_text("schema_version: 1\ndistribution:\n")
+            path.write_text("schema_version: 2\ndistribution:\n")
             self.assertEqual(
                 ["missing distribution.source", "missing distribution.version"],
                 validate(path),

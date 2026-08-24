@@ -5,7 +5,7 @@ Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows
 ## Distribution
 
 - Source: `github.com/synthlike/agent-workflows`
-- Version: `v0.3.0`
+- Version: `v0.4.0`
 - Configuration schema: `2`
 
 ## Installation inventory

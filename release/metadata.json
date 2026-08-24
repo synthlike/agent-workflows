@@ -1,7 +1,7 @@
 {
   "configuration": {
     "current_schema": 2,
-    "readable_schemas": [1, 2]
+    "readable_schemas": [2]
   },
   "skills": [
     "author-specification",
@@ -26,5 +26,5 @@
     "triage-issue"
   ],
   "source": "github.com/synthlike/agent-workflows",
-  "version": "v0.3.0"
+  "version": "v0.4.0"
 }

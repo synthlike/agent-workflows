@@ -15,7 +15,7 @@ Each release publishes a deterministic JSON manifest at `skills/configure-projec
   },
   "configuration": {
     "current_schema": 2,
-    "readable_schemas": [1, 2]
+    "readable_schemas": [2]
   },
   "skills": {
     "configure-project": {

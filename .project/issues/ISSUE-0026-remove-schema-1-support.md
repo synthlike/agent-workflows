@@ -2,9 +2,9 @@
 id: ISSUE-0026
 title: Remove schema-1 support
 kind: task
-status: open
+status: resolved
 created: 2026-08-24
-assignee:
+assignee: synthlike
 parent:
 blocked_by: []
 labels: [v0.4, cleanup, compatibility]
@@ -18,13 +18,13 @@ Remove the unused schema-1 compatibility surface from active code, release metad
 
 ## Acceptance criteria
 
-- [ ] Release metadata and generated manifests list only schema 2 as readable and current.
-- [ ] The source-checkout schema-1 consumer verifier and its dedicated tests are removed.
-- [ ] Remaining configuration and lifecycle tests use schema 2 and retain coverage for immutable identity and unsupported-schema rejection without maintaining a schema-1 fixture.
-- [ ] Operational setup, update, verification, manifest, and configuration documentation no longer advertise or route to schema-1 behavior.
-- [ ] Active code, metadata, tests, and operational documentation contain no schema-1 compatibility references.
-- [ ] Historical versioned RFCs, ARPs, specifications, changelog entries, and resolved issues remain unchanged as accurate decision history.
-- [ ] The distribution manifest is regenerated and all repository verification passes.
+- [x] Release metadata and generated manifests list only schema 2 as readable and current.
+- [x] The source-checkout schema-1 consumer verifier and its dedicated tests are removed.
+- [x] Remaining configuration and lifecycle tests use schema 2 and retain coverage for immutable identity and unsupported-schema rejection without maintaining a schema-1 fixture.
+- [x] Operational setup, update, verification, manifest, and configuration documentation no longer advertise or route to schema-1 behavior.
+- [x] Active code, metadata, tests, and operational documentation contain no schema-1 compatibility references.
+- [x] Historical versioned RFCs, ARPs, specifications, changelog entries, and resolved issues remain unchanged as accurate decision history.
+- [x] The distribution manifest is regenerated and all repository verification passes.
 
 ## Blocked by
 
@@ -39,3 +39,5 @@ None.
 ## Comments
 
 ## Resolution
+
+Resolved on 2026-08-24. Schema 2 is now the sole current and readable configuration schema in v0.4 metadata and the generated manifest. The source-checkout legacy consumer verifier and its dedicated tests were removed; remaining identity and lifecycle tests use schema 2 and still reject unsupported schemas. Operational verification and configuration guidance now describe only installed schema-2 behavior, while versioned historical artifacts remain unchanged. Active implementation and operational paths contain no schema-1 compatibility references, and all 71 tests pass.

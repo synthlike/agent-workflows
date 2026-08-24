@@ -12,29 +12,6 @@ python3 PATH/TO/configure-project/references/lifecycle.py verify-consumer \
 
 Use repeated `--skill-dir` arguments when the harness discovers skills from several parents. Add `--json` for deterministic machine-readable output. See [Workflow configuration schema 2](workflow-configuration.md) for the inventory contract.
 
-## Legacy schema-1 verification
-
-The known installation now uses schema 2. Source-checkout verification remains available for diagnosing an unmigrated schema-1 fixture or installation, but it is no longer the repository's default verification path. Run it from the Agent Workflows distribution and pass the consumer repository root plus the skill directories discovered by its agent harness.
-
-When discoverable skills share a parent directory:
-
-```bash
-python3 scripts/verify_consumer_installation.py \
-  --consumer-root /path/to/consumer \
-  --skills-root /path/to/discoverable/skills
-```
-
-When a harness discovers skills from several locations, pass each directory explicitly:
-
-```bash
-python3 scripts/verify_consumer_installation.py \
-  --consumer-root /path/to/consumer \
-  --skill-dir /first/location/configure-project \
-  --skill-dir /another/location/clarify-intent
-```
-
-The physical skill location is not part of the contract. The verifier checks the set supplied through `--skills-root` or `--skill-dir`.
-
 ## Checks
 
 Verification fails when:
@@ -46,6 +23,6 @@ Verification fails when:
 - configuration schema, immutable distribution identity, issue backend, artifact settings, repository-contained paths, or required guidance are invalid; or
 - root agent guidance does not point to workflow and issue-backend guidance.
 
-By default, the verifier compares against `skills/` and `docs/workflow-dependencies.md` beside the verification script. Use `--source-skills` or `--dependency-table` to verify a copied release from another location.
+The verifier compares every installed file and dependency with the manifest embedded in the installed `configure-project` directory. It does not require a distribution source checkout.
 
-Harness-specific discovery itself remains outside this script: the harness or installer supplies the exact directories it discovered.
+Harness-specific discovery remains outside the lifecycle command: the harness or installer supplies the exact directories it discovered.
