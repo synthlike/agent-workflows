@@ -1,16 +1,18 @@
 # Starting a new project
 
-v0.1 supports one configured consumer root per Git repository.
+v0.2 supports one configured consumer root per Git repository.
 
-1. Select the workflows you want and install `configure-project` plus their complete [dependency closure](workflow-dependencies.md).
-2. Preserve each selected skill directory intact and place it where the consumer's agent can discover it. No particular parent directory is required.
+1. Select the workflows you want and install them with `configure-project`. The initial selection may omit transitive dependencies.
+2. Preserve each installed skill directory intact and place it where the consumer's agent can discover it. No particular parent directory is required.
 3. Invoke `configure-project` from the Git repository root before using another workflow.
-4. Record the exact distribution source and release version or immutable commit SHA.
-5. Accept or change the recommended issue backend and artifact capabilities.
-6. Review the complete proposed `AGENTS.md`, `.agents/workflows.yaml`, and `docs/agents/` dry run. Nothing is written before approval.
-7. [Verify the consumer installation](verifying-installation.md).
-8. Commit the configuration and guidance before creating project artifacts.
+4. Let the installed lifecycle command inspect the harness-discovered directories and calculate the [dependency closure](workflow-dependencies.md).
+5. When dependencies are missing, supply the matching verified release bundle and review every proposed source and destination. See [Fresh-project configuration](fresh-project-configuration.md).
+6. Approve the non-destructive missing-skill plan, apply it, and ask the harness to confirm discovery of the complete closure.
+7. Accept or change the recommended issue backend and artifact capabilities.
+8. Review the complete proposed schema-2 `.agents/workflows.yaml`, `AGENTS.md`, and `docs/agents/` dry run. Nothing is written before approval.
+9. [Verify the consumer installation](verifying-installation.md).
+10. Commit the installed skill directories, configuration, and guidance before creating project artifacts.
 
-`.agents/workflows.yaml` is the repository's single canonical workflow configuration. Monorepos may choose suitable artifact paths within it, but v0.1 does not support nested configurations or inheritance.
+`.agents/workflows.yaml` is the repository's single canonical workflow configuration. It records immutable distribution identity, user-selected workflows, and every harness-discovered skill path. Monorepos may choose suitable repository-contained paths, but v0.2 does not support nested configurations or inheritance.
 
 Directories for optional artifacts and local issues are created only when their first content is written.

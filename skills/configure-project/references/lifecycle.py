@@ -19,6 +19,7 @@ from urllib.parse import urlparse
 from urllib.request import urlopen
 
 from consumer import dependency_closure, inspect_skills, verify_consumer
+from fresh_install import FreshInstallError, apply_fresh_install, plan_fresh_install
 
 
 MANIFEST_FORMAT = 1
@@ -547,6 +548,40 @@ def _consumer_skill_dirs(args: argparse.Namespace) -> list[Path]:
     return args.skill_dir
 
 
+def _destination_overrides(values: list[str] | None) -> dict[str, Path]:
+    overrides: dict[str, Path] = {}
+    for value in values or []:
+        if "=" not in value:
+            raise LifecycleError(f"destination override must use SKILL=PATH: {value}")
+        name, path = value.split("=", 1)
+        if not name or not path or name in overrides:
+            raise LifecycleError(f"invalid or duplicate destination override: {value}")
+        overrides[name] = Path(path)
+    return overrides
+
+
+def _print_fresh_plan(plan: dict[str, Any]) -> None:
+    print(f"Fresh configuration plan: {plan['plan_id']}")
+    print(f"Release: {plan['release']['source']}@{plan['release']['version']}")
+    print("Selected: " + ", ".join(plan["selected"]))
+    print("Closure: " + ", ".join(plan["closure"]))
+    print("Discovered: " + ", ".join(plan["discovered"]))
+    print("Unexpected: " + (", ".join(plan["unexpected"]) or "none"))
+    print("Missing: " + (", ".join(plan["missing"]) or "none"))
+    print(f"Bundle SHA-256: {plan['bundle_sha256']}")
+    for action in plan["actions"]:
+        print(
+            f"- create {action['skill']} from {action['source']} at "
+            f"{action['destination']} ({len(action['files'])} files)"
+        )
+    print("Configuration: schema 2 with distribution identity and installation inventory")
+    print("Guidance: " + ", ".join(plan["guidance_changes"]))
+    if plan["errors"]:
+        print("Blocking errors:")
+        for error in plan["errors"]:
+            print(f"- {error}")
+
+
 def _print_result(result: dict[str, Any], as_json: bool, success: str) -> None:
     if as_json:
         sys.stdout.buffer.write(canonical_json(result))
@@ -587,6 +622,26 @@ def main() -> int:
     _add_consumer_arguments(inspect_parser)
     verify_parser = subparsers.add_parser("verify-consumer")
     _add_consumer_arguments(verify_parser)
+    plan_parser = subparsers.add_parser("plan-fresh")
+    plan_parser.add_argument("bundle", help="current release bundle path or HTTPS URL")
+    plan_parser.add_argument(
+        "--selected",
+        action="append",
+        required=True,
+        help="one explicitly selected workflow; repeat for each",
+    )
+    _add_consumer_arguments(plan_parser)
+    plan_parser.add_argument(
+        "--destination",
+        action="append",
+        help="override one missing skill destination as SKILL=PATH",
+    )
+    plan_parser.add_argument("--output", type=Path, help="write canonical plan JSON")
+    apply_parser = subparsers.add_parser("apply-fresh")
+    apply_parser.add_argument("bundle", help="same current release bundle used for planning")
+    apply_parser.add_argument("--plan", required=True, type=Path)
+    apply_parser.add_argument("--consumer-root", required=True, type=Path)
+    apply_parser.add_argument("--json", action="store_true", help="emit canonical JSON")
     args = parser.parse_args()
     try:
         if args.command == "generate-release":
@@ -651,7 +706,7 @@ def main() -> int:
             _print_result(result, args.json, "Installed skills match the release manifest.")
             if inspection.errors:
                 return 1
-        else:
+        elif args.command == "verify-consumer":
             manifest = installed_manifest()
             skill_dirs = _consumer_skill_dirs(args)
             verification = verify_consumer(args.consumer_root, skill_dirs, manifest)
@@ -662,6 +717,55 @@ def main() -> int:
             )
             if verification.errors:
                 return 1
+        elif args.command == "plan-fresh":
+            manifest = installed_manifest()
+            bundle = validate_bundle_bytes(load_bundle(args.bundle))
+            skill_dirs = _consumer_skill_dirs(args)
+            plan = plan_fresh_install(
+                args.consumer_root,
+                skill_dirs,
+                set(args.selected),
+                manifest,
+                bundle,
+                _destination_overrides(args.destination),
+            )
+            if args.output:
+                args.output.parent.mkdir(parents=True, exist_ok=True)
+                args.output.write_bytes(canonical_json(plan))
+            if args.json:
+                sys.stdout.buffer.write(canonical_json(plan))
+            else:
+                _print_fresh_plan(plan)
+            if plan["errors"]:
+                return 1
+        else:
+            manifest = installed_manifest()
+            bundle = validate_bundle_bytes(load_bundle(args.bundle))
+            try:
+                plan = parse_json(args.plan.read_bytes(), f"fresh-install plan {args.plan}")
+            except OSError as error:
+                raise LifecycleError(f"cannot read fresh-install plan {args.plan}: {error}") from error
+            try:
+                created = apply_fresh_install(
+                    plan,
+                    args.consumer_root,
+                    bundle,
+                    manifest,
+                )
+            except FreshInstallError as error:
+                raise LifecycleError(str(error)) from error
+            result = {
+                "created": created,
+                "ok": True,
+                "plan_id": plan["plan_id"],
+                "requires_harness_discovery_confirmation": True,
+            }
+            if args.json:
+                sys.stdout.buffer.write(canonical_json(result))
+            else:
+                print(f"Applied fresh configuration plan {plan['plan_id']}.")
+                print("Created: " + (", ".join(created) or "none"))
+                print("Confirm harness discovery before writing final configuration.")
     except LifecycleError as error:
         print(f"Lifecycle error: {error}", file=sys.stderr)
         return 1

@@ -54,6 +54,7 @@ From the consumer's Git root, invoke `configure-project` before any other instal
 - [Verifying a consumer installation](docs/verifying-installation.md)
 - [Issue-tracker backends](docs/issue-tracker-backends.md)
 - [Starting a new project](docs/starting-a-new-project.md)
+- [Fresh-project configuration](docs/fresh-project-configuration.md)
 - [Adopting in an existing project](docs/adopting-in-existing-project.md)
 
 ## Status

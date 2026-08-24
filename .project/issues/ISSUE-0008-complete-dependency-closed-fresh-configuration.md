@@ -2,9 +2,9 @@
 id: ISSUE-0008
 title: Complete dependency-closed fresh configuration
 kind: task
-status: open
+status: resolved
 created: 2026-08-24
-assignee:
+assignee: synthlike
 parent: ../../docs/specifications/v0.2-fresh-project-lifecycle.md
 blocked_by:
   - ISSUE-0006-generate-v0.2-manifests-and-release-bundles.md
@@ -24,17 +24,17 @@ Let `configure-project` turn an intentionally incomplete fresh installation into
 
 ## Acceptance criteria
 
-- [ ] `configure-project` obtains user-selected workflow intent and uses the lifecycle command to calculate closure.
-- [ ] It compares the closure with exact harness-discovered skills and reports missing, unexpected, duplicate, incomplete, and modified directories.
-- [ ] Missing skills are sourced only from a safely verified current-release archive supplied by local path or HTTPS URL.
-- [ ] The parent of discovered `configure-project` is the default missing-skill destination, with explicit repository-contained per-skill overrides.
-- [ ] The dry run identifies archive digest, selected workflows, closure, every source and destination, all file actions, and schema-2 configuration and guidance changes.
-- [ ] Apply rechecks the approved inputs, stages complete skill directories, and creates only absent destinations; occupied, incomplete, or modified destinations block writes.
-- [ ] Existing skill directories and consumer-owned files are never replaced or removed.
-- [ ] Failures stop safely and identify any newly created directories with cleanup guidance.
-- [ ] Configuration completes only after harness discovery confirms the closure and installed verification passes.
-- [ ] Empty- and existing-project fixtures preserve conventions and keep optional artifact and issue directories lazy.
-- [ ] Complete structural verification passes.
+- [x] `configure-project` obtains user-selected workflow intent and uses the lifecycle command to calculate closure.
+- [x] It compares the closure with exact harness-discovered skills and reports missing, unexpected, duplicate, incomplete, and modified directories.
+- [x] Missing skills are sourced only from a safely verified current-release archive supplied by local path or HTTPS URL.
+- [x] The parent of discovered `configure-project` is the default missing-skill destination, with explicit repository-contained per-skill overrides.
+- [x] The dry run identifies archive digest, selected workflows, closure, every source and destination, all file actions, and schema-2 configuration and guidance changes.
+- [x] Apply rechecks the approved inputs, stages complete skill directories, and creates only absent destinations; occupied, incomplete, or modified destinations block writes.
+- [x] Existing skill directories and consumer-owned files are never replaced or removed.
+- [x] Failures stop safely and identify any newly created directories with cleanup guidance.
+- [x] Configuration completes only after harness discovery confirms the closure and installed verification passes.
+- [x] Empty- and existing-project fixtures preserve conventions and keep optional artifact and issue directories lazy.
+- [x] Complete structural verification passes.
 
 ## Blocked by
 
@@ -48,3 +48,5 @@ Replacing installed skills, reusable updates, transaction journals, rollback, or
 ## Comments
 
 ## Resolution
+
+Resolved on 2026-08-24. The installed lifecycle command now generates immutable `plan-fresh` dry runs and applies exact approved plans through `apply-fresh`. Plans bind release archive bytes, selected intent, calculated and operational closure, discovered and unexpected skills, every destination and file action, and schema-2 configuration/guidance fragments. Apply rechecks all inputs, stages complete skills beside destinations, publishes only absent directories, never writes configuration or replaces existing content, and reports precise cleanup after failure. `configure-project` retains approval and discovery confirmation. Ten fresh-install scenarios and all 56 repository tests pass.

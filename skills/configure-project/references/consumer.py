@@ -180,7 +180,11 @@ def _ignored(relative: Path) -> bool:
 
 
 def inspect_skills(
-    consumer_root: Path, skill_dirs: list[Path], manifest: dict[str, Any]
+    consumer_root: Path,
+    skill_dirs: list[Path],
+    manifest: dict[str, Any],
+    *,
+    check_dependencies: bool = True,
 ) -> Inspection:
     root = consumer_root.resolve()
     errors: list[str] = []
@@ -275,10 +279,13 @@ def inspect_skills(
     names = set(installed)
     if "configure-project" not in names:
         errors.append("installed skill set is missing required configure-project")
-    for name in sorted(names & manifest["skills"].keys()):
-        missing = set(manifest["skills"][name]["dependencies"]) - names
-        if missing:
-            errors.append(f"{name} is missing installed dependencies: {', '.join(sorted(missing))}")
+    if check_dependencies:
+        for name in sorted(names & manifest["skills"].keys()):
+            missing = set(manifest["skills"][name]["dependencies"]) - names
+            if missing:
+                errors.append(
+                    f"{name} is missing installed dependencies: {', '.join(sorted(missing))}"
+                )
     return Inspection(installed=installed, errors=errors)
 
 
