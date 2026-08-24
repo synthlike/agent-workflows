@@ -84,6 +84,6 @@ The opt-in smoke test exercises the real `skills@latest` installer and Pi discov
 scripts/smoke-fresh-install.sh
 ```
 
-It intentionally installs only `configure-project` and `develop-rfc`, builds and applies the missing closure, confirms Pi discovery through its SDK resource loader, writes schema-2 setup, verifies from copied lifecycle assets with no source checkout, checks lazy directories, and removes the temporary repository.
+It intentionally installs only `configure-project` and `frame-product-problem`, builds and applies the missing closure, confirms Pi discovery through its SDK resource loader, writes schema-2 setup, verifies from copied lifecycle assets with no source checkout, checks lazy directories, and removes the temporary repository.
 
 The regular unit and fixture suite covers destination override, several discovered roots, occupied destinations, changed plan inputs, staging and publication failures, and existing-project preservation without requiring network access.

@@ -23,7 +23,7 @@ python3 -B "$root/skills/configure-project/references/lifecycle.py" \
 (
   cd "$consumer"
   npx --yes skills@latest add "$root" \
-    --skill configure-project develop-rfc \
+    --skill configure-project frame-product-problem \
     --agent pi \
     --copy \
     -y
@@ -35,7 +35,7 @@ test -f "$command"
 python3 -B "$command" plan-fresh "$bundle" \
   --consumer-root "$consumer" \
   --skills-root "$consumer/.pi/skills" \
-  --selected develop-rfc \
+  --selected frame-product-problem \
   --output "$plan" \
   --json >/dev/null
 
