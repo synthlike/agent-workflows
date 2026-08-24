@@ -78,12 +78,32 @@ for path in config_examples:
     if "REQUIRED_" in text and "Incomplete" not in text:
         errors.append(f"{path.relative_to(root)}: placeholders are not marked as incomplete")
 
+documentation = [root / "README.md", *(root / "docs").rglob("*.md"), *(root / ".project/issues").glob("*.md")]
+for path in documentation:
+    for target in re.findall(r"\[[^]]*\]\(([^)]+)\)", path.read_text()):
+        if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", target) or target.startswith("#"):
+            continue
+        resolved = (path.parent / target.split("#", 1)[0]).resolve()
+        if not resolved.exists():
+            errors.append(f"{path.relative_to(root)}: broken link {target}")
+
+readme = (root / "README.md").read_text()
+for required in (
+    "docs/rfcs/RFC-0001-v0.1-installation-and-consumer-project-contract.md",
+    "docs/decisions/ARP-0001-use-a-vendored-consumer-owned-installation-boundary.md",
+    "docs/specifications/v0.1-installation-and-consumer-project-contract.md",
+    "docs/workflow-dependencies.md",
+    "docs/verifying-installation.md",
+):
+    if f"]({required})" not in readme:
+        errors.append(f"README.md: missing v0.1 contract link {required}")
+
 if errors:
     print("Verification failed:", file=sys.stderr)
     for error in errors:
         print(f"- {error}", file=sys.stderr)
     raise SystemExit(1)
-print(f"Verified {len(skills)} skills, {len(list((root / 'backends/issue-tracker').glob('*.md'))) - 1} backends, and {len(config_examples)} configuration examples.")
+print(f"Verified {len(skills)} skills, {len(list((root / 'backends/issue-tracker').glob('*.md'))) - 1} backends, {len(config_examples)} configuration examples, and {len(documentation)} documentation files.")
 PY
 python3 -B "$root/scripts/verify_workflow_config.py" "$root/.agents/workflows.yaml"
 python3 -B "$root/scripts/verify_workflow_dependencies.py"

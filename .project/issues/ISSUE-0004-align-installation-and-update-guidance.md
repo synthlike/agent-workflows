@@ -2,9 +2,9 @@
 id: ISSUE-0004
 title: Align installation and update guidance with the v0.1 contract
 kind: task
-status: open
+status: resolved
 created: 2026-08-24
-assignee:
+assignee: synthlike
 parent: ../../docs/specifications/v0.1-installation-and-consumer-project-contract.md
 blocked_by:
   - ISSUE-0001-record-immutable-distribution-identity.md
@@ -24,14 +24,14 @@ Give new and existing consumers one consistent installation and update story tha
 
 ## Acceptance criteria
 
-- [ ] README installation guidance requires `configure-project` plus the dependency closure of selected workflows.
-- [ ] Third-party installer commands are explicitly illustrative rather than guaranteed interfaces.
-- [ ] Documentation permits any harness-discoverable skill location and an equivalent intact manual copy.
-- [ ] Setup guidance explains one configuration per Git root, immutable source-version recording, approved dry runs, and lazy optional directories.
-- [ ] Adoption and update guidance clearly distinguish distribution-managed vendored files from consumer-owned configuration, guidance, backend state, local changes, and artifacts.
-- [ ] Update guidance requires reviewed diffs, preserved consumer files, surfaced local modifications, and no automatic migrations.
-- [ ] Documentation links the accepted RFC, ARP, specification, dependency table, and consumer verification entry point without duplicating their full content.
-- [ ] Link and structural verification passes.
+- [x] README installation guidance requires `configure-project` plus the dependency closure of selected workflows.
+- [x] Third-party installer commands are explicitly illustrative rather than guaranteed interfaces.
+- [x] Documentation permits any harness-discoverable skill location and an equivalent intact manual copy.
+- [x] Setup guidance explains one configuration per Git root, immutable source-version recording, approved dry runs, and lazy optional directories.
+- [x] Adoption and update guidance clearly distinguish distribution-managed vendored files from consumer-owned configuration, guidance, backend state, local changes, and artifacts.
+- [x] Update guidance requires reviewed diffs, preserved consumer files, surfaced local modifications, and no automatic migrations.
+- [x] Documentation links the accepted RFC, ARP, specification, dependency table, and consumer verification entry point without duplicating their full content.
+- [x] Link and structural verification passes.
 
 ## Blocked by
 
@@ -45,3 +45,5 @@ Publishing a release, implementing an installer or updater, or migrating existin
 ## Comments
 
 ## Resolution
+
+Resolved on 2026-08-24. README and new-project guidance now define dependency-closed, harness-independent installation followed by approved root configuration and verification. Existing-project and update guidance define the distribution/consumer ownership boundary, preserve consumer files, surface local skill changes, and prohibit automatic migrations. README links the accepted RFC, ARP, specification, dependency table, and verifier. Structural verification now checks relative documentation links and required v0.1 contract links; all 20 tests pass.

@@ -23,15 +23,27 @@ Research, prototypes, questionnaires, meetings, and handoffs support this flow w
 
 ## Install
 
-Install the skills using an Agent Skills-compatible installer, for example:
+v0.1 vendors skills into each consumer repository. Choose the workflows you want, then use the [dependency table](docs/workflow-dependencies.md) to include `configure-project` and their complete transitive closure.
+
+An Agent Skills-compatible installer may perform the copy. For example:
 
 ```bash
 npx skills@latest add <owner>/agent-workflows
 ```
 
-Select `configure-project` and the workflows you want. Then invoke `configure-project` once in the target repository. It inspects existing conventions, asks only about unresolved choices, and writes `.agents/workflows.yaml` plus concise agent documentation.
+This command is illustrative; v0.1 does not guarantee a third-party installer's syntax, selection behavior, destination, or update behavior. An equivalent manual copy is supported when every selected skill directory remains intact and the consumer's agent can discover it. The harness may use any discoverable parent location; `.agents/skills/` is only one example.
 
-Until this repository is published, point your agent at `skills/` directly or copy selected skill directories into a supported project skill location such as `.agents/skills/`.
+From the consumer's Git root, invoke `configure-project` before any other installed workflow. Approve its complete dry run and record the exact distribution source plus release version or immutable commit SHA in the single root `.agents/workflows.yaml`. Then [verify the consumer installation](docs/verifying-installation.md) and commit the reviewed configuration and guidance before creating artifacts.
+
+Until this repository is published, point your agent at `skills/` directly or make an intact manual copy of the required closure.
+
+## v0.1 contract
+
+- [Specification: installation and consumer-project contract](docs/specifications/v0.1-installation-and-consumer-project-contract.md)
+- [ARP-0001: accepted installation and ownership boundary](docs/decisions/ARP-0001-use-a-vendored-consumer-owned-installation-boundary.md)
+- [RFC-0001: design discussion and resolution](docs/rfcs/RFC-0001-v0.1-installation-and-consumer-project-contract.md)
+- [Workflow dependency table](docs/workflow-dependencies.md)
+- [Consumer verification](docs/verifying-installation.md)
 
 ## Start here
 
