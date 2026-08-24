@@ -73,4 +73,4 @@ Use repeated `--skill-dir` arguments when discovery spans several parent directo
 
 Verification checks configuration identity and inventory, closure, every distributed file hash, internal links, repository-contained paths, backend and agent guidance, and exact supplied harness discovery. It reports missing, extra, and modified files without changing them.
 
-Schema-1 source verification remains available during the known v0.1-to-v0.2 migration; installed v0.2 lifecycle verification requires schema 2.
+The known installation has migrated to schema 2. Schema-1 source verification remains available for legacy diagnostics; installed v0.2 lifecycle verification requires schema 2.

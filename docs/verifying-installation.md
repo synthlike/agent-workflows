@@ -12,9 +12,9 @@ python3 PATH/TO/configure-project/references/lifecycle.py verify-consumer \
 
 Use repeated `--skill-dir` arguments when the harness discovers skills from several parents. Add `--json` for deterministic machine-readable output. See [Workflow configuration schema 2](workflow-configuration.md) for the inventory contract.
 
-## Schema-1 migration verification
+## Legacy schema-1 verification
 
-Until the known v0.1.0 installation migrates, source-checkout verification remains available. Run it from the Agent Workflows distribution and pass the consumer repository root plus the skill directories discovered by its agent harness.
+The known installation now uses schema 2. Source-checkout verification remains available for diagnosing an unmigrated schema-1 fixture or installation, but it is no longer the repository's default verification path. Run it from the Agent Workflows distribution and pass the consumer repository root plus the skill directories discovered by its agent harness.
 
 When discoverable skills share a parent directory:
 

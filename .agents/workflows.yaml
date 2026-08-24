@@ -1,8 +1,37 @@
-schema_version: 1
+schema_version: 2
 
 distribution:
   source: github.com/synthlike/agent-workflows
-  version: v0.1.0
+  version: v0.2.0
+
+installation:
+  selected:
+    - author-specification
+    - capture-meeting
+    - clarify-intent
+    - develop-rfc
+    - model-domain
+    - plan-implementation
+    - plan-initiative
+    - prepare-handoff
+    - prepare-questionnaire
+    - prototype-design
+    - record-arp
+    - research-question
+  skills:
+    author-specification: skills/author-specification
+    capture-meeting: skills/capture-meeting
+    clarify-intent: skills/clarify-intent
+    configure-project: skills/configure-project
+    develop-rfc: skills/develop-rfc
+    model-domain: skills/model-domain
+    plan-implementation: skills/plan-implementation
+    plan-initiative: skills/plan-initiative
+    prepare-handoff: skills/prepare-handoff
+    prepare-questionnaire: skills/prepare-questionnaire
+    prototype-design: skills/prototype-design
+    record-arp: skills/record-arp
+    research-question: skills/research-question
 
 issue_tracker:
   backend: local-markdown

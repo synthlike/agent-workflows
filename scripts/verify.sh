@@ -117,7 +117,8 @@ python3 -B "$root/scripts/verify_workflow_config.py" "$root/.agents/workflows.ya
 python3 -B "$root/scripts/verify_workflow_dependencies.py"
 python3 -B "$root/skills/configure-project/references/lifecycle.py" \
   check-release --root "$root"
-python3 -B "$root/scripts/verify_consumer_installation.py" \
+python3 -B "$root/skills/configure-project/references/lifecycle.py" \
+  verify-consumer \
   --consumer-root "$root" \
   --skills-root "$root/skills"
 python3 -B -m unittest discover -s "$root/tests" -p 'test_*.py'
