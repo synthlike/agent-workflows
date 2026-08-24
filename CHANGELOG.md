@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.0 - 2026-08-24
+
 - Remove the unused schema-1 compatibility verifier and retain schema 2 as the sole supported configuration.
 - Make operational documentation, smoke testing, and release verification less version-specific.
 - Consolidate repeated consumer fixtures and skill-contract assertions.
