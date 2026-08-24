@@ -21,10 +21,10 @@ Use GitHub sub-issues for parent-child relationships where enabled. Otherwise pu
 
 Use native issue dependencies where available. GitHub's dependency API requires the blocker's numeric database `id`, not its issue number or GraphQL `node_id`. Otherwise use a `Blocked by: #N` body convention.
 
-## Wayfinding
+## Initiative planning
 
-- Maps carry `wayfinder:map`.
-- Children carry one of `wayfinder:research`, `wayfinder:prototype`, `wayfinder:clarification`, or `wayfinder:task`.
+- Maps carry `initiative:map`.
+- Children carry one of `initiative:research`, `initiative:prototype`, `initiative:clarification`, or `initiative:task`.
 - An assignee represents a claim.
 - The frontier contains open children with no assignee and no open blockers.
 - Resolve a child with a resolution comment, close it, then append a linked one-line gist to the map.

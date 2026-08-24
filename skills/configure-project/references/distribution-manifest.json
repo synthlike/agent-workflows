@@ -68,7 +68,7 @@
         "references/consumer.py": "3d38d9a5e576b5ee0a0258f3b9fea49b8f081b20261a2353a89ad25aed1a1325",
         "references/fresh_install.py": "e3b034af256dc847e7a31b0e03cdd38882eefa60a51e20f4fb358b3984aa9355",
         "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
-        "references/issue-tracker-github.md": "1213773752ff95356905038822b1f9eff019be607f3be0399b1186b2a28d32d2",
+        "references/issue-tracker-github.md": "de9e3a59c869da263b05517a337aa22f86e9fa5bfd8406cdcaa91ed96fbf2c30",
         "references/issue-tracker-local-markdown.md": "918cd42abc92a36a03083076d09f79f7aea24c9b05d4cd618ace72eeecb20e14",
         "references/lifecycle.py": "21fa77165e5827595559e91a58be3b6c4c25ffe121d8f9e2d89fbdd3d665c784",
         "references/workflow-config.example.yaml": "9bf87e4b69060cf4dcce0f4f56a75b112e66c3528183515d3af951655cd06ba6"

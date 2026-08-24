@@ -65,6 +65,19 @@ for source_name, bundled_name in (
     if not copy.exists() or source.read_text() != copy.read_text():
         errors.append(f"{copy.relative_to(root)}: bundled backend copy is missing or stale")
 
+github_adapter = (root / "backends/issue-tracker/github.md").read_text()
+for label in (
+    "initiative:map",
+    "initiative:research",
+    "initiative:prototype",
+    "initiative:clarification",
+    "initiative:task",
+):
+    if f"`{label}`" not in github_adapter:
+        errors.append(f"backends/issue-tracker/github.md: missing initiative label {label}")
+if "wayfinder:" in github_adapter:
+    errors.append("backends/issue-tracker/github.md: contains legacy wayfinder label namespace")
+
 config_examples = [
     root / "skills/configure-project/references/workflow-config.example.yaml",
     root / "examples/github/workflows.yaml",
