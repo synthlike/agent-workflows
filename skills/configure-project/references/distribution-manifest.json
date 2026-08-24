@@ -77,6 +77,16 @@
         "references/technical-baseline-template.md": "533f55813ae86b5f812bf983f1a31ba8fe2a98b1b34796df0a17cca76e7158e2"
       }
     },
+    "investigate-failure": {
+      "dependencies": [
+        "clarify-intent",
+        "research-question"
+      ],
+      "files": {
+        "SKILL.md": "71e2a50a49a0d268100b2a3622ee6d4878c21d20d6148b13dc99ce72fb7b14c5",
+        "references/failure-findings-template.md": "64a668a1271493f15311c140c56a8ddcbc489e423225968405caf063da252d90"
+      }
+    },
     "model-domain": {
       "dependencies": [
         "develop-rfc",

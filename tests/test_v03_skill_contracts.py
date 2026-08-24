@@ -65,6 +65,46 @@ class V03SkillContractTests(unittest.TestCase):
         ):
             self.assertIn(heading, template)
 
+    def test_failure_investigation_is_diagnostic_and_hypothesis_driven(self) -> None:
+        text = self.skill("investigate-failure")
+        for required in (
+            "## Bound the investigation",
+            "## Reproduce",
+            "## Test hypotheses",
+            "## Control probes",
+            "## Conclude",
+            "## Confirm publication",
+            "supported, weakened, falsified, or untested",
+            "bounded uncertainty",
+            "do not create a permanent test or implement a production fix",
+        ):
+            self.assertIn(required, text)
+
+    def test_failure_investigation_controls_probes_and_issue_writes(self) -> None:
+        text = self.skill("investigate-failure")
+        self.assertIn("Track every probe", text)
+        self.assertIn("Remove it before completion", text)
+        self.assertIn("Present the findings before writing", text)
+        self.assertIn("Do not create follow-up work, change issue status", text)
+
+    def test_failure_findings_template_supports_reproduced_and_uncertain_results(self) -> None:
+        template = (
+            SKILLS
+            / "investigate-failure"
+            / "references/failure-findings-template.md"
+        ).read_text()
+        for required in (
+            "## Expected and observed behavior",
+            "## Environment and reproduction",
+            "## Evidence",
+            "## Hypotheses",
+            "a supported root cause",
+            "bounded uncertainty",
+            "## Probes and repository state",
+            "## Recommended next action",
+        ):
+            self.assertIn(required, template)
+
 
 if __name__ == "__main__":
     unittest.main()
