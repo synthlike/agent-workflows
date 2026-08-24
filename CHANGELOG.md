@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.0 - 2026-08-24
+
 - Add deterministic v0.2 release manifests and self-contained validated bundles.
 - Add schema-2 installation inventory and source-checkout-free installed verification.
 - Add dependency-complete fresh-project planning and non-destructive missing-skill installation.
