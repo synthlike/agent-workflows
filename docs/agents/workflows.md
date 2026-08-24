@@ -5,7 +5,7 @@ Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows
 ## Distribution
 
 - Source: `github.com/synthlike/agent-workflows`
-- Version: `e9d7dbb926931e2c7970e547fdb42b9906bb4cab`
+- Version: `v0.1.0`
 
 ## Artifact authority
 

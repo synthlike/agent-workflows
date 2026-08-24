@@ -2,7 +2,7 @@ schema_version: 1
 
 distribution:
   source: github.com/synthlike/agent-workflows
-  version: e9d7dbb926931e2c7970e547fdb42b9906bb4cab
+  version: v0.1.0
 
 issue_tracker:
   backend: local-markdown
