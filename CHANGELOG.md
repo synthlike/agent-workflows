@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Restructure the README around user outcomes, scenario-based workflow selection, a short setup path, and a copyable founder-discovery prompt.
+
 ## 0.4.0 - 2026-08-24
 
 - Remove the unused schema-1 compatibility verifier and retain schema 2 as the sole supported configuration.
