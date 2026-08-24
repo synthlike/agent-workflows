@@ -1,0 +1,9 @@
+schema_version: 1
+issue_tracker:
+  backend: github
+artifacts:
+  domain: {enabled: true, path: docs/domain}
+  arps: {enabled: true, path: docs/decisions, prefix: ARP}
+  rfcs: {enabled: true, path: docs/rfcs, prefix: RFC}
+  meetings: {enabled: true, path: docs/meetings}
+  specifications: {enabled: true, path: docs/specifications}

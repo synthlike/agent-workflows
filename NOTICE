@@ -1,0 +1,11 @@
+This project includes adaptations of work from mattpocock/skills:
+https://github.com/mattpocock/skills
+
+Source commit: 6654f6b60cd9d5be8b54c6fafe44346dabeb3b76
+Original copyright: Copyright (c) 2026 Matt Pocock
+License: MIT
+
+Adapted concepts and workflows include grilling, domain-modeling, wayfinder,
+research, prototype, to-questionnaire, to-spec, to-tickets, handoff, and the
+project setup workflow. They have been renamed and modified to use a cohesive
+verb-object vocabulary and a backend-neutral issue-tracker contract.
