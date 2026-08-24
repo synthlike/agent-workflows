@@ -5,6 +5,7 @@
 - Add deterministic v0.2 release manifests and self-contained validated bundles.
 - Add schema-2 installation inventory and source-checkout-free installed verification.
 - Add dependency-complete fresh-project planning and non-destructive missing-skill installation.
+- Give generated workflow guidance a project-overridable plain-language documentation style.
 - Validate the fresh flow through `skills@latest` and Pi while preserving existing-project conventions and lazy artifact directories.
 - Defer reusable update transactions, rollback, recovery, and public migration tooling to v0.3.
 

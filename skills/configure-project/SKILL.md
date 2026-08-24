@@ -37,7 +37,8 @@ Prefer existing conventions. For a new project, recommend:
 - ARPs under `docs/decisions/`;
 - RFCs under `docs/rfcs/`;
 - specifications under `docs/specifications/`; and
-- meeting notes disabled unless requested.
+- meeting notes disabled unless requested; and
+- a plain-language documentation style unless the project already defines one: use active voice, short sentences, explicit references, established domain terms, and one action per procedural step; avoid idioms, unnecessary synonyms, and ambiguous pronouns.
 
 Ask one decision at a time. Do not ask for facts available in the repository. If distribution identity cannot be established from installation metadata or the repository, ask for it rather than proposing a mutable value such as a branch name, `latest`, or `unreleased`.
 
@@ -53,7 +54,7 @@ Show a dry run containing:
 4. every skill-directory create action and blocking conflict;
 5. `.agents/workflows.yaml`, based on [the example](references/workflow-config.example.yaml), with schema 2, exact distribution identity, selected workflows, and complete discovered skill-path inventory;
 6. the selected issue-backend instructions;
-7. `docs/agents/workflows.md`;
+7. `docs/agents/workflows.md`, including the preserved project writing policy or the default plain-language documentation style;
 8. the concise agent-instructions block; and
 9. every other directory or file that would be created or changed.
 
@@ -65,7 +66,7 @@ Wait for explicit approval.
 - Ask the harness to rediscover skills. Continue only after it confirms every skill in the closure at the planned paths.
 - Write `.agents/workflows.yaml` as the canonical schema-2 configuration. Never write a placeholder or mutable distribution version.
 - Copy the selected bundled adapter, [GitHub](references/issue-tracker-github.md) or [local Markdown](references/issue-tracker-local-markdown.md), to `docs/agents/issue-tracker.md`. Both implement the bundled [backend contract](references/issue-tracker-contract.md).
-- Write `docs/agents/workflows.md` with the artifact authority table, configured paths, optional features, and a pointer to the issue backend.
+- Write `docs/agents/workflows.md` with the artifact authority table, configured paths, optional features, a pointer to the issue backend, and a `## Documentation style` section. Preserve an existing project policy. Otherwise write: "Write clear, direct documentation. Prefer active voice, short sentences, explicit references, and established domain terms. Avoid idioms, unnecessary synonyms, and ambiguous pronouns. Use one action per procedural step."
 - Add or update a short `## Engineering workflows` section in the existing agent-guidance file. Use [the seed block](references/agents-section.md). Do not replace surrounding instructions.
 - Create `docs/agents/`, but create optional artifact and local-issue directories only when their first artifact is needed.
 

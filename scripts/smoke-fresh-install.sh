@@ -104,6 +104,10 @@ cat > "$consumer/docs/agents/workflows.md" <<'MD'
 # Engineering workflows
 
 Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows.yaml). Issue operations follow [the configured backend](issue-tracker.md).
+
+## Documentation style
+
+Write clear, direct documentation. Prefer active voice, short sentences, explicit references, and established domain terms. Avoid idioms, unnecessary synonyms, and ambiguous pronouns. Use one action per procedural step.
 MD
 cat > "$consumer/AGENTS.md" <<'MD'
 # Agent guidance

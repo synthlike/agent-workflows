@@ -42,7 +42,7 @@
     "configure-project": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "c4e4dc3f4c2f2ae242d7f5acc988492d0d9a4bd59fc0cb9ae7f9c9714b0dc6af",
+        "SKILL.md": "a039770d35f9876833652da72247b97dae0e4da40a15769e0e0b2486d558f286",
         "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
         "references/consumer.py": "3d38d9a5e576b5ee0a0258f3b9fea49b8f081b20261a2353a89ad25aed1a1325",
         "references/fresh_install.py": "e3b034af256dc847e7a31b0e03cdd38882eefa60a51e20f4fb358b3984aa9355",
