@@ -1,6 +1,6 @@
 # Fresh-project configuration
 
-A v0.2 fresh installation needs `configure-project` and the workflows the user explicitly selects. It may initially omit transitive dependencies; `configure-project` calculates and adds the missing closure from the matching verified release bundle.
+A v0.3 fresh installation needs `configure-project` and the workflows the user explicitly selects. It may initially omit transitive dependencies; `configure-project` calculates and adds the missing closure from the matching verified release bundle.
 
 Human intent and approval remain in the skill. The installed lifecycle command performs deterministic inspection, planning, bundle validation, and non-destructive skill creation.
 
@@ -14,7 +14,7 @@ From the consumer root, invoke the lifecycle command carried by discovered `conf
 
 ```bash
 python3 PATH/TO/configure-project/references/lifecycle.py plan-fresh \
-  /path/to/agent-workflows-v0.2.0.tar.gz \
+  /path/to/agent-workflows-v0.3.0.tar.gz \
   --consumer-root . \
   --skills-root .claude/skills \
   --selected develop-rfc \
@@ -49,7 +49,7 @@ After reviewing and approving the complete `configure-project` dry run, apply th
 
 ```bash
 python3 PATH/TO/configure-project/references/lifecycle.py apply-fresh \
-  /path/to/agent-workflows-v0.2.0.tar.gz \
+  /path/to/agent-workflows-v0.3.0.tar.gz \
   --consumer-root . \
   --plan /tmp/agent-workflows-plan.json
 ```

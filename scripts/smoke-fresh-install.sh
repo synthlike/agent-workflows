@@ -13,7 +13,7 @@ cleanup() {
 trap cleanup EXIT
 
 git -C "$consumer" init -q
-bundle="$consumer/agent-workflows-v0.2.0.tar.gz"
+bundle="$consumer/agent-workflows-v0.3.0.tar.gz"
 plan="$consumer/fresh-plan.json"
 discovery="$consumer/pi-discovery.json"
 

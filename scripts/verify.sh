@@ -108,6 +108,9 @@ for required in (
     "docs/release-manifest.md",
     "docs/workflow-configuration.md",
     "docs/fresh-project-configuration.md",
+    "docs/rfcs/RFC-0004-focus-v0.3-on-project-feedback-workflows.md",
+    "docs/decisions/ARP-0005-focus-v0.3-on-project-feedback-workflows.md",
+    "docs/specifications/v0.3-project-foundation-and-feedback-workflows.md",
 ):
     if f"]({required})" not in readme:
         errors.append(f"README.md: missing contract link {required}")
@@ -117,6 +120,10 @@ for required in (
     "deterministic v0.2 release manifests",
     "dependency-complete fresh-project",
     "Defer reusable update transactions",
+    "establish-technical-baseline",
+    "diagnosis-only failure investigation",
+    "implementation conformance review",
+    "defer transactional maintenance automation to v0.4",
 ):
     if required not in changelog:
         errors.append(f"CHANGELOG.md: missing v0.2 release coverage {required!r}")

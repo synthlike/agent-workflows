@@ -1,6 +1,6 @@
 # Verifying a consumer installation
 
-## v0.2 installed verification
+## Installed verification
 
 A schema-2 consumer verifies itself with the lifecycle command carried by its installed `configure-project` skill. Pass the consumer root plus the exact skill directories discovered by its harness:
 

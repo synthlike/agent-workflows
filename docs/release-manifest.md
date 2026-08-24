@@ -1,6 +1,6 @@
 # Release manifest and bundle
 
-v0.2 publishes a deterministic JSON manifest at `skills/configure-project/references/distribution-manifest.json`. The installed `configure-project` skill carries this manifest and the lifecycle command that validates it.
+Each release publishes a deterministic JSON manifest at `skills/configure-project/references/distribution-manifest.json`. The installed `configure-project` skill carries this manifest and the lifecycle command that validates it.
 
 `release/metadata.json` declares the exact release identity, configuration compatibility, and skill inventory. Skill-to-skill routing declared by exact skill names in `SKILL.md` inline code is the authoritative dependency source. The JSON manifest is generated from those sources, and the [human-readable dependency table](workflow-dependencies.md) is verified against the same declarations.
 
@@ -11,7 +11,7 @@ v0.2 publishes a deterministic JSON manifest at `skills/configure-project/refere
   "manifest_version": 1,
   "distribution": {
     "source": "github.com/OWNER/agent-workflows",
-    "version": "v0.2.0"
+    "version": "v0.3.0"
   },
   "configuration": {
     "current_schema": 2,
@@ -48,7 +48,7 @@ The canonical JSON encoding uses UTF-8, sorted object keys, two-space indentatio
 The canonical release asset is `agent-workflows-vMAJOR.MINOR.PATCH.tar.gz`. It contains regular files only under one root named `agent-workflows-vMAJOR.MINOR.PATCH/`:
 
 ```text
-agent-workflows-v0.2.0/
+agent-workflows-v0.3.0/
 ├── CHANGELOG.md
 └── skills/
     ├── configure-project/
@@ -65,14 +65,14 @@ The lifecycle command accepts local files or HTTPS URLs:
 
 ```bash
 python3 skills/configure-project/references/lifecycle.py validate-bundle \
-  agent-workflows-v0.2.0.tar.gz
+  agent-workflows-v0.3.0.tar.gz
 ```
 
 To stage validated files without using `tar` extraction:
 
 ```bash
 python3 skills/configure-project/references/lifecycle.py validate-bundle \
-  agent-workflows-v0.2.0.tar.gz \
+  agent-workflows-v0.3.0.tar.gz \
   --stage /temporary/empty/directory
 ```
 
@@ -94,5 +94,5 @@ Build the release asset:
 
 ```bash
 python3 skills/configure-project/references/lifecycle.py build-bundle \
-  --output dist/agent-workflows-v0.2.0.tar.gz
+  --output dist/agent-workflows-v0.3.0.tar.gz
 ```

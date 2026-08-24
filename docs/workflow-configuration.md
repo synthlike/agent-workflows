@@ -1,13 +1,13 @@
 # Workflow configuration schema 2
 
-`.agents/workflows.yaml` is the single canonical configuration at the consumer Git root. v0.2 adds installation intent and discovered paths while retaining v0.1 distribution, issue-backend, and artifact settings.
+`.agents/workflows.yaml` is the single canonical configuration at the consumer Git root. Schema 2 records installation intent and discovered paths while retaining distribution, issue-backend, and artifact settings.
 
 ```yaml
 schema_version: 2
 
 distribution:
   source: github.com/synthlike/agent-workflows
-  version: v0.2.0
+  version: v0.3.0
 
 installation:
   selected:
@@ -73,4 +73,4 @@ Use repeated `--skill-dir` arguments when discovery spans several parent directo
 
 Verification checks configuration identity and inventory, closure, every distributed file hash, internal links, repository-contained paths, backend and agent guidance, and exact supplied harness discovery. It reports missing, extra, and modified files without changing them.
 
-The known installation has migrated to schema 2. Schema-1 source verification remains available for legacy diagnostics; installed v0.2 lifecycle verification requires schema 2.
+The known installation has migrated to schema 2. Schema-1 source verification remains available for legacy diagnostics; installed v0.3 lifecycle verification requires schema 2.

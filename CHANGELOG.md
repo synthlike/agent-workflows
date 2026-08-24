@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add `establish-technical-baseline` for minimal production-compatible foundations from an agreed stack.
+- Add issue triage, diagnosis-only failure investigation, and durable regression capture workflows.
+- Add read-only implementation conformance review and evidence-based initiative closure.
+- Retain schema 2 and reviewed manual updates; provisionally defer transactional maintenance automation to v0.4.
+
 ## 0.2.0 - 2026-08-24
 
 - Add deterministic v0.2 release manifests and self-contained validated bundles.
