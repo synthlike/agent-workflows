@@ -33,6 +33,14 @@
         "references/meeting-template.md": "49ab8809ff00a4325e74e68e556f4714d37742847fe0397793b5864b19097850"
       }
     },
+    "capture-regression": {
+      "dependencies": [
+        "investigate-failure"
+      ],
+      "files": {
+        "SKILL.md": "ed473eecc6b674216145e4412a158145d1f4e6699291ff57fc83a749cd7d73f7"
+      }
+    },
     "clarify-intent": {
       "dependencies": [],
       "files": {
@@ -79,6 +87,7 @@
     },
     "investigate-failure": {
       "dependencies": [
+        "capture-regression",
         "clarify-intent",
         "research-question"
       ],

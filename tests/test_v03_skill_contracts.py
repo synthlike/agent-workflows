@@ -105,6 +105,36 @@ class V03SkillContractTests(unittest.TestCase):
         ):
             self.assertIn(required, template)
 
+    def test_regression_capture_requires_an_established_defect_and_approval(self) -> None:
+        text = self.skill("capture-regression")
+        for required in (
+            "## Verify the starting point",
+            "accepted and either reliably reproduced",
+            "stop and use `investigate-failure`",
+            "## Select the test seam",
+            "## Confirm",
+            "Wait for explicit approval before writing",
+        ):
+            self.assertIn(required, text)
+
+    def test_regression_capture_proves_the_pre_fix_failure_without_production_changes(self) -> None:
+        text = self.skill("capture-regression")
+        for required in (
+            "fails before the production fix",
+            "Change only approved test and fixture files",
+            "Do not change production code",
+            "fails at the intended assertion or observable signal",
+            "unrelated setup or environment errors do not explain it",
+            "Do not commit automatically",
+        ):
+            self.assertIn(required, text)
+
+    def test_regression_capture_handles_impractical_automation_and_red_policy(self) -> None:
+        text = self.skill("capture-regression")
+        self.assertIn("If durable automation is impractical", text)
+        self.assertIn("policy prohibits a failing commit", text)
+        self.assertIn("land atomically", text)
+
 
 if __name__ == "__main__":
     unittest.main()

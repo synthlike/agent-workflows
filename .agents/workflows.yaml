@@ -8,6 +8,7 @@ installation:
   selected:
     - author-specification
     - capture-meeting
+    - capture-regression
     - clarify-intent
     - develop-rfc
     - establish-technical-baseline
@@ -23,6 +24,7 @@ installation:
   skills:
     author-specification: skills/author-specification
     capture-meeting: skills/capture-meeting
+    capture-regression: skills/capture-regression
     clarify-intent: skills/clarify-intent
     configure-project: skills/configure-project
     develop-rfc: skills/develop-rfc
