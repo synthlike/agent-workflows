@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Restructure the README around user outcomes, scenario-based workflow selection, a short setup path, and a copyable founder-discovery prompt.
+- Recommend complete skill installation for normal onboarding while retaining selective bundle-backed setup as an advanced reproducible option.
 
 ## 0.4.0 - 2026-08-24
 

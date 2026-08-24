@@ -32,22 +32,23 @@ See [Choosing a workflow](docs/choosing-a-workflow.md) for the complete guide an
 
 ## Quick start
 
-Agent Workflows copies skills into each consumer repository, where they remain owned and versioned by that project. Start with `configure-project` and the first workflow you want to use.
+Agent Workflows copies skills into each consumer repository, where they remain owned and versioned by that project. The recommended setup installs the complete workflow set; it is small, avoids dependency downloads during configuration, and leaves you free to select only the workflows you intend to use.
 
-For example, an Agent Skills-compatible installer can copy the setup and founder-discovery workflows:
+For example, an Agent Skills-compatible installer can copy all skills:
 
 ```bash
 npx skills@latest add synthlike/agent-workflows \
-  --skill configure-project frame-product-problem
+  --skill '*' \
+  --copy
 ```
 
-Installer syntax, destinations, and update behavior vary. An intact manual copy also works at any repository-contained location your agent harness discovers.
+The installer can ask which agent harness should discover them. Installer syntax, destinations, and update behavior vary. An intact manual copy also works at any repository-contained location your agent harness discovers.
 
 From the consumer repository root, tell your agent:
 
-> Use `configure-project` to configure this fresh repository for `frame-product-problem`. Show me the complete dry run and ask before writing anything.
+> Use `configure-project` to configure this fresh repository. Select `frame-product-problem` as my initial workflow, inventory every installed skill, show me the complete dry run, and ask before writing anything.
 
-`configure-project` inspects the repository, calculates missing dependencies, and presents every source and destination for approval. It then guides you through harness discovery, project configuration, installed verification, and the first commit. It does not replace existing skill directories or silently modify consumer-owned content.
+`configure-project` inspects the repository, records explicit workflow intent separately from the complete installed inventory, and checks dependency closure. It then guides you through project configuration, installed verification, and the first commit. It does not replace existing skill directories or silently modify consumer-owned content. Because the complete skill set is already present, normal fresh setup does not require a release bundle.
 
 Read [Fresh-project configuration](docs/fresh-project-configuration.md) for the complete procedure and safety behavior. For a repository that already has conventions or artifacts, use [Adopting in an existing project](docs/adopting-in-existing-project.md) instead.
 

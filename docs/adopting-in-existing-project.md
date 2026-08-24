@@ -1,6 +1,8 @@
 # Adopting in an existing project
 
-Install intact copies of `configure-project` and the workflows you explicitly select, then run `configure-project` from the Git repository root. The installed lifecycle command calculates closure and may propose adding missing dependencies from the verified current-release bundle. Let the skill inspect existing conventions before proposing changes. Review and explicitly approve every skill destination and the complete schema-2 configuration dry run before it writes anything.
+Prefer installing intact copies of the complete Agent Workflows skill set, then run `configure-project` from the Git repository root. Review existing skill names and destinations first; never replace a project-owned skill directory. A complete install needs no release bundle during configuration, while schema 2 still records explicitly selected workflows separately from the complete installed inventory. Let the skill inspect existing conventions before proposing changes and explicitly approve the configuration dry run before it writes anything.
+
+Selective installation remains supported when the project does not want the complete set. The installed lifecycle command calculates closure and may propose adding missing dependencies from the verified matching release bundle. Review every proposed source and destination before approving the non-destructive plan.
 
 Prefer adoption over migration:
 
