@@ -13,6 +13,7 @@ installation:
     - close-initiative
     - develop-rfc
     - establish-technical-baseline
+    - frame-product-problem
     - investigate-failure
     - model-domain
     - plan-implementation
@@ -33,6 +34,7 @@ installation:
     configure-project: skills/configure-project
     develop-rfc: skills/develop-rfc
     establish-technical-baseline: skills/establish-technical-baseline
+    frame-product-problem: skills/frame-product-problem
     investigate-failure: skills/investigate-failure
     model-domain: skills/model-domain
     plan-implementation: skills/plan-implementation

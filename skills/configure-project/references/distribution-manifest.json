@@ -98,6 +98,22 @@
         "references/technical-baseline-template.md": "533f55813ae86b5f812bf983f1a31ba8fe2a98b1b34796df0a17cca76e7158e2"
       }
     },
+    "frame-product-problem": {
+      "dependencies": [
+        "author-specification",
+        "capture-meeting",
+        "model-domain",
+        "plan-initiative",
+        "prepare-questionnaire",
+        "prototype-design",
+        "record-arp",
+        "research-question"
+      ],
+      "files": {
+        "SKILL.md": "189b7dd6b1c9a9430e8594b4bf70752eccde5a67ed2949e762d4aeb2c587eb96",
+        "references/problem-framing-template.md": "bb46fdf6472d926fdb8e5ac33e4febf7f9854dbc189ee08013196265fa5b7cba"
+      }
+    },
     "investigate-failure": {
       "dependencies": [
         "capture-regression",

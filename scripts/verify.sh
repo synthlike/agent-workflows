@@ -124,6 +124,8 @@ for required in (
     "docs/rfcs/RFC-0004-focus-v0.3-on-project-feedback-workflows.md",
     "docs/decisions/ARP-0005-focus-v0.3-on-project-feedback-workflows.md",
     "docs/specifications/v0.3-project-foundation-and-feedback-workflows.md",
+    "docs/rfcs/RFC-0005-add-product-problem-framing-to-v0.3.md",
+    "docs/decisions/ARP-0006-add-product-problem-framing-to-v0.3.md",
 ):
     if f"]({required})" not in readme:
         errors.append(f"README.md: missing contract link {required}")
@@ -133,6 +135,7 @@ for required in (
     "deterministic v0.2 release manifests",
     "dependency-complete fresh-project",
     "Defer reusable update transactions",
+    "frame-product-problem",
     "establish-technical-baseline",
     "diagnosis-only failure investigation",
     "implementation conformance review",

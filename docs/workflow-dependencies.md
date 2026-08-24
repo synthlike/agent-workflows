@@ -14,6 +14,7 @@ Every installation must include `configure-project`, the workflows selected by t
 | `configure-project` | None |
 | `develop-rfc` | `author-specification`, `clarify-intent`, `prototype-design`, `record-arp`, `research-question` |
 | `establish-technical-baseline` | `develop-rfc`, `record-arp`, `research-question` |
+| `frame-product-problem` | `author-specification`, `capture-meeting`, `model-domain`, `plan-initiative`, `prepare-questionnaire`, `prototype-design`, `record-arp`, `research-question` |
 | `investigate-failure` | `capture-regression`, `clarify-intent`, `research-question` |
 | `model-domain` | `develop-rfc`, `record-arp` |
 | `plan-implementation` | `clarify-intent`, `develop-rfc`, `plan-initiative` |

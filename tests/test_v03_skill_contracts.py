@@ -247,6 +247,72 @@ class V03SkillContractTests(unittest.TestCase):
         ):
             self.assertIn(required, template)
 
+    def test_product_problem_framing_interviews_and_challenges_the_founder(self) -> None:
+        text = self.skill("frame-product-problem")
+        for required in (
+            "Ask exactly one question at a time",
+            "the proposed solution",
+            "current behavior, alternatives, and workarounds",
+            "Founder belief",
+            "Direct observation",
+            "External evidence",
+            "Interpretation",
+            "Unknown",
+            "counter-hypotheses",
+        ):
+            self.assertIn(required, text)
+
+    def test_product_problem_framing_requires_location_and_write_approval(self) -> None:
+        text = self.skill("frame-product-problem")
+        self.assertIn("Prefer an existing project-approved", text)
+        self.assertIn("Never assume a fixed consumer path", text)
+        self.assertIn("Wait for explicit approval before writing", text)
+        self.assertIn("supporting evidence", text)
+        self.assertNotIn("docs/product/", text)
+
+    def test_product_validation_is_non_leading_and_evidence_based(self) -> None:
+        text = self.skill("frame-product-problem")
+        for required in (
+            "ask about concrete past behavior",
+            "avoid pitching the solution",
+            "avoid hypothetical compliments",
+            "respect consent, privacy, confidentiality",
+            "Do not fabricate participants",
+            "cannot substitute for customer or behavioral evidence",
+        ):
+            self.assertIn(required, text)
+
+    def test_product_problem_reassessment_preserves_uncertainty_and_founder_decision(self) -> None:
+        text = self.skill("frame-product-problem")
+        for state in (
+            "`Unexamined`",
+            "`Supported`",
+            "`Weakened`",
+            "`Contradicted`",
+            "`Inconclusive`",
+        ):
+            self.assertIn(state, text)
+        self.assertIn("continue, narrow, reframe, pivot, or stop", text)
+        self.assertIn("The founder decides", text)
+        self.assertIn("Never label the product idea or problem “validated”", text)
+
+    def test_product_problem_template_separates_solution_evidence_and_validation(self) -> None:
+        template = (
+            SKILLS / "frame-product-problem" / "references/problem-framing-template.md"
+        ).read_text()
+        for required in (
+            "## Proposed solution",
+            "## Problem hypothesis",
+            "## Actors and audience segments",
+            "## Current behavior, alternatives, and workarounds",
+            "## Claims and evidence",
+            "## Counter-hypotheses",
+            "## Risky assumptions and validation plan",
+            "## Evidence log and reassessment",
+            "## Current recommendation",
+        ):
+            self.assertIn(required, template)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -12,7 +12,8 @@ v0.3 supports one configured consumer root per Git repository.
 8. Review the complete proposed schema-2 `.agents/workflows.yaml`, `AGENTS.md`, and `docs/agents/` dry run. Nothing is written before approval.
 9. [Verify the consumer installation](verifying-installation.md).
 10. Commit the installed skill directories, configuration, and guidance before creating project artifacts.
-11. When the principal application stack is already selected, invoke `establish-technical-baseline` before product-dependent architecture work. Approve a project-owned documentation location and keep unknown product questions deferred.
+11. When a founder has an early product idea, invoke `frame-product-problem` before treating it as requirements. Approve a project-owned discovery location, challenge the problem and audience, and plan non-leading customer validation.
+12. When the principal application stack is already selected, invoke `establish-technical-baseline` before product-dependent architecture work. Approve a project-owned documentation location and keep unknown product questions deferred.
 
 `.agents/workflows.yaml` is the repository's single canonical workflow configuration. It records immutable distribution identity, user-selected workflows, and every harness-discovered skill path. Monorepos may choose suitable repository-contained paths, but v0.3 does not support nested configurations or inheritance.
 

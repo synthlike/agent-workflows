@@ -2,6 +2,7 @@
 
 | Situation | Skill |
 | --- | --- |
+| A founder's product idea needs problem framing and customer-validation planning | `frame-product-problem` |
 | An agreed technical stack needs production-compatible foundations | `establish-technical-baseline` |
 | The request, plan, or decision is unclear | `clarify-intent` |
 | Domain terms or boundaries are inconsistent | `model-domain` |
@@ -22,6 +23,16 @@
 | An initiative is ending or changing direction | `close-initiative` |
 
 ## Common flows
+
+### Early startup discovery
+
+```text
+frame-product-problem -> prepare-questionnaire -> capture-meeting
+                      -> research-question / prototype-design
+                      -> plan-initiative
+```
+
+The founder's idea becomes a testable problem hypothesis, not an assumed specification. Customer and behavioral evidence can support, weaken, contradict, or leave assumptions inconclusive.
 
 ### New technical project
 

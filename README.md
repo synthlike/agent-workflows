@@ -12,6 +12,9 @@ The kit separates:
 ## Workflow
 
 ```text
+frame-product-problem ─> prepare-questionnaire / research-question / prototype-design
+                      └> plan-initiative
+
 establish-technical-baseline
 
 clarify-intent ─┬─> model-domain
@@ -46,8 +49,8 @@ See [Fresh-project configuration](docs/fresh-project-configuration.md) for comma
 ## v0.3 contract
 
 - [Current specification: project-foundation and feedback workflows](docs/specifications/v0.3-project-foundation-and-feedback-workflows.md)
-- [Scope decision: ARP-0005](docs/decisions/ARP-0005-focus-v0.3-on-project-feedback-workflows.md)
-- [Scope RFC: RFC-0004](docs/rfcs/RFC-0004-focus-v0.3-on-project-feedback-workflows.md)
+- [Scope decision: ARP-0005](docs/decisions/ARP-0005-focus-v0.3-on-project-feedback-workflows.md) and [product-framing refinement: ARP-0006](docs/decisions/ARP-0006-add-product-problem-framing-to-v0.3.md)
+- [Scope RFC: RFC-0004](docs/rfcs/RFC-0004-focus-v0.3-on-project-feedback-workflows.md) and [product-framing amendment: RFC-0005](docs/rfcs/RFC-0005-add-product-problem-framing-to-v0.3.md)
 - [v0.2 fresh-project lifecycle foundation](docs/specifications/v0.2-fresh-project-lifecycle.md), with its [scope RFC](docs/rfcs/RFC-0003-reduce-v0.2-to-fresh-project-lifecycle.md) and [decision](docs/decisions/ARP-0004-ship-v0.2-for-fresh-project-adoption.md)
 - [Release manifest and bundle](docs/release-manifest.md)
 - [Workflow configuration schema 2](docs/workflow-configuration.md)
@@ -70,7 +73,7 @@ The v0.1 [RFC](docs/rfcs/RFC-0001-v0.1-installation-and-consumer-project-contrac
 
 ## Status
 
-Active early development. v0.3 covers project foundations, planning and design knowledge, defect evidence, implementation conformance review, and initiative closure. It does not implement application code or automated cross-version maintenance.
+Active early development. v0.3 covers product-problem framing, project foundations, planning and design knowledge, defect evidence, implementation conformance review, and initiative closure. It does not implement application code or automated cross-version maintenance.
 
 ## Attribution
 

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 0.3.0 - 2026-08-24
+
+- Add `frame-product-problem` for founder interviews, problem briefs, customer-validation planning, and evidence reassessment.
 - Add `establish-technical-baseline` for minimal production-compatible foundations from an agreed stack.
 - Add issue triage, diagnosis-only failure investigation, and durable regression capture workflows.
 - Add read-only implementation conformance review and evidence-based initiative closure.
