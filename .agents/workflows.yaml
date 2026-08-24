@@ -1,0 +1,28 @@
+schema_version: 1
+
+distribution:
+  source: github.com/synthlike/agent-workflows
+  version: e9d7dbb926931e2c7970e547fdb42b9906bb4cab
+
+issue_tracker:
+  backend: local-markdown
+  root: .project
+
+artifacts:
+  domain:
+    enabled: true
+    path: docs/domain
+  arps:
+    enabled: true
+    path: docs/decisions
+    prefix: ARP
+  rfcs:
+    enabled: true
+    path: docs/rfcs
+    prefix: RFC
+  meetings:
+    enabled: false
+    path: docs/meetings
+  specifications:
+    enabled: true
+    path: docs/specifications
