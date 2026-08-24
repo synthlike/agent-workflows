@@ -38,6 +38,7 @@ Until this repository is published, point your agent at `skills/` directly or co
 - [Choosing a workflow](docs/choosing-a-workflow.md)
 - [Artifact model](docs/artifact-model.md)
 - [Workflow dependencies](docs/workflow-dependencies.md)
+- [Verifying a consumer installation](docs/verifying-installation.md)
 - [Issue-tracker backends](docs/issue-tracker-backends.md)
 - [Starting a new project](docs/starting-a-new-project.md)
 - [Adopting in an existing project](docs/adopting-in-existing-project.md)

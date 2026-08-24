@@ -87,4 +87,7 @@ print(f"Verified {len(skills)} skills, {len(list((root / 'backends/issue-tracker
 PY
 python3 -B "$root/scripts/verify_workflow_config.py" "$root/.agents/workflows.yaml"
 python3 -B "$root/scripts/verify_workflow_dependencies.py"
+python3 -B "$root/scripts/verify_consumer_installation.py" \
+  --consumer-root "$root" \
+  --skills-root "$root/skills"
 python3 -B -m unittest discover -s "$root/tests" -p 'test_*.py'
