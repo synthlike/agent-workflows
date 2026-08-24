@@ -102,9 +102,24 @@ for required in (
     "docs/specifications/v0.1-installation-and-consumer-project-contract.md",
     "docs/workflow-dependencies.md",
     "docs/verifying-installation.md",
+    "docs/rfcs/RFC-0003-reduce-v0.2-to-fresh-project-lifecycle.md",
+    "docs/decisions/ARP-0004-ship-v0.2-for-fresh-project-adoption.md",
+    "docs/specifications/v0.2-fresh-project-lifecycle.md",
+    "docs/release-manifest.md",
+    "docs/workflow-configuration.md",
+    "docs/fresh-project-configuration.md",
 ):
     if f"]({required})" not in readme:
-        errors.append(f"README.md: missing v0.1 contract link {required}")
+        errors.append(f"README.md: missing contract link {required}")
+
+changelog = (root / "CHANGELOG.md").read_text()
+for required in (
+    "deterministic v0.2 release manifests",
+    "dependency-complete fresh-project",
+    "Defer reusable update transactions",
+):
+    if required not in changelog:
+        errors.append(f"CHANGELOG.md: missing v0.2 release coverage {required!r}")
 
 if errors:
     print("Verification failed:", file=sys.stderr)
@@ -122,3 +137,5 @@ python3 -B "$root/skills/configure-project/references/lifecycle.py" \
   --consumer-root "$root" \
   --skills-root "$root/skills"
 python3 -B -m unittest discover -s "$root/tests" -p 'test_*.py'
+bash -n "$root/scripts/smoke-fresh-install.sh"
+node --check "$root/scripts/pi-discover-skills.mjs"

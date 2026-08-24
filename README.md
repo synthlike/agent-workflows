@@ -23,7 +23,7 @@ Research, prototypes, questionnaires, meetings, and handoffs support this flow w
 
 ## Install
 
-v0.1 vendors skills into each consumer repository. Choose the workflows you want, then use the [dependency table](docs/workflow-dependencies.md) to include `configure-project` and their complete transitive closure.
+v0.2 vendors skills into each consumer repository. Start with `configure-project` and the workflows you explicitly want; the initial copy may omit transitive dependencies.
 
 An Agent Skills-compatible installer may perform the copy. For example:
 
@@ -31,18 +31,22 @@ An Agent Skills-compatible installer may perform the copy. For example:
 npx skills@latest add synthlike/agent-workflows
 ```
 
-This command is illustrative; v0.1 does not guarantee a third-party installer's syntax, selection behavior, destination, or update behavior. An equivalent manual copy is supported when every selected skill directory remains intact and the consumer's agent can discover it. The harness may use any discoverable parent location; `.agents/skills/` is only one example.
+This command is illustrative; v0.2 does not guarantee a third-party installer's syntax, destination, or update behavior. An equivalent intact manual copy is supported at any repository-contained location the consumer's harness discovers.
 
-From the consumer's Git root, invoke `configure-project` before any other installed workflow. Approve its complete dry run and record the exact distribution source plus release version or immutable commit SHA in the single root `.agents/workflows.yaml`. Then [verify the consumer installation](docs/verifying-installation.md) and commit the reviewed configuration and guidance before creating artifacts.
+From the consumer Git root, invoke `configure-project` before another workflow. Its installed lifecycle command reads the [release manifest](docs/release-manifest.md), calculates closure, and produces a complete dry run. When dependencies are missing, supply the matching release bundle, approve every source and destination, apply the non-destructive plan, and confirm harness discovery. Then approve schema-2 configuration and guidance, run [installed verification](docs/verifying-installation.md), and commit before creating artifacts.
 
+See [Fresh-project configuration](docs/fresh-project-configuration.md) for commands and safety behavior.
 
-## v0.1 contract
+## v0.2 contract
 
-- [Specification: installation and consumer-project contract](docs/specifications/v0.1-installation-and-consumer-project-contract.md)
-- [ARP-0001: accepted installation and ownership boundary](docs/decisions/ARP-0001-use-a-vendored-consumer-owned-installation-boundary.md)
-- [RFC-0001: design discussion and resolution](docs/rfcs/RFC-0001-v0.1-installation-and-consumer-project-contract.md)
-- [Workflow dependency table](docs/workflow-dependencies.md)
-- [Consumer verification](docs/verifying-installation.md)
+- [Current specification: fresh-project lifecycle](docs/specifications/v0.2-fresh-project-lifecycle.md)
+- [Scope decision: ARP-0004](docs/decisions/ARP-0004-ship-v0.2-for-fresh-project-adoption.md)
+- [Scope amendment: RFC-0003](docs/rfcs/RFC-0003-reduce-v0.2-to-fresh-project-lifecycle.md)
+- [Release manifest and bundle](docs/release-manifest.md)
+- [Workflow configuration schema 2](docs/workflow-configuration.md)
+- [Installed verification](docs/verifying-installation.md)
+
+The v0.1 [RFC](docs/rfcs/RFC-0001-v0.1-installation-and-consumer-project-contract.md), [ownership ARP](docs/decisions/ARP-0001-use-a-vendored-consumer-owned-installation-boundary.md), and [specification](docs/specifications/v0.1-installation-and-consumer-project-contract.md) remain historical context.
 
 ## Start here
 
