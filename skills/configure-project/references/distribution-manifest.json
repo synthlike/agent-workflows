@@ -1,0 +1,139 @@
+{
+  "configuration": {
+    "current_schema": 2,
+    "readable_schemas": [
+      1,
+      2
+    ]
+  },
+  "distribution": {
+    "source": "github.com/synthlike/agent-workflows",
+    "version": "v0.2.0"
+  },
+  "manifest_version": 1,
+  "skills": {
+    "author-specification": {
+      "dependencies": [
+        "develop-rfc"
+      ],
+      "files": {
+        "SKILL.md": "a6baa695bc28e0388e66dc021339e6357309165294773b0f46935e9217b069d8",
+        "references/specification-template.md": "099893f4c0ba785e4be898222579649b51b594630b39ea113b9e0c44a63026e0"
+      }
+    },
+    "capture-meeting": {
+      "dependencies": [
+        "author-specification",
+        "develop-rfc",
+        "model-domain",
+        "record-arp"
+      ],
+      "files": {
+        "SKILL.md": "43f7efc5dc0ba8d7fee86b4047e75532e9977ea24442a6b88e2874d7a54437ae",
+        "references/meeting-template.md": "49ab8809ff00a4325e74e68e556f4714d37742847fe0397793b5864b19097850"
+      }
+    },
+    "clarify-intent": {
+      "dependencies": [],
+      "files": {
+        "SKILL.md": "5387c7c1b8511bb3f2e7333314a9cca75c8ab4ba31c9beb1529c3865163218e0"
+      }
+    },
+    "configure-project": {
+      "dependencies": [],
+      "files": {
+        "SKILL.md": "7398f2e9249e551515be86efee35a6408220f936abb1248878cfe3fbb746abe3",
+        "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
+        "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
+        "references/issue-tracker-github.md": "1213773752ff95356905038822b1f9eff019be607f3be0399b1186b2a28d32d2",
+        "references/issue-tracker-local-markdown.md": "918cd42abc92a36a03083076d09f79f7aea24c9b05d4cd618ace72eeecb20e14",
+        "references/lifecycle.py": "dc80f394f0ec23f0c1a6c343517f98b6b9938500a0253a36c9c890215372e249",
+        "references/workflow-config.example.yaml": "58dc24b927c42f57c8b5d55de1bc76d4d0b9571844491551dc95f3247dfee0b0"
+      }
+    },
+    "develop-rfc": {
+      "dependencies": [
+        "author-specification",
+        "clarify-intent",
+        "prototype-design",
+        "record-arp",
+        "research-question"
+      ],
+      "files": {
+        "SKILL.md": "7053da851553cca2244e270f9ea48668a97d65f4fe1e5b70de560d430e9b0e05",
+        "references/rfc-template.md": "c8db27ddbed10cf5f975b400bdcf64de947d4bde7fd1c5258d69af4091bd8955"
+      }
+    },
+    "model-domain": {
+      "dependencies": [
+        "develop-rfc",
+        "record-arp"
+      ],
+      "files": {
+        "SKILL.md": "ca45cb63ca6b74b3c2222944462488e2fd8e6e98f9dace64ad47256a2a73e056",
+        "references/context-template.md": "eafc2407a6773e51f18c28b3f892decf796a3ed01e2dc0138aa561b540f5b116"
+      }
+    },
+    "plan-implementation": {
+      "dependencies": [
+        "clarify-intent",
+        "develop-rfc",
+        "plan-initiative"
+      ],
+      "files": {
+        "SKILL.md": "23f275b0a5af036c491c56e38e5fa1fc534869a7f6a9a45874e59b2cc3decd41",
+        "references/issue-template.md": "1110472be63689c089fbc32ab2796d62da432402aad71eb672d1a5c15dae25a5"
+      }
+    },
+    "plan-initiative": {
+      "dependencies": [
+        "author-specification",
+        "clarify-intent",
+        "develop-rfc",
+        "model-domain",
+        "plan-implementation",
+        "prototype-design",
+        "record-arp",
+        "research-question"
+      ],
+      "files": {
+        "SKILL.md": "cd53539b45db1958fb065f8a2b7dc64eddac496a610e638d4e2708ccacd1d2fa",
+        "references/map-template.md": "970ff9e3b2f5956964d67f1b5bcbcecd39a5aff8baf7a47b461c1102e353988b"
+      }
+    },
+    "prepare-handoff": {
+      "dependencies": [],
+      "files": {
+        "SKILL.md": "605c90bd958de271437cfe3a66e7e38f91eb7eed60b9f6ed4cf54073d2c66b7c"
+      }
+    },
+    "prepare-questionnaire": {
+      "dependencies": [],
+      "files": {
+        "SKILL.md": "47137525536c3ba7ae63ecfa48f233d6b63c65620989f3dfbe2555c28c5991d2",
+        "references/questionnaire-template.md": "743f8a80e3c5df32c662c3a3cf586e0ec4e08f8accb316d6d461f14ca7369054"
+      }
+    },
+    "prototype-design": {
+      "dependencies": [],
+      "files": {
+        "SKILL.md": "7e0ed03b2737c3a38734afb7d9e1d41446d410d230e5af4f01d6ed6ee8119cb9"
+      }
+    },
+    "record-arp": {
+      "dependencies": [
+        "develop-rfc"
+      ],
+      "files": {
+        "SKILL.md": "3b70964d1e7d7ea98d91da783f245da418f0b8b934ba7dd83a5c36514d0a1e50",
+        "references/arp-template.md": "41cb359f5039d6a153a4e60a945a452b4ba2c69a75e01bebd770d1940798ca1c"
+      }
+    },
+    "research-question": {
+      "dependencies": [],
+      "files": {
+        "SKILL.md": "223c966020f1e7d607a1de27151b1fe050e844dfc618022274d254adb0d39a38"
+      }
+    }
+  }
+}

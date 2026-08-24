@@ -1,0 +1,23 @@
+{
+  "configuration": {
+    "current_schema": 2,
+    "readable_schemas": [1, 2]
+  },
+  "skills": [
+    "author-specification",
+    "capture-meeting",
+    "clarify-intent",
+    "configure-project",
+    "develop-rfc",
+    "model-domain",
+    "plan-implementation",
+    "plan-initiative",
+    "prepare-handoff",
+    "prepare-questionnaire",
+    "prototype-design",
+    "record-arp",
+    "research-question"
+  ],
+  "source": "github.com/synthlike/agent-workflows",
+  "version": "v0.2.0"
+}

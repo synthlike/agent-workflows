@@ -9,6 +9,10 @@ license: MIT
 
 Inspect first, propose second, and write only after confirmation. Installation must not silently migrate existing artifacts.
 
+## Lifecycle assets
+
+v0.2 release identity, dependencies, and file integrity are defined by the bundled [distribution manifest](references/distribution-manifest.json). Use the deterministic [lifecycle command](references/lifecycle.py) for manifest, closure, bundle, and installed-verification operations as they become available; keep human intent and write approval in this skill.
+
 ## Explore
 
 From the repository root, inspect:
