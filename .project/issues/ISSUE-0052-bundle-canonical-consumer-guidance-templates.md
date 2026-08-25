@@ -2,9 +2,9 @@
 id: ISSUE-0052
 title: "Bundle canonical consumer guidance templates"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0050-streamline-deterministic-consumer-configuration.md"
 blocked_by:
 labels: ["lifecycle","configuration"]
@@ -38,6 +38,6 @@ None.
 Applying generated files, replacing skill directories, provider provisioning, and record migration.
 
 ## Comments
-
-
 ## Resolution
+
+Bundled canonical templates for schema-3 `.agents/workflows.yaml`, `docs/agents/workflows.md`, `docs/agents/records.md`, and the marked root agent-guidance section. Added a pure renderer that accepts normalized distribution, installation, backend, route, documentation-policy, and root-guidance inputs; emits every route explicitly in canonical order; returns only the shared contract and guidance/helper pairs for backend types actually used; and performs no consumer writes. It normalizes mapping order for byte-identical output, preserves unrelated bytes in `AGENTS.md` or an equivalent selected root file, rejects ambiguous managed markers, and supports idempotent managed-section replacement. Workflow guidance includes the literal instruction to read `docs/agents/records.md`; templates preserve semantic authority, documentation policy, lazy destination behavior, disabled-route boundaries, and mutation approval requirements. Replaced the unmarked legacy root seed with the canonical managed template and marked this repository's own managed section without changing unrelated guidance. Added all-local and mixed-backend rendering regressions, byte determinism and preservation checks, exact-asset checks, and an end-to-end generated-output test that passes installed `verify-consumer` without repair. Manifest format 2 covers the renderer and every template. `scripts/verify.sh` passes with 144 tests.

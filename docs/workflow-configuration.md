@@ -78,6 +78,8 @@ The canonical key is `specs`; the semantic artifact and workflow remain “speci
 
 A profile question may simplify the interview, but `configure-workflows` expands it into all twelve reviewed routes. It prefers existing conventions before these defaults and does not move, copy, rename, or rewrite existing records.
 
+Canonical templates under `configure-workflows/references/templates/` and the pure `references/templates.py` renderer define exact output. Mapping order does not affect rendered bytes. The renderer replaces only its marked root-guidance section, preserves all unrelated bytes in `AGENTS.md` or the selected equivalent root file, and returns backend assets only for types used by routes.
+
 Schema-3 consumers generate:
 
 - `docs/agents/records.md` with routes, operations, references, revisions, and approval boundaries;

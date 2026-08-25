@@ -1,6 +1,8 @@
 # Engineering workflows
 
-Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows.yaml). Record operations follow [the configured semantic routes](records.md) in `docs/agents/records.md`.
+Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows.yaml).
+
+Read `docs/agents/records.md` for record routing and operations.
 
 ## Distribution
 

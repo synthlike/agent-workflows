@@ -1,0 +1,35 @@
+# Engineering workflows
+
+Canonical configuration is in `.agents/workflows.yaml`.
+
+Read `docs/agents/records.md` for record routing and operations.
+
+## Distribution
+
+- Source: `{{distribution_source_text}}`
+- Version: `{{distribution_version_text}}`
+- Configuration schema: `3`
+
+## Selected workflows
+
+{{selected_workflows}}
+
+## Artifact authority
+
+| Information | Canonical artifact |
+| --- | --- |
+| Domain terminology and boundaries | Domain model |
+| Unresolved technical or design discussion | RFC |
+| Accepted consequential technical decision | ARP |
+| Agreed product or system behavior | Specification |
+| Executable work | Issue |
+| What happened in a meeting | Meeting notes |
+| Current system behavior | Code and tests |
+
+Supporting research, prototypes, questionnaires, meetings, and planning maps are evidence rather than authoritative requirements or decisions. Authority derives from semantic record type, not storage backend.
+
+## Documentation policy
+
+{{documentation_policy}}
+
+Create backend destinations only on the first approved record write. Ask before persisting through a disabled route. Do not migrate existing records as a side effect of configuration, installation, or route changes.

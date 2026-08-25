@@ -24,6 +24,8 @@ If inspection reports an absent, unexpected, duplicate, incomplete, or modified 
 
 Invoke `configure-workflows` from the intended consumer workspace root. Initial inspection covers only workspace/version-control state, existing workflow guidance and artifact conventions, distribution integrity, and project structure. Then describe the project and collaboration profile and select workflows. The workflow records selected intent separately from the complete installed inventory and verifies dependency closure.
 
+Canonical bundled templates and the pure renderer produce `.agents/workflows.yaml`, `docs/agents/workflows.md`, `docs/agents/records.md`, the managed root-guidance section, and exact used backend assets. Rendering identical normalized inputs produces identical bytes and preserves unrelated root-guidance bytes.
+
 Provider inspection is conditional. A local-only setup invokes neither `gh` nor `bearcli`. When GitHub is considered, select an authenticated account explicitly and review identity-aware capability preflight and a stale-safe label plan. When Bear is considered, review its explicit command/workspace and read-only scoped preflight. Review the proposed schema-3 `.agents/workflows.yaml`, record-backend guidance, workflow guidance, and concise agent pointer. Nothing is written before approval. Optional artifact and issue directories remain absent.
 
 ## 3. Verify and land

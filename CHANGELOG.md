@@ -6,6 +6,7 @@
 - Validate routes against immutable adapter-owned capability declarations so future note-only and issue-only backends cannot claim unsupported behavior.
 - Add scoped Bear configuration, read-only MCP provider preflight, and complete non-issue record operations while keeping `issues` on another backend.
 - Distinguish integrity-checked discovery from model invocation eligibility and defer GitHub or Bear inspection until each backend is considered.
+- Bundle manifest-covered canonical consumer templates and a deterministic pure renderer that preserves unrelated root guidance.
 - Rename the mandatory workflow bootstrap from `configure-project` to `configure-workflows` before external adoption.
 - Complete the GitHub Cloud issue backend with explicit multi-account identity selection, native relationships, reviewed label provisioning, deterministic frontier calculation, and an executable `gh` helper.
 - Configure repository retention and paths for research, questionnaires, technical baselines, prototypes, and handoffs according to project needs.

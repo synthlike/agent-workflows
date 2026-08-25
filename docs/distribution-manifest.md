@@ -35,6 +35,7 @@ The manifest has this shape:
 - `model_invocation` is `enabled` unless validated skill frontmatter sets `disable-model-invocation: true`, in which case it is `manual`. This records invocation eligibility; it does not claim what a running model saw in its startup prompt.
 - `files` maps every distributed file inside the skill directory to its lowercase SHA-256 digest.
 - `configure-workflows/references/distribution-manifest.json` is excluded from its own file map.
+- Canonical consumer templates and their pure renderer are ordinary distributed skill files, so their exact bytes are covered by the manifest.
 
 A supported consumer installs the complete skill inventory. `.agents/workflows.yaml` separately records which workflows the user explicitly selected and the exact consumer-root-relative path of every harness-discovered skill. Installed verification compares those paths and files with the embedded manifest and does not require a source checkout.
 

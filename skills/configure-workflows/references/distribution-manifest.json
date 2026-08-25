@@ -67,8 +67,7 @@
     "configure-workflows": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "e082e23410a5d141d90220f9027aac21078601e4673a7bbd787d751fa568808b",
-        "references/agents-section.md": "6a5f9f0ccd71186a3f11439d553a44c1a6c83605b477c5b3044b3880df4de594",
+        "SKILL.md": "845f91a1153df76d6834b62064d6205e18eda700654137c61b1f868e64131d8b",
         "references/backends/record-store/bear.capabilities.json": "b4ac3509abc45ff2591c3b8cba94c1fc1eff8a11e10522938cd960c2fcd1bc2d",
         "references/backends/record-store/bear.md": "7e1822bb443fd71327db86ed40e9e1ab2b42e2808d00ec20b09250b08268c6eb",
         "references/backends/record-store/bear.py": "193262dde236f5c8b05dcb7258c6b45999a33eadf1a648e920e19ef327e5e57c",
@@ -81,7 +80,12 @@
         "references/backends/record-store/local-markdown.py": "cd173aff05f238137d7e7cde284b97f0f03550633af8a06905ec09b1fe49aeec",
         "references/consumer.py": "2812dae3f8009e87aa2fb2aa1451be8a9bfff30931174aef19bb1cb1a20c0ff8",
         "references/lifecycle.py": "a74a29184b74156239e9e64658e8ed0aee2eabc2ef6daaf0629a32dc30b873c8",
-        "references/workflow-config.example.yaml": "2ca10cf6381a51f976fc12a2a4b3e21c54e0186c45a0e189acbcb8ebb09a1dc7"
+        "references/templates.py": "febe7ad0e025d30c49b6ddb471a35771f324d39408c4efcbe414b767b4774abb",
+        "references/templates/agents-section.md.tmpl": "af6188a3b911d22a80b56f4725efcfaecfd461d7513c15535f0df6aa34cc85f2",
+        "references/templates/records.md.tmpl": "3ec3c516d7c1335b9ceaeddb139f66df638bd2708b36f3474e05c6f802604407",
+        "references/templates/workflows.md.tmpl": "9d610ed4054c0076717224d0bba4d7d3b62a71f014ed8fb0003593f294d277e9",
+        "references/templates/workflows.yaml.tmpl": "8c785d7710e298e5205add4ed1c9999629a87e081530f061a4a78bbe7c5829f7",
+        "references/workflow-config.example.yaml": "38f9f1dc7abb0fcfe7eeed35af92a168107f5f94c7a1c144e2d337ad804f859b"
       },
       "model_invocation": "manual"
     },

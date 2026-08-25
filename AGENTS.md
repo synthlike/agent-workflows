@@ -17,6 +17,8 @@ This repository contains reusable Agent Skills. Keep every workflow independent 
 
 Run `scripts/verify.sh` after changing skills or references.
 
+<!-- agent-workflows:start -->
 ## Engineering workflows
 
 Workflow configuration is in `.agents/workflows.yaml`. Before significant design or planning work, read `docs/agents/workflows.md`. Perform record operations according to `docs/agents/records.md`.
+<!-- agent-workflows:end -->

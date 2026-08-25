@@ -84,10 +84,10 @@ Show a dry run containing:
 1. exact distribution identity;
 2. user-selected workflows, calculated closure, and the complete discovered skill inventory;
 3. any missing, unexpected, duplicate, incomplete, or modified skill and every blocking conflict;
-4. `.agents/workflows.yaml`, based on [the example](references/workflow-config.example.yaml), with schema 3, exact distribution identity, named backend instances, all twelve explicit routes, selected workflows, and complete discovered skill-path inventory;
-5. backend preflight and actual-identity results, reviewed GitHub label plans, and every generated file under `docs/agents/backends/`;
-6. `docs/agents/records.md`, including all routes, portable operations, opaque references and revisions, disabled-route behavior, and approval boundaries;
-7. `docs/agents/workflows.md`, including the authority table, pointer to record guidance, and preserved project writing policy or default plain-language style;
+4. `.agents/workflows.yaml`, rendered from the canonical [configuration template](references/templates/workflows.yaml.tmpl), with schema 3, exact distribution identity, named backend instances, all twelve explicit routes, selected workflows, and complete discovered skill-path inventory;
+5. backend preflight and actual-identity results, reviewed GitHub label plans, and exactly the used distribution-managed backend files returned by the pure [template renderer](references/templates.py);
+6. `docs/agents/records.md`, rendered from its [canonical template](references/templates/records.md.tmpl), including all routes, portable operations, opaque references and revisions, disabled-route behavior, approval boundaries, and exact used backend assets;
+7. `docs/agents/workflows.md`, rendered from its [canonical template](references/templates/workflows.md.tmpl), including the literal instruction to read `docs/agents/records.md`, the authority table, and the project writing policy or default plain-language style;
 8. detected version-control state, the chosen consumer root, and whether completed issue work will have a commit or equivalent landing checkpoint;
 9. the concise agent-instructions block pointing to workflow and record guidance; and
 10. every other directory or file that would be created or changed.
@@ -99,13 +99,13 @@ Wait for explicit approval.
 - Never write project configuration while the complete distribution is absent or fails integrity inspection.
 - Do not require or initialize Git. Use the approved consumer workspace root whether it is Git-controlled, controlled by another system, or intentionally unversioned.
 - After external installation changes, ask the harness to restart or rediscover skills only when files were added after startup or a manual skill command is unavailable. Continue after the integrity-checked discovery evidence matches every distributed skill at its consumer-root-contained path.
-- Write `.agents/workflows.yaml` as canonical schema 3 with every backend and all twelve routes explicit. Never write a placeholder or mutable distribution version.
+- Render canonical consumer files through `references/templates.py`; identical normalized inputs must produce identical bytes. Write `.agents/workflows.yaml` as canonical schema 3 with every backend and all twelve routes explicit. Never write a placeholder or mutable distribution version.
 - Copy the bundled [portable contract module](references/backends/record-store/contract.py) and exactly the guidance/helper pair for each backend type used by a route: [local Markdown guidance](references/backends/record-store/local-markdown.md) and [helper](references/backends/record-store/local-markdown.py), [GitHub guidance](references/backends/record-store/github.md) and [helper](references/backends/record-store/github.py), and/or [Bear guidance](references/backends/record-store/bear.md) and [helper](references/backends/record-store/bear.py). Do not generate assets for configured but unused backend instances. Do not create a local record destination directory until its first approved write.
 - Apply only the exact approved GitHub label plan after configuration approval and a fresh stale-state check. Pass the configured repository, login, backend instance, and route destination explicitly to every helper operation.
 - Do not generate legacy issue-tracker guidance or helpers outside `docs/agents/backends/`. Do not move or rewrite existing issues or records.
 - Write `docs/agents/records.md` with all twelve configured routes, common operations, opaque references and revisions, destination-adapter reference rendering, generated backend assets, disabled-route behavior, and approval boundaries. Instruct workflows to use semantic keys and operations without constructing provider paths, identifiers, labels, tags, or links.
 - Write `docs/agents/workflows.md` with the artifact authority table, a pointer to record routing, and a `## Documentation style` section. Preserve an existing project policy. Otherwise write: "Write clear, direct documentation. Prefer active voice, short sentences, explicit references, and established domain terms. Avoid idioms, unnecessary synonyms, and ambiguous pronouns. Use one action per procedural step."
-- Add or update a short `## Engineering workflows` section in the existing agent-guidance file. Use [the seed block](references/agents-section.md). Do not replace surrounding instructions.
+- Add or update only the unambiguous `agent-workflows` managed section in the existing agent-guidance file, rendered from the [canonical root template](references/templates/agents-section.md.tmpl). Preserve every unrelated existing byte.
 - Create `docs/agents/`, but create optional artifact and local-issue directories only when their first artifact is needed.
 
 Run installed lifecycle verification against the exact rediscovered directories. Finish only when it passes, then list detected version-control state, created skill directories, written configuration and guidance, selected workflows, and calculated closure.

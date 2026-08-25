@@ -1,4 +1,4 @@
-# Incomplete template: configure-workflows must replace every REQUIRED value.
+# Incomplete template: illustrative only; canonical output uses templates/workflows.yaml.tmpl.
 schema_version: 3
 
 distribution:
