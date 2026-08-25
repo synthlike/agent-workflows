@@ -47,8 +47,15 @@ ISSUE_OPERATIONS = {
     "block", "cancel", "claim", "comment", "create", "frontier", "list",
     "parent", "read", "resolve", "update",
 }
+MIGRATION_OPERATIONS = {"export-history", "import", "retire", "verify"}
 CAPABILITY_FIELDS = {
-    "backend_type", "issue_operations", "record_operations", "record_types", "schema_version"
+    "backend_type",
+    "issue_migration_operations",
+    "issue_operations",
+    "record_migration_operations",
+    "record_operations",
+    "record_types",
+    "schema_version",
 }
 GITHUB_REPOSITORY = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 
@@ -62,12 +69,14 @@ def parse_backend_capabilities(value: Any, expected_type: str | None = None) -> 
         raise ValueError("backend capability type must be a non-empty string")
     if expected_type is not None and backend_type != expected_type:
         raise ValueError(f"backend capability type must be {expected_type}")
-    if value.get("schema_version") != 1:
-        raise ValueError("backend capability schema_version must be 1")
+    if value.get("schema_version") != 2:
+        raise ValueError("backend capability schema_version must be 2")
     allowed = {
         "record_types": RECORD_TYPES,
         "record_operations": RECORD_OPERATIONS,
         "issue_operations": ISSUE_OPERATIONS,
+        "record_migration_operations": MIGRATION_OPERATIONS,
+        "issue_migration_operations": MIGRATION_OPERATIONS,
     }
     parsed: dict[str, frozenset[str]] = {}
     for field, supported in allowed.items():
@@ -113,6 +122,46 @@ def required_backend_operations(record_type: str) -> tuple[str, set[str]]:
     if record_type == "issues":
         return "issue", ISSUE_OPERATIONS
     return "record", RECORD_OPERATIONS
+
+
+def required_migration_operations(role: str) -> set[str]:
+    if role == "source":
+        return {"export-history", "retire"}
+    if role == "destination":
+        return {"import", "verify"}
+    raise ValueError("migration role must be source or destination")
+
+
+def migration_pair_errors(
+    record_type: str,
+    source_type: str,
+    destination_type: str,
+    capabilities: dict[str, dict[str, frozenset[str]]] | None = None,
+) -> list[str]:
+    """Return immutable-capability errors for one strict cross-backend route move."""
+    declarations = BACKEND_CAPABILITIES if capabilities is None else capabilities
+    errors: list[str] = []
+    if record_type not in RECORD_TYPES:
+        return [f"unknown migration record type: {record_type}"]
+    if source_type == destination_type:
+        errors.append("migration backend types must differ")
+    contract = "issue" if record_type == "issues" else "record"
+    field = f"{contract}_migration_operations"
+    for role, backend_type in (("source", source_type), ("destination", destination_type)):
+        declaration = declarations.get(backend_type)
+        if declaration is None:
+            errors.append(f"unknown {role} backend type: {backend_type}")
+            continue
+        if record_type not in declaration["record_types"]:
+            errors.append(f"{role} backend {backend_type} does not support {record_type}")
+            continue
+        missing = required_migration_operations(role) - declaration[field]
+        if missing:
+            errors.append(
+                f"{role} backend {backend_type} lacks {contract} migration operations: "
+                + ", ".join(sorted(missing))
+            )
+    return errors
 
 
 @dataclass(frozen=True)

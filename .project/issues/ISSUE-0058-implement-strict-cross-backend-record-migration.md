@@ -35,6 +35,7 @@ A user can explicitly invoke `/skill:migrate-records` to move one complete seman
 
 ## Decisions so far
 
+- Specify portable migration snapshots and capabilities — schema-2 immutable declarations gate source export/retirement and destination import/verification; version-1 snapshots, plans, and journals define semantic fidelity and resumable stages.
 - Preserve semantic record type strictly; reclassification is unsupported.
 - Move one complete route per plan, including active and historical records.
 - Reject migrations that cannot preserve portable meaning.

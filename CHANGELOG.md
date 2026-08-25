@@ -9,6 +9,7 @@
 - Bundle manifest-covered canonical consumer templates and a deterministic pure renderer that preserves unrelated root guidance.
 - Add source-checkout-free deterministic consumer planning with strict versioned answers, stale-state binding, exact target bytes and hashes, lazy-directory intent, and a canonical plan digest.
 - Add digest-gated transactional consumer apply with complete preflight, destination-filesystem staging, installed verification, no-op replay, and caught-failure rollback.
+- Specify strict one-route cross-backend migration with schema-2 adapter-owned migration capabilities, semantic-lossless snapshots, deterministic plans, resumable journals, staged approvals, and roll-forward recovery.
 - Route `configure-workflows` and the fresh-project smoke through one deterministic plan review, one local-file approval, and mechanical apply while keeping provider operations separate.
 - Rename the mandatory workflow bootstrap from `configure-project` to `configure-workflows` before external adoption.
 - Complete the GitHub Cloud issue backend with explicit multi-account identity selection, native relationships, reviewed label provisioning, deterministic frontier calculation, and an executable `gh` helper.

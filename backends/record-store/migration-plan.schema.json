@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/synthlike/agent-workflows/schema/migration-plan-v1.json",
+  "title": "Strict one-route record migration plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_version",
+    "digest",
+    "consumer_root",
+    "record_type",
+    "source",
+    "destination",
+    "freeze",
+    "journal",
+    "records",
+    "configuration_cutover",
+    "stages",
+    "directories_to_create",
+    "directories_left_absent"
+  ],
+  "properties": {
+    "plan_version": {"const": 1},
+    "digest": {"$ref": "#/$defs/digest"},
+    "consumer_root": {"type": "string", "minLength": 1},
+    "record_type": {"$ref": "migration-snapshot.schema.json#/$defs/recordType"},
+    "source": {"$ref": "#/$defs/endpoint"},
+    "destination": {"$ref": "#/$defs/endpoint"},
+    "freeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "acknowledged", "source_inventory_sha256"],
+      "properties": {
+        "required": {"const": true},
+        "acknowledged": {"const": true},
+        "source_inventory_sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "journal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "expected_prior"],
+      "properties": {
+        "path": {"$ref": "#/$defs/relativePath"},
+        "expected_prior": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/digest"}
+          ]
+        }
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "snapshot", "snapshot_sha256", "destination_prior",
+          "normalized_import_sha256", "relationship_order"
+        ],
+        "properties": {
+          "snapshot": {"$ref": "migration-snapshot.schema.json"},
+          "snapshot_sha256": {"$ref": "#/$defs/digest"},
+          "destination_prior": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["state", "reference", "revision"],
+            "properties": {
+              "state": {"enum": ["absent", "matching"]},
+              "reference": {
+                "oneOf": [
+                  {"type": "null"},
+                  {"$ref": "migration-snapshot.schema.json#/$defs/reference"}
+                ]
+              },
+              "revision": {"type": ["string", "null"]}
+            }
+          },
+          "normalized_import_sha256": {"$ref": "#/$defs/digest"},
+          "relationship_order": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "configuration_cutover": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_path", "plan_digest", "source_route_sha256", "destination_route_sha256"
+      ],
+      "properties": {
+        "plan_path": {"$ref": "#/$defs/relativePath"},
+        "plan_digest": {"$ref": "#/$defs/digest"},
+        "source_route_sha256": {"$ref": "#/$defs/digest"},
+        "destination_route_sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": {"enum": ["copy-verify", "route-cutover", "source-retirement"]}
+        }
+      }
+    },
+    "directories_to_create": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/relativePath"}
+    },
+    "directories_left_absent": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/relativePath"}
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//).+$"
+    },
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backend_instance", "backend_type", "settings_sha256", "destination",
+        "capabilities_sha256", "preflight_sha256"
+      ],
+      "properties": {
+        "backend_instance": {"type": "string", "minLength": 1},
+        "backend_type": {"enum": ["local-markdown", "github", "bear"]},
+        "settings_sha256": {"$ref": "#/$defs/digest"},
+        "destination": {"type": "object", "minProperties": 1},
+        "capabilities_sha256": {"$ref": "#/$defs/digest"},
+        "preflight_sha256": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/digest"}
+          ]
+        }
+      }
+    }
+  }
+}

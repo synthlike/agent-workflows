@@ -1,5 +1,6 @@
 {
   "backend_type": "local-markdown",
+  "issue_migration_operations": [],
   "issue_operations": [
     "block",
     "cancel",
@@ -13,6 +14,7 @@
     "resolve",
     "update"
   ],
+  "record_migration_operations": [],
   "record_operations": [
     "archive",
     "create",
@@ -34,5 +36,5 @@
     "specs",
     "technical_baselines"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }

@@ -2,7 +2,7 @@
 
 Agent Workflows routes each semantic record type independently through a named backend instance. Workflows read `.agents/workflows.yaml` and `docs/agents/records.md`, use portable operations, and treat destinations, revisions, and structured references as opaque.
 
-Canonical contracts and implementations are under [`backends/record-store/`](../backends/record-store/). Each adapter owns a schema-1 `<type>.capabilities.json` declaration beside its implementation; installed verification reads the immutable distributed copy rather than trusting project configuration.
+Canonical contracts and implementations are under [`backends/record-store/`](../backends/record-store/). Each adapter owns a schema-2 `<type>.capabilities.json` declaration beside its implementation; installed verification reads the immutable distributed copy rather than trusting project configuration.
 
 - [portable contract](../backends/record-store/contract.md);
 - [local Markdown](../backends/record-store/local-markdown.md);
@@ -23,7 +23,7 @@ Local Markdown and GitHub run the same backend-independent record and issue-exte
 
 `scripts/smoke-bear-crud.sh` refuses to run unless `BEAR_CRUD_APPROVED=YES` and `BEAR_SMOKE_WORKSPACE` names a unique child of `agent-workflows-smoke/`. It verifies create, read, query search, revision-gated update, stale-write rejection, metadata-only archive, and active-search exclusion. The final result reports that the note is metadata-archived and retained; it does not delete the native note or workspace tag. See the [Bear backend guidance](../backends/record-store/bear.md) for exact commands, managed framing, revision and reference semantics, concurrency boundaries, and ambiguous-failure recovery.
 
-Configuration rejects a routed backend unless its adapter-owned declaration includes the routed record type and its complete required operation set: common record operations for non-issue routes or the issue extension for `issues`. Generated helpers assume the workflow has already resolved an enabled route and obtained approval; they intentionally do not discover configuration or enforce conversational approval themselves. Workflows must not invoke a mutation helper for a disabled route without new approval.
+Configuration rejects a routed backend unless its adapter-owned declaration includes the routed record type and its complete required operation set: common record operations for non-issue routes or the issue extension for `issues`. Migration operations are declared separately: a source requires `export-history` and `retire`, while a destination requires `import` and `verify` under the corresponding record or issue migration contract. Empty migration lists mean unsupported; ordinary route support never implies migration support. See [Strict cross-backend record migration](specifications/strict-record-migration.md). Generated helpers assume the workflow has already resolved an enabled route and obtained approval; they intentionally do not discover configuration or enforce conversational approval themselves. Workflows must not invoke a mutation helper for a disabled route without new approval.
 
 Local allocation and claiming are serialized only within one workspace and are not atomic across unsynchronized working trees. GitHub behavior depends on the authenticated account, repository permissions, API availability, and native sub-issue and dependency support established by preflight.
 

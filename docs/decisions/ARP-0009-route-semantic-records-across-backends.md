@@ -1,3 +1,6 @@
+<!-- agent-workflows-record
+{"archived":false,"created":"2026-08-25T16:20:54.825603+00:00","id":"ARP-0009","modified":"2026-08-25T22:07:32Z","record_type":"arps","title":"Route semantic records across backends"}
+-->
 ---
 id: ARP-0009
 title: Route semantic records across backends
@@ -11,6 +14,8 @@ related_rfcs:
 ---
 
 # Route semantic records across backends
+
+> Extended by ARP-0010: route changes remain non-migrating by default, while an explicitly invoked, capability-gated, staged workflow may migrate one complete semantic route.
 
 ## Context
 

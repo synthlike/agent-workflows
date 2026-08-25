@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/synthlike/agent-workflows/schema/migration-journal-v1.json",
+  "title": "Resumable strict record migration journal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "journal_version",
+    "digest",
+    "journal_revision",
+    "plan_digest",
+    "record_type",
+    "state",
+    "recovery_direction",
+    "freeze",
+    "approvals",
+    "records",
+    "configuration",
+    "events"
+  ],
+  "properties": {
+    "journal_version": {"const": 1},
+    "digest": {"$ref": "#/$defs/digest"},
+    "journal_revision": {"type": "integer", "minimum": 1},
+    "plan_digest": {"$ref": "#/$defs/digest"},
+    "record_type": {"$ref": "migration-snapshot.schema.json#/$defs/recordType"},
+    "state": {
+      "enum": [
+        "planned", "copying", "copied", "cutting-over", "cut-over",
+        "retiring", "completed", "abandoned", "cleaning-staged"
+      ]
+    },
+    "recovery_direction": {"enum": ["pre-cutover", "roll-forward"]},
+    "freeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["acknowledged_at", "source_inventory_sha256", "last_rechecked_at"],
+      "properties": {
+        "acknowledged_at": {"$ref": "#/$defs/timestamp"},
+        "source_inventory_sha256": {"$ref": "#/$defs/digest"},
+        "last_rechecked_at": {"$ref": "#/$defs/timestamp"}
+      }
+    },
+    "approvals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["copy-verify", "route-cutover", "source-retirement", "staged-cleanup"],
+      "properties": {
+        "copy-verify": {"$ref": "#/$defs/approvalOrNull"},
+        "route-cutover": {"$ref": "#/$defs/approvalOrNull"},
+        "source-retirement": {"$ref": "#/$defs/approvalOrNull"},
+        "staged-cleanup": {"$ref": "#/$defs/approvalOrNull"}
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_reference", "source_revision", "destination_reference",
+          "destination_revision", "copy_state", "verification_sha256",
+          "retirement_state", "retirement_revision"
+        ],
+        "properties": {
+          "source_reference": {"$ref": "migration-snapshot.schema.json#/$defs/reference"},
+          "source_revision": {"type": "string", "minLength": 1},
+          "destination_reference": {
+            "oneOf": [
+              {"type": "null"},
+              {"$ref": "migration-snapshot.schema.json#/$defs/reference"}
+            ]
+          },
+          "destination_revision": {"type": ["string", "null"]},
+          "copy_state": {"enum": ["pending", "imported", "verified", "cleanup-required", "cleaned"]},
+          "verification_sha256": {
+            "oneOf": [{"type": "null"}, {"$ref": "#/$defs/digest"}]
+          },
+          "retirement_state": {"enum": ["pending", "archived", "tombstoned", "provenance-added", "verified"]},
+          "retirement_revision": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plan_digest", "state", "verification_sha256"],
+      "properties": {
+        "plan_digest": {"$ref": "#/$defs/digest"},
+        "state": {"enum": ["pending", "applied", "verified"]},
+        "verification_sha256": {
+          "oneOf": [{"type": "null"}, {"$ref": "#/$defs/digest"}]
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sequence", "timestamp", "stage", "outcome", "evidence_sha256"],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1},
+          "timestamp": {"$ref": "#/$defs/timestamp"},
+          "stage": {
+            "enum": [
+              "journal", "copy-verify", "route-cutover", "source-retirement", "staged-cleanup"
+            ]
+          },
+          "outcome": {"enum": ["started", "checkpoint", "failed", "completed"]},
+          "evidence_sha256": {"$ref": "#/$defs/digest"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "minLength": 1},
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plan_digest", "stage", "approved_at"],
+      "properties": {
+        "plan_digest": {"$ref": "#/$defs/digest"},
+        "stage": {"enum": ["copy-verify", "route-cutover", "source-retirement", "staged-cleanup"]},
+        "approved_at": {"$ref": "#/$defs/timestamp"}
+      }
+    },
+    "approvalOrNull": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/approval"}
+      ]
+    }
+  }
+}

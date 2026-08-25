@@ -1,6 +1,8 @@
 {
   "backend_type": "bear",
+  "issue_migration_operations": [],
   "issue_operations": [],
+  "record_migration_operations": [],
   "record_operations": [
     "archive",
     "create",
@@ -21,5 +23,5 @@
     "specs",
     "technical_baselines"
   ],
-  "schema_version": 1
+  "schema_version": 2
 }
