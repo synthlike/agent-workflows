@@ -224,6 +224,27 @@ class InstalledLifecycleTests(unittest.TestCase):
             self.assertEqual(config_before, (root / ".agents/workflows.yaml").read_bytes())
             self.assertFalse((root / ".project").exists())
 
+    def test_schema_3_rejects_an_incomplete_non_issue_contract_before_writes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), schema3_profile_name="all-local"
+            )
+            incomplete = {
+                "record_types": set(consumer.RECORD_TYPES),
+                "record_operations": set(consumer.RECORD_OPERATIONS) - {"archive"},
+                "issue_operations": set(consumer.ISSUE_OPERATIONS),
+            }
+            with patch.dict(
+                consumer.BACKEND_CAPABILITIES,
+                {"local-markdown": incomplete},
+            ):
+                errors = self.verify(root, skill_dirs).errors
+            self.assertIn(
+                "records.specs backend contract is missing record operations: archive",
+                errors,
+            )
+            self.assertFalse((root / "docs/specs").exists())
+
     def test_schema_3_rejects_incomplete_github_identity_and_wrong_labels(self) -> None:
         mutations = {
             "missing repository": lambda text: text.replace("    repository: acme/project\n", ""),
@@ -269,6 +290,10 @@ class InstalledLifecycleTests(unittest.TestCase):
             ),
             "unsupported backend": lambda text: text.replace(
                 "type: local-markdown", "type: bear"
+            ),
+            "user-authored supports": lambda text: text.replace(
+                "    type: local-markdown",
+                "    type: local-markdown\n    supports: [issues, specs]",
             ),
             "unknown destination": lambda text: text.replace(
                 "destination: {path: docs/specs}",

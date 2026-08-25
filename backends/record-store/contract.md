@@ -1,6 +1,6 @@
 # Semantic record adapter contract
 
-A record adapter persists one configured semantic record type without exposing provider mechanics to workflows.
+A record adapter persists one configured non-issue semantic record type without exposing provider mechanics to workflows. An issue-only backend may implement the issue extension without exposing this separate non-issue operation interface.
 
 ## Portable request
 
@@ -28,6 +28,12 @@ A stored record returns:
 The destination adapter renders structured references for its own canonical content. Workflows pass the complete reference unchanged and never construct provider links.
 
 List and search return zero or more complete stored records in stable adapter order.
+
+## Backend capability declaration
+
+Each backend type owns one `<type>.capabilities.json` file beside its adapter. The schema-1 declaration contains exactly `backend_type`, `record_types`, `record_operations`, `issue_operations`, and `schema_version`. Values are unique lists drawn from this contract. Project configuration cannot add or override capabilities.
+
+Installed verification reads the declaration distributed with `configure-workflows`. A non-issue route requires its record type and every common record operation. The `issues` route requires its record type and every issue-extension operation. This permits a notes backend to support only non-issue records and a task backend to support only issues without reducing either route's semantics.
 
 ## Stable errors
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import json
 from pathlib import Path, PurePosixPath
 import re
 from typing import Any
@@ -45,15 +46,72 @@ ISSUE_OPERATIONS = {
     "block", "cancel", "claim", "comment", "create", "frontier", "list",
     "parent", "read", "resolve", "update",
 }
-BACKEND_CAPABILITIES = {
-    backend_type: {
-        "record_types": set(RECORD_TYPES),
-        "record_operations": set(RECORD_OPERATIONS),
-        "issue_operations": set(ISSUE_OPERATIONS),
-    }
-    for backend_type in BACKEND_ASSETS
+CAPABILITY_FIELDS = {
+    "backend_type", "issue_operations", "record_operations", "record_types", "schema_version"
 }
 GITHUB_REPOSITORY = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+
+
+def parse_backend_capabilities(value: Any, expected_type: str | None = None) -> dict[str, frozenset[str]]:
+    """Validate one adapter-owned capability declaration."""
+    if not isinstance(value, dict) or set(value) != CAPABILITY_FIELDS:
+        raise ValueError("backend capability declaration has missing or unknown fields")
+    backend_type = value.get("backend_type")
+    if not isinstance(backend_type, str) or not backend_type:
+        raise ValueError("backend capability type must be a non-empty string")
+    if expected_type is not None and backend_type != expected_type:
+        raise ValueError(f"backend capability type must be {expected_type}")
+    if value.get("schema_version") != 1:
+        raise ValueError("backend capability schema_version must be 1")
+    allowed = {
+        "record_types": RECORD_TYPES,
+        "record_operations": RECORD_OPERATIONS,
+        "issue_operations": ISSUE_OPERATIONS,
+    }
+    parsed: dict[str, frozenset[str]] = {}
+    for field, supported in allowed.items():
+        items = value.get(field)
+        if (
+            not isinstance(items, list)
+            or any(not isinstance(item, str) or not item for item in items)
+            or len(items) != len(set(items))
+        ):
+            raise ValueError(f"backend capability {field} must contain unique names")
+        unknown = set(items) - supported
+        if unknown:
+            raise ValueError(
+                f"backend capability {field} has unknown names: {', '.join(sorted(unknown))}"
+            )
+        parsed[field] = frozenset(items)
+    return parsed
+
+
+def load_backend_capabilities() -> dict[str, dict[str, frozenset[str]]]:
+    directory = Path(__file__).resolve().parent / "backends/record-store"
+    declared_types = {
+        path.name.removesuffix(".capabilities.json")
+        for path in directory.glob("*.capabilities.json")
+    }
+    if declared_types != set(BACKEND_ASSETS):
+        raise RuntimeError("backend assets and capability declarations do not match")
+    result = {}
+    for backend_type in sorted(BACKEND_ASSETS):
+        path = directory / f"{backend_type}.capabilities.json"
+        try:
+            value = json.loads(path.read_text())
+            result[backend_type] = parse_backend_capabilities(value, backend_type)
+        except (OSError, json.JSONDecodeError, ValueError) as error:
+            raise RuntimeError(f"invalid capability declaration {path.name}: {error}") from error
+    return result
+
+
+BACKEND_CAPABILITIES = load_backend_capabilities()
+
+
+def required_backend_operations(record_type: str) -> tuple[str, set[str]]:
+    if record_type == "issues":
+        return "issue", ISSUE_OPERATIONS
+    return "record", RECORD_OPERATIONS
 
 
 @dataclass(frozen=True)
@@ -490,21 +548,17 @@ def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: li
             continue
         backend_type = settings["type"]
         capabilities = BACKEND_CAPABILITIES.get(backend_type, {})
-        missing_record_operations = RECORD_OPERATIONS - capabilities.get("record_operations", set())
         if record_type not in capabilities.get("record_types", set()):
             errors.append(f"{label} is unsupported by the {backend_type} record contract")
-        if missing_record_operations:
+        contract_name, required_operations = required_backend_operations(record_type)
+        missing_operations = required_operations - capabilities.get(
+            f"{contract_name}_operations", set()
+        )
+        if missing_operations:
             errors.append(
-                f"{label} backend contract is missing record operations: "
-                + ", ".join(sorted(missing_record_operations))
+                f"{label} backend contract is missing {contract_name} operations: "
+                + ", ".join(sorted(missing_operations))
             )
-        if record_type == "issues":
-            missing_issue_operations = ISSUE_OPERATIONS - capabilities.get("issue_operations", set())
-            if missing_issue_operations:
-                errors.append(
-                    f"{label} backend contract is missing issue operations: "
-                    + ", ".join(sorted(missing_issue_operations))
-                )
         destination = route.get("destination")
         if backend_type == "local-markdown":
             expected_destination = {"root"} if record_type == "issues" else {"path"}

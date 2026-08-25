@@ -126,7 +126,7 @@ records:
 
 ### Record contract
 
-21. Every adapter MUST implement the following record operations:
+21. Every adapter receiving a non-`issues` route MUST implement the following record operations:
    1. create a typed record and allocate any required semantic identifier within that operation;
    2. read complete current content and metadata plus an opaque revision;
    3. list and search by type, identity, title, and supported metadata;
@@ -143,7 +143,7 @@ records:
 
 ### Issue contract
 
-28. An adapter receiving the `issues` route MUST implement create, read, list, update, comment, claim, resolve, cancel, parent, block, and frontier in addition to the record contract.
+28. An adapter receiving the `issues` route MUST implement create, read, list, update, comment, claim, resolve, cancel, parent, block, and frontier while preserving the record contract's revision, reference, allocation, collision, and retained-history guarantees. It need not expose the separate non-issue record-operation interface.
 29. Initiative maps and decision tickets MUST remain issue structures. They MUST NOT become separate record routes.
 30. Failure findings, implementation reviews, and initiative closure summaries MUST update the requesting issue or parent record rather than create separate report records.
 31. A backend limitation such as non-atomic claiming MAY be declared, but every required operation MUST remain queryable and testable.

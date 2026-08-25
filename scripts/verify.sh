@@ -46,7 +46,15 @@ for forbidden in ("Monerium", "EMS", "CRUSH_", "docs/content/docs"):
 
 record_source = root / "backends/record-store"
 record_bundle = root / "skills/configure-workflows/references/backends/record-store"
-for name in ("contract.py", "github.md", "github.py", "local-markdown.md", "local-markdown.py"):
+for name in (
+    "contract.py",
+    "github.capabilities.json",
+    "github.md",
+    "github.py",
+    "local-markdown.capabilities.json",
+    "local-markdown.md",
+    "local-markdown.py",
+):
     source = root / "backends/record-store" / name
     bundled_copy = record_bundle / name
     if not bundled_copy.exists() or source.read_bytes() != bundled_copy.read_bytes():

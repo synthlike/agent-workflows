@@ -2,9 +2,9 @@
 id: ISSUE-0044
 title: "Declare backend record capabilities explicitly"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0043-add-bear-for-non-issue-record-routing.md"
 blocked_by:
 labels: ["bear","record-routing"]
@@ -37,6 +37,6 @@ None.
 Bear transport, Bear records, Things implementation, and dynamic reduction of required workflow semantics.
 
 ## Comments
-
-
 ## Resolution
+
+Added immutable schema-1 capability declarations beside the local Markdown and GitHub adapters and bundled exact copies with `configure-workflows`. Installed verification now loads those adapter-owned declarations, requires common operations only for non-issue routes and the complete issue extension for `issues`, and rejects missing record types or operations before writes. This permits future Bear note-only and Things issue-only declarations without user-authored `supports` overrides. Added drift checks against adapter record-type constants and portable operation sets, strict declaration-shape tests, incomplete-contract tests, and bundled-copy verification. Updated the portable contract, authoritative specification, configuration guidance, backend documentation, and changelog. `scripts/verify.sh` passes with 105 tests.
