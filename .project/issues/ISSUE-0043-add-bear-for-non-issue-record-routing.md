@@ -24,6 +24,7 @@ Normal verification uses deterministic mocked MCP. Live preflight is read-only. 
 ## Decisions so far
 
 - Declare backend record capabilities explicitly — immutable adapter-owned declarations now distinguish complete non-issue and issue operation contracts.
+- Verify the Bear MCP record contract — scoped stdio MCP exposes the required paginated note operations, whole-note hashes, native IDs, and deterministic preflight surface.
 - Bear supports the eleven non-issue record types, not `issues`.
 - Backend adapters declare supported record types and operations; projects do not self-assert capabilities.
 - Backend instances configure explicit `command` and `workspace`; destinations configure workspace-relative `tag`.
@@ -47,7 +48,7 @@ Dependent slices:
 
 ## Not yet specified
 
-- Exact Bear MCP tool names, schemas, protocol behavior, and documented note-ID deep-link format must be verified before implementation.
+None.
 
 ## Out of scope
 
