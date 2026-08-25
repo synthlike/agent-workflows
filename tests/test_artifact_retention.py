@@ -34,6 +34,16 @@ class ArtifactRetentionTests(unittest.TestCase):
         self.assertIn("never initialize, change, or configure version control without approval", text)
         self.assertIn("preserve its conventions", text)
 
+    def test_github_routes_require_preflight_and_reviewed_provisioning(self) -> None:
+        text = (ROOT / "skills/configure-workflows/SKILL.md").read_text()
+        self.assertIn("before recommending or asking approval for any route", text)
+        self.assertIn("actual API identity", text)
+        self.assertIn("complete record contract", text)
+        self.assertIn("complete issue contract", text)
+        self.assertIn("label-plan schema 2", text)
+        self.assertIn("apply only the exact reviewed plan after approval", text)
+        self.assertIn("exactly the guidance/helper pair for each backend type used", text)
+
     def test_affected_workflows_follow_repository_retention_policy(self) -> None:
         for name in (
             "research-question",
@@ -53,8 +63,8 @@ class ArtifactRetentionTests(unittest.TestCase):
         self.assertIn("what kind of project this is", text)
         self.assertIn("how people and agents will collaborate", text)
         self.assertIn("recommend each capability individually", text)
-        self.assertIn("profile question may offer all-local persistence", text)
-        self.assertIn("expand that answer into explicit routes", text)
+        self.assertIn("Profile questions may offer all-local, all-GitHub, or mixed", text)
+        self.assertIn("expand every answer into explicit routes", text)
         self.assertIn("complete destination for every route", text)
 
 

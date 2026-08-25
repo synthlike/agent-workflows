@@ -1,6 +1,6 @@
 # Workflow configuration
 
-`.agents/workflows.yaml` is the single canonical configuration at the consumer workspace root. Git is optional; the root may use Git, another version-control system, or be intentionally unversioned. New all-local configurations use schema 3. During the phase-1 implementation bridge, installed lifecycle verification also reads existing schema-2 consumers; the final cutover removes that compatibility.
+`.agents/workflows.yaml` is the single canonical configuration at the consumer workspace root. Git is optional; the root may use Git, another version-control system, or be intentionally unversioned. New all-local, all-GitHub, and mixed configurations use schema 3. During the phase-1 implementation bridge, installed lifecycle verification also reads existing schema-2 consumers; the final cutover removes that compatibility.
 
 ## Schema 3
 
@@ -38,6 +38,24 @@ records:
   handoffs: {enabled: false, backend: local, destination: {path: .agents/handoffs}}
 ```
 
+A GitHub backend instance requires exact provider settings and each routed destination uses its complete managed label:
+
+```yaml
+backends:
+  github-main:
+    type: github
+    repository: acme/project
+    login: octocat
+
+records:
+  issues: {enabled: true, backend: github-main, destination: {label: workflow:record:issues}}
+  specs: {enabled: true, backend: github-main, destination: {label: workflow:record:specs}}
+  research: {enabled: true, backend: github-main, destination: {label: workflow:record:research}}
+  # The other nine explicit routes follow the same label rule.
+```
+
+Mixed configurations declare both backend types and assign each of the twelve routes explicitly. Routes on the same GitHub instance cannot reuse another record type's label. Before route approval, `configure-workflows` verifies the configured login against the actual API identity and checks GitHub Cloud, enabled Issues, write permission, complete record operations, and complete issue/native-relationship operations when `issues` is routed there. Label planning is deterministic, reviewable, stale-safe, and applied only after separate mutation approval.
+
 The canonical key is `specs`; the semantic artifact and workflow remain “specification” and `author-specification`. Local paths must remain inside the consumer root. ARP and RFC routes require prefixes. Disabled routes prohibit persistence without approval but retain their destinations and may still permit approved temporary or external output.
 
 A profile question may simplify the interview, but `configure-workflows` expands it into all twelve reviewed routes. It prefers existing conventions before these defaults and does not move, copy, rename, or rewrite existing records.
@@ -46,8 +64,9 @@ Schema-3 consumers generate:
 
 - `docs/agents/records.md` with routes, operations, references, revisions, and approval boundaries;
 - `docs/agents/workflows.md` with authority and documentation policy;
-- `docs/agents/backends/local-markdown.md` and `local-markdown.py` for an all-local configuration; and
-- `docs/agents/backends/contract.py`, used by the local helper.
+- `docs/agents/backends/contract.py`, shared by generated helpers;
+- `docs/agents/backends/local-markdown.md` and `local-markdown.py` only when a route uses local Markdown; and
+- `docs/agents/backends/github.md` and `github.py` only when a route uses GitHub.
 
 `docs/agents/issue-tracker.md` is obsolete in schema 3. Generated backend assets must exactly match the installed `configure-workflows` copies. Record directories remain lazy and are created only on the first approved write.
 

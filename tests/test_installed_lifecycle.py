@@ -19,6 +19,8 @@ from consumer_fixture import (  # noqa: E402
     write_schema2_config,
     write_schema3_all_local_config,
     write_schema3_guidance,
+    write_schema3_routed_config,
+    write_schema3_routed_guidance,
 )
 
 
@@ -34,6 +36,7 @@ class InstalledLifecycleTests(unittest.TestCase):
         split_locations: bool = False,
         selected: tuple[str, ...] = ("clarify-intent",),
         schema_version: int = 2,
+        schema3_profile_name: str | None = None,
     ) -> tuple[Path, list[Path]]:
         root = base / "consumer"
         root.mkdir()
@@ -48,9 +51,19 @@ class InstalledLifecycleTests(unittest.TestCase):
             path.name: path.relative_to(root).as_posix() for path in skill_dirs
         }
         if schema_version == 3:
-            write_schema3_all_local_config(root, MANIFEST["distribution"], selected, inventory)
             configure_dir = next(path for path in skill_dirs if path.name == "configure-workflows")
-            write_schema3_guidance(root, configure_dir)
+            if schema3_profile_name:
+                assignments = write_schema3_routed_config(
+                    root,
+                    MANIFEST["distribution"],
+                    selected,
+                    inventory,
+                    schema3_profile_name,
+                )
+                write_schema3_routed_guidance(root, configure_dir, assignments)
+            else:
+                write_schema3_all_local_config(root, MANIFEST["distribution"], selected, inventory)
+                write_schema3_guidance(root, configure_dir)
         else:
             write_schema2_config(root, MANIFEST["distribution"], selected, inventory)
             write_guidance(root)
@@ -87,6 +100,114 @@ class InstalledLifecycleTests(unittest.TestCase):
             self.assertFalse((root / ".project").exists())
             self.assertFalse((root / "docs/domain").exists())
             self.assertFalse((root / "docs/specs").exists())
+
+    def test_verifies_all_github_and_mixed_schema_3_assets(self) -> None:
+        cases = {
+            "all-github": {"contract.py", "github.md", "github.py"},
+            "mixed": {
+                "contract.py",
+                "github.md",
+                "github.py",
+                "local-markdown.md",
+                "local-markdown.py",
+            },
+        }
+        for profile, expected_assets in cases.items():
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as directory:
+                root, skill_dirs = self.set_up_consumer(
+                    Path(directory),
+                    schema_version=3,
+                    schema3_profile_name=profile,
+                )
+                self.assertEqual([], self.verify(root, skill_dirs).errors)
+                data = consumer.parse_config((root / ".agents/workflows.yaml").read_text())
+                github = data["backends"]["github"]
+                self.assertEqual(
+                    {"type": "github", "repository": "acme/project", "login": "octocat"},
+                    github,
+                )
+                actual_assets = {
+                    path.name for path in (root / "docs/agents/backends").iterdir()
+                }
+                self.assertEqual(expected_assets, actual_assets)
+
+    def test_schema_3_does_not_generate_assets_for_unused_backend_instances(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), schema_version=3, schema3_profile_name="all-local"
+            )
+            config = root / ".agents/workflows.yaml"
+            config.write_text(
+                config.read_text().replace(
+                    "  local:\n    type: local-markdown\n",
+                    "  local:\n    type: local-markdown\n"
+                    "  unused-github:\n    type: github\n"
+                    "    repository: acme/project\n    login: octocat\n",
+                )
+            )
+            self.assertEqual([], self.verify(root, skill_dirs).errors)
+            assets = {path.name for path in (root / "docs/agents/backends").iterdir()}
+            self.assertEqual(
+                {"contract.py", "local-markdown.md", "local-markdown.py"}, assets
+            )
+
+    def test_schema_3_cross_backend_references_render_in_both_directions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), schema_version=3, schema3_profile_name="mixed"
+            )
+            self.assertEqual([], self.verify(root, skill_dirs).errors)
+            backend_dir = root / "docs/agents/backends"
+            references = (
+                (
+                    backend_dir / "local-markdown.py",
+                    ["--root", str(root), "--backend", "local", "--destination", "docs/specs"],
+                    {"backend": "github", "id": "42", "title": "GitHub record", "href": "https://github.com/acme/project/issues/42"},
+                ),
+                (
+                    backend_dir / "github.py",
+                    ["--login", "unused", "--backend", "github", "--destination-label", "workflow:record:specs"],
+                    {"backend": "local", "id": "docs/specs/local.md", "title": "Local record", "href": "docs/specs/local.md"},
+                ),
+            )
+            for helper, common, reference in references:
+                with self.subTest(helper=helper.name):
+                    reference_file = root / f"{helper.stem}-reference.json"
+                    reference_file.write_text(json.dumps(reference))
+                    completed = subprocess.run(
+                        [sys.executable, "-B", str(helper), *common, "render-reference", "--reference-file", str(reference_file)],
+                        cwd=root,
+                        text=True,
+                        capture_output=True,
+                        check=False,
+                    )
+                    self.assertEqual(0, completed.returncode, completed.stderr)
+                    self.assertEqual(
+                        f"[{reference['title']}](<{reference['href']}>)",
+                        json.loads(completed.stdout)["rendered"],
+                    )
+
+    def test_schema_3_rejects_incomplete_github_identity_and_wrong_labels(self) -> None:
+        mutations = {
+            "missing repository": lambda text: text.replace("    repository: acme/project\n", ""),
+            "missing login": lambda text: text.replace("    login: octocat\n", ""),
+            "malformed repository": lambda text: text.replace("acme/project", "acme/project/extra"),
+            "wrong route label": lambda text: text.replace(
+                "destination: {label: workflow:record:specs}",
+                "destination: {label: workflow:record:research}",
+            ),
+            "unknown backend setting": lambda text: text.replace(
+                "    login: octocat", "    login: octocat\n    token: forbidden"
+            ),
+        }
+        for name, mutate in mutations.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root, skill_dirs = self.set_up_consumer(
+                    Path(directory), schema_version=3, schema3_profile_name="all-github"
+                )
+                config = root / ".agents/workflows.yaml"
+                config.write_text(mutate(config.read_text()))
+                self.assertTrue(self.verify(root, skill_dirs).errors)
 
     def test_schema_3_rejects_missing_extra_malformed_and_unsupported_fields(self) -> None:
         mutations = {

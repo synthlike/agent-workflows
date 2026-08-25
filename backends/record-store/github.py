@@ -1202,10 +1202,13 @@ def main(arguments: list[str] | None = None) -> int:
     backend = GitHubBackend(client)
     portable = GitHubRecordAdapter(client, args.backend)
     try:
-        client.current_user()
         if args.command == "render-reference":
             reference = RecordReference.from_dict(json.loads(Path(args.reference_file).read_text()))
             result = {"rendered": portable.render_reference(reference)}
+        else:
+            client.current_user()
+        if args.command == "render-reference":
+            pass
         elif args.command.startswith("record-"):
             if not args.destination_label:
                 raise RecordError("invalid_destination", "--destination-label is required")

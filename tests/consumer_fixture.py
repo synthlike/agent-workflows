@@ -155,6 +155,133 @@ records:
     )
 
 
+SCHEMA3_ROUTES = {
+    "issues": (True, "root: .project"),
+    "domain": (True, "path: docs/domain"),
+    "arps": (True, "path: docs/decisions, prefix: ARP"),
+    "rfcs": (True, "path: docs/rfcs, prefix: RFC"),
+    "specs": (True, "path: docs/specs"),
+    "meetings": (False, "path: docs/meetings"),
+    "research": (True, "path: docs/research"),
+    "questionnaires": (True, "path: docs/questionnaires"),
+    "technical_baselines": (True, "path: docs/engineering"),
+    "problem_framing": (True, "path: docs/product"),
+    "prototypes": (False, "path: docs/prototypes"),
+    "handoffs": (False, "path: .agents/handoffs"),
+}
+
+
+def schema3_profile(profile: str) -> tuple[str, dict[str, str]]:
+    if profile == "all-local":
+        return "  local:\n    type: local-markdown", {name: "local" for name in SCHEMA3_ROUTES}
+    if profile == "all-github":
+        return (
+            "  github:\n    type: github\n    repository: acme/project\n    login: octocat",
+            {name: "github" for name in SCHEMA3_ROUTES},
+        )
+    if profile == "mixed":
+        backends = (
+            "  local:\n    type: local-markdown\n"
+            "  github:\n    type: github\n    repository: acme/project\n    login: octocat"
+        )
+        github_routes = {"issues", "arps", "specs", "research", "problem_framing", "prototypes"}
+        return backends, {
+            name: "github" if name in github_routes else "local"
+            for name in SCHEMA3_ROUTES
+        }
+    raise ValueError(f"unknown schema-3 profile: {profile}")
+
+
+def write_schema3_routed_config(
+    root: Path,
+    distribution: dict[str, Any],
+    selected: Iterable[str],
+    inventory: dict[str, str],
+    profile: str,
+) -> dict[str, str]:
+    selected_lines = "\n".join(f"    - {name}" for name in sorted(selected))
+    skill_lines = "\n".join(f"    {name}: {path}" for name, path in sorted(inventory.items()))
+    backend_text, assignments = schema3_profile(profile)
+    route_blocks = []
+    for name, (enabled, local_destination) in SCHEMA3_ROUTES.items():
+        backend = assignments[name]
+        destination = (
+            f"label: workflow:record:{name}"
+            if backend == "github"
+            else local_destination
+        )
+        route_blocks.append(
+            f"  {name}:\n"
+            f"    enabled: {'true' if enabled else 'false'}\n"
+            f"    backend: {backend}\n"
+            f"    destination: {{{destination}}}"
+        )
+    routes_text = "\n".join(route_blocks)
+    (root / ".agents").mkdir(exist_ok=True)
+    (root / ".agents/workflows.yaml").write_text(
+        f"""schema_version: 3
+
+distribution:
+  source: {distribution['source']}
+  version: {distribution['version']}
+
+installation:
+  selected:
+{selected_lines}
+  skills:
+{skill_lines}
+
+backends:
+{backend_text}
+
+records:
+{routes_text}
+"""
+    )
+    return assignments
+
+
+def write_schema3_routed_guidance(
+    root: Path,
+    configure_workflows_dir: Path,
+    assignments: dict[str, str],
+) -> None:
+    backend_source = configure_workflows_dir / "references/backends/record-store"
+    backend_target = root / "docs/agents/backends"
+    backend_target.mkdir(parents=True, exist_ok=True)
+    names = {"contract.py"}
+    if "local" in assignments.values():
+        names.update({"local-markdown.md", "local-markdown.py"})
+    if "github" in assignments.values():
+        names.update({"github.md", "github.py"})
+    for name in sorted(names):
+        shutil.copy2(backend_source / name, backend_target / name)
+    (root / "docs/agents/workflows.md").write_text(
+        "# Workflows\n\nRecord routing is documented in `docs/agents/records.md`.\n"
+    )
+    route_lines = "\n".join(
+        f"- `{name}`: {'enabled' if SCHEMA3_ROUTES[name][0] else 'disabled'}, "
+        f"backend `{backend}`, destination `"
+        + (
+            f"workflow:record:{name}"
+            if backend == "github"
+            else SCHEMA3_ROUTES[name][1]
+        )
+        + "` (adapter-owned)"
+        for name, backend in assignments.items()
+    )
+    (root / "docs/agents/records.md").write_text(
+        "# Record routing\n\nConfiguration: `.agents/workflows.yaml`\n\n"
+        "Use create, read, list/search, guarded update, and archive through the configured adapter. "
+        "Issues additionally support comment, claim, resolve, cancel, parent, block, and frontier. "
+        "Treat returned references and revisions as opaque. Pass complete references to the destination adapter for rendering and pass the latest revision to mutations. "
+        "Obtain approval before every mutation. A disabled route prohibits persistence without new approval.\n\n"
+        "Backend guidance and helpers are under `docs/agents/backends/`.\n\n"
+        + route_lines + "\n"
+    )
+    (root / "AGENTS.md").write_text(SCHEMA3_AGENT_POINTERS)
+
+
 def write_schema3_guidance(root: Path, configure_workflows_dir: Path) -> None:
     backend_source = configure_workflows_dir / "references/backends/record-store"
     backend_target = root / "docs/agents/backends"

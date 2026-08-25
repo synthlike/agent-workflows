@@ -156,6 +156,33 @@ class GitHubIssueBackendTests(unittest.TestCase):
         with self.assertRaisesRegex(BackendError, "expected selected-user"):
             client.current_user()
 
+    def test_preflight_reports_complete_record_and_issue_capabilities(self):
+        def runner(arguments, _input_text):
+            if arguments[:2] == ["auth", "status"]:
+                return json.dumps(
+                    {"hosts": {"github.com": [{"active": True, "login": "octocat", "state": "success"}]}}
+                )
+            if arguments == ["api", "--method", "GET", "/user"]:
+                return json.dumps({"login": "octocat"})
+            if arguments[:3] == ["repo", "view", "acme/project"]:
+                return json.dumps(
+                    {
+                        "nameWithOwner": "acme/project",
+                        "url": "https://github.com/acme/project",
+                        "viewerPermission": "WRITE",
+                        "hasIssuesEnabled": True,
+                    }
+                )
+            raise AssertionError(arguments)
+
+        result = GhClient("acme/project", "octocat", runner).preflight()
+        capabilities = result["capabilities"]
+        self.assertEqual("complete", capabilities["record_contract"])
+        self.assertEqual("complete", capabilities["issue_contract"])
+        self.assertEqual(sorted(backend_module.RECORD_TYPES), capabilities["record_types"])
+        self.assertEqual("native", capabilities["sub_issues"])
+        self.assertEqual("native", capabilities["issue_dependencies"])
+
     def test_label_plan_is_reviewable_and_stale_safe(self):
         labels = []
 

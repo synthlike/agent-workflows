@@ -36,7 +36,11 @@ RECORD_TYPES = {
     "handoffs",
 }
 SCHEMA3_TOP_LEVEL = {"schema_version", "distribution", "installation", "backends", "records"}
-LOCAL_BACKEND_ASSETS = {"contract.py", "local-markdown.md", "local-markdown.py"}
+BACKEND_ASSETS = {
+    "local-markdown": {"local-markdown.md", "local-markdown.py"},
+    "github": {"github.md", "github.py"},
+}
+GITHUB_REPOSITORY = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 
 
 @dataclass(frozen=True)
@@ -357,7 +361,19 @@ def _validate_schema3_assets(root: Path, data: dict[str, Any], errors: list[str]
         for path in backend_dir.iterdir()
         if path.is_file() and path.name not in IGNORED_NAMES
     } if backend_dir.is_dir() else set()
-    expected = set(LOCAL_BACKEND_ASSETS)
+    backends = data.get("backends")
+    records = data.get("records")
+    used_types = set()
+    if isinstance(backends, dict) and isinstance(records, dict):
+        for route in records.values():
+            instance = route.get("backend") if isinstance(route, dict) else None
+            settings = backends.get(instance) if isinstance(instance, str) else None
+            backend_type = settings.get("type") if isinstance(settings, dict) else None
+            if backend_type in BACKEND_ASSETS:
+                used_types.add(backend_type)
+    expected = {"contract.py"} if used_types else set()
+    for backend_type in used_types:
+        expected.update(BACKEND_ASSETS[backend_type])
     missing = expected - actual
     unexpected = actual - expected
     if missing:
@@ -413,10 +429,23 @@ def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: li
         if not isinstance(name, str) or not name:
             errors.append("backend instance names must be non-empty strings")
             continue
-        if not _exact_fields(settings, {"type"}, label, errors):
+        if not isinstance(settings, dict):
+            errors.append(f"{label} must be a mapping")
             continue
-        if settings.get("type") != "local-markdown":
-            errors.append(f"unsupported backend type for schema-3 bridge: {settings.get('type')}")
+        backend_type = settings.get("type")
+        if backend_type == "local-markdown":
+            _exact_fields(settings, {"type"}, label, errors)
+        elif backend_type == "github":
+            if not _exact_fields(settings, {"type", "repository", "login"}, label, errors):
+                continue
+            repository = settings.get("repository")
+            login = settings.get("login")
+            if not isinstance(repository, str) or not GITHUB_REPOSITORY.fullmatch(repository):
+                errors.append(f"{label}.repository must use OWNER/REPO form")
+            if not isinstance(login, str) or not login.strip():
+                errors.append(f"{label}.login must be a non-empty string")
+        else:
+            errors.append(f"unsupported backend type for schema-3 bridge: {backend_type}")
 
     records = data.get("records")
     if not isinstance(records, dict):
@@ -440,21 +469,28 @@ def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: li
             errors.append(f"{label}.backend must reference a configured backend")
             continue
         settings = backends.get(backend)
-        if not isinstance(settings, dict) or settings.get("type") != "local-markdown":
+        if not isinstance(settings, dict) or settings.get("type") not in BACKEND_ASSETS:
             errors.append(f"{label} uses an unsupported backend contract")
             continue
         destination = route.get("destination")
-        expected_destination = {"root"} if record_type == "issues" else {"path"}
-        if record_type in {"arps", "rfcs"}:
-            expected_destination.add("prefix")
-        if not _exact_fields(destination, expected_destination, f"{label}.destination", errors):
-            continue
-        path_key = "root" if record_type == "issues" else "path"
-        _contained_path(root, destination.get(path_key), f"{label}.destination.{path_key}", errors)
-        if record_type in {"arps", "rfcs"} and (
-            not isinstance(destination.get("prefix"), str) or not destination["prefix"]
-        ):
-            errors.append(f"{label}.destination.prefix must be a non-empty string")
+        if settings["type"] == "local-markdown":
+            expected_destination = {"root"} if record_type == "issues" else {"path"}
+            if record_type in {"arps", "rfcs"}:
+                expected_destination.add("prefix")
+            if not _exact_fields(destination, expected_destination, f"{label}.destination", errors):
+                continue
+            path_key = "root" if record_type == "issues" else "path"
+            _contained_path(root, destination.get(path_key), f"{label}.destination.{path_key}", errors)
+            if record_type in {"arps", "rfcs"} and (
+                not isinstance(destination.get("prefix"), str) or not destination["prefix"]
+            ):
+                errors.append(f"{label}.destination.prefix must be a non-empty string")
+        else:
+            if not _exact_fields(destination, {"label"}, f"{label}.destination", errors):
+                continue
+            expected_label = f"workflow:record:{record_type}"
+            if destination.get("label") != expected_label:
+                errors.append(f"{label}.destination.label must be {expected_label}")
     _validate_schema3_assets(root, data, errors)
 
 
