@@ -11,6 +11,7 @@ import re
 import sys
 from typing import Any
 
+from application import ApplyError, apply_consumer_plan, parse_canonical_plan
 from consumer import dependency_closure, inspect_skills, verify_consumer
 from planning import PlanError, build_consumer_plan
 
@@ -404,6 +405,10 @@ def main() -> int:
     plan_parser = subparsers.add_parser("plan-consumer")
     _add_consumer_arguments(plan_parser)
     plan_parser.add_argument("--answers", required=True, type=Path)
+    apply_parser = subparsers.add_parser("apply-consumer")
+    apply_parser.add_argument("--consumer-root", required=True, type=Path)
+    apply_parser.add_argument("--plan", required=True, type=Path)
+    apply_parser.add_argument("--expected-digest", required=True)
     args = parser.parse_args()
     try:
         if args.command == "generate-release":
@@ -464,7 +469,7 @@ def main() -> int:
             )
             if verification.errors:
                 return 1
-        else:
+        elif args.command == "plan-consumer":
             manifest = installed_manifest()
             skill_dirs = _consumer_skill_dirs(args)
             try:
@@ -473,7 +478,16 @@ def main() -> int:
                 raise LifecycleError(f"cannot read answers {args.answers}: {error}") from error
             plan = build_consumer_plan(args.consumer_root, skill_dirs, manifest, answer)
             sys.stdout.buffer.write(canonical_json(plan))
-    except (LifecycleError, PlanError) as error:
+        else:
+            manifest = installed_manifest()
+            try:
+                plan_data = args.plan.read_bytes()
+            except OSError as error:
+                raise LifecycleError(f"cannot read plan {args.plan}: {error}") from error
+            plan = parse_canonical_plan(plan_data, args.expected_digest)
+            result = apply_consumer_plan(args.consumer_root, plan, manifest)
+            sys.stdout.buffer.write(canonical_json(result))
+    except (ApplyError, LifecycleError, PlanError) as error:
         print(f"Lifecycle error: {error}", file=sys.stderr)
         return 1
     return 0

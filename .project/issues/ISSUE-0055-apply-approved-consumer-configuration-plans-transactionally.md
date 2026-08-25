@@ -2,9 +2,9 @@
 id: ISSUE-0055
 title: "Apply approved consumer configuration plans transactionally"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0050-streamline-deterministic-consumer-configuration.md"
 blocked_by:
   - "ISSUE-0054-generate-deterministic-consumer-configuration-plans.md"
@@ -41,6 +41,6 @@ Deterministic consumer plan generation.
 Skill updates, backend records, label application, schema migration, and interruption recovery after an uncatchable process or machine failure.
 
 ## Comments
-
-
 ## Resolution
+
+Added source-checkout-free `lifecycle.py apply-consumer`, requiring an exact canonical plan file and separately supplied reviewed `sha256` digest. Apply strictly validates plan and operation shape, digest, bound consumer root, release identity and manifest hash, complete integrity-checked installed inventory, invocation policy and dependency closure, backend capabilities and destinations, canonical re-rendered target set, every prior target state, every copied source path/hash, destination hashes and containment, and managed/lazy directory intent before consumer mutation. It stages every output on the destination filesystem, backs up changed existing files with metadata, rechecks the complete state immediately before mutation, creates only planned managed parents, atomically replaces only changed planned files, runs `verify-consumer` with plan-bound skill paths, and confirms record destinations remain absent. Caught write or verification failures restore prior targets and remove newly created planned directories when safe, with explicit complete/incomplete rollback reporting. Replanning applied identical intent produces unchanged targets and a no-op apply. Skills, record destinations, backend state, and provider configuration are never mutation targets; GitHub labels remain separate. Added success, canonical/digest tamper, stale state, malicious recomputed plan, exact-root-guidance preservation, skill immutability, source-checkout-free CLI, verification/write rollback, stage cleanup, and no-op regressions. Updated authoritative and user guidance plus the changelog. `scripts/verify.sh` passes with 156 tests.

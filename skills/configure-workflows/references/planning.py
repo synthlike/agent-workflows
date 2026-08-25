@@ -150,7 +150,7 @@ def _expected_value(prior: dict[str, str]) -> str | None:
     return prior.get("sha256") if prior["state"] == "file" else None
 
 
-def _directory_sets(
+def directory_intent(
     root: Path,
     target_paths: list[str],
     records: dict[str, dict[str, Any]],
@@ -317,12 +317,13 @@ def build_consumer_plan(
         targets.append(target_entry)
 
     target_paths = [target["path"] for target in targets]
-    directories_to_create, directories_left_absent = _directory_sets(
+    directories_to_create, directories_left_absent = directory_intent(
         root, target_paths, records, backends
     )
     manifest_hash = _digest(canonical_json(manifest))
     plan: dict[str, Any] = {
         "plan_version": PLAN_VERSION,
+        "consumer_root": str(root),
         "distribution": {
             "source": manifest["distribution"]["source"],
             "version": manifest["distribution"]["version"],
