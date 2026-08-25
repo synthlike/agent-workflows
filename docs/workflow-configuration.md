@@ -56,6 +56,24 @@ records:
 
 Mixed configurations declare both backend types and assign each of the twelve routes explicitly. Routes on the same GitHub instance cannot reuse another record type's label. Before route approval, `configure-workflows` verifies the configured login against the actual API identity and checks GitHub Cloud, enabled Issues, write permission, complete record operations, and complete issue/native-relationship operations when `issues` is routed there. Label planning is deterministic, reviewable, stale-safe, and applied only after separate mutation approval.
 
+A Bear backend instance requires an absolute executable and project workspace tag. Non-issue destinations use workspace-relative tags:
+
+```yaml
+backends:
+  notes:
+    type: bear
+    command: /Applications/Bear.app/Contents/MacOS/bearcli
+    workspace: agent-workflows/project-key
+
+records:
+  specs:
+    enabled: true
+    backend: notes
+    destination: {tag: specs}
+```
+
+Before approval, `configure-workflows` launches `COMMAND mcp-server --only-tags WORKSPACE` for read-only identity, scope, and required-tool preflight. It never creates an MCP registration, note, or tag during preflight. The bundled preflight currently establishes provider capability while Bear record CRUD remains incomplete, so installed verification rejects Bear routes until the adapter declares the common record operations. Bear never supports `issues`.
+
 The canonical key is `specs`; the semantic artifact and workflow remain “specification” and `author-specification`. Local paths must remain inside the consumer root. ARP and RFC routes require prefixes. Disabled routes prohibit persistence without approval but retain their destinations and may still permit approved temporary or external output.
 
 A profile question may simplify the interview, but `configure-workflows` expands it into all twelve reviewed routes. It prefers existing conventions before these defaults and does not move, copy, rename, or rewrite existing records.
@@ -65,8 +83,9 @@ Schema-3 consumers generate:
 - `docs/agents/records.md` with routes, operations, references, revisions, and approval boundaries;
 - `docs/agents/workflows.md` with authority and documentation policy;
 - `docs/agents/backends/contract.py`, shared by generated helpers;
-- `docs/agents/backends/local-markdown.md` and `local-markdown.py` only when a route uses local Markdown; and
-- `docs/agents/backends/github.md` and `github.py` only when a route uses GitHub.
+- `docs/agents/backends/local-markdown.md` and `local-markdown.py` only when a route uses local Markdown;
+- `docs/agents/backends/github.md` and `github.py` only when a route uses GitHub; and
+- `docs/agents/backends/bear.md` and `bear.py` only when a route uses Bear.
 
 Schema 3 does not generate provider-specific issue-tracker guidance outside `docs/agents/backends/`. Generated backend assets must exactly match the installed `configure-workflows` copies. Record directories remain lazy and are created only on the first approved write.
 

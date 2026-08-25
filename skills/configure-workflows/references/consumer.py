@@ -38,6 +38,7 @@ RECORD_TYPES = {
 }
 SCHEMA3_TOP_LEVEL = {"schema_version", "distribution", "installation", "backends", "records"}
 BACKEND_ASSETS = {
+    "bear": {"bear.md", "bear.py"},
     "local-markdown": {"local-markdown.md", "local-markdown.py"},
     "github": {"github.md", "github.py"},
 }
@@ -404,6 +405,34 @@ def _contained_path(root: Path, value: Any, label: str, errors: list[str]) -> Pa
     return resolved
 
 
+def _validate_bear_tag(
+    value: Any,
+    label: str,
+    errors: list[str],
+    *,
+    workspace: str | None = None,
+) -> bool:
+    if not isinstance(value, str) or not value or value != value.strip():
+        errors.append(f"{label} must be a non-empty trimmed Bear tag")
+        return False
+    if value.startswith(("#", "/")) or value.endswith(("#", "/")):
+        errors.append(f"{label} must not start or end with # or /")
+        return False
+    if "," in value or "\\" in value or any(ord(character) < 32 for character in value):
+        errors.append(f"{label} contains unsupported characters")
+        return False
+    if any(
+        not segment or segment in {".", ".."} or segment != segment.strip()
+        for segment in value.split("/")
+    ):
+        errors.append(f"{label} has an invalid tag segment")
+        return False
+    if workspace is not None and (value == workspace or value.startswith(workspace + "/")):
+        errors.append(f"{label} must be relative to the configured workspace")
+        return False
+    return True
+
+
 def _exact_fields(value: Any, expected: set[str], label: str, errors: list[str]) -> bool:
     if not isinstance(value, dict):
         errors.append(f"{label} must be a mapping")
@@ -518,6 +547,13 @@ def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: li
                 errors.append(f"{label}.repository must use OWNER/REPO form")
             if not isinstance(login, str) or not login.strip():
                 errors.append(f"{label}.login must be a non-empty string")
+        elif backend_type == "bear":
+            if not _exact_fields(settings, {"type", "command", "workspace"}, label, errors):
+                continue
+            command = settings.get("command")
+            if not isinstance(command, str) or not command or not Path(command).is_absolute():
+                errors.append(f"{label}.command must be an absolute executable path")
+            _validate_bear_tag(settings.get("workspace"), f"{label}.workspace", errors)
         else:
             errors.append(f"unsupported backend type for schema 3: {backend_type}")
 
@@ -572,12 +608,25 @@ def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: li
                 not isinstance(destination.get("prefix"), str) or not destination["prefix"]
             ):
                 errors.append(f"{label}.destination.prefix must be a non-empty string")
-        else:
+        elif backend_type == "github":
             if not _exact_fields(destination, {"label"}, f"{label}.destination", errors):
                 continue
             expected_label = f"workflow:record:{record_type}"
             if destination.get("label") != expected_label:
                 errors.append(f"{label}.destination.label must be {expected_label}")
+        else:
+            if not _exact_fields(destination, {"tag"}, f"{label}.destination", errors):
+                continue
+            _validate_bear_tag(
+                destination.get("tag"),
+                f"{label}.destination.tag",
+                errors,
+                workspace=(
+                    settings.get("workspace")
+                    if isinstance(settings.get("workspace"), str)
+                    else None
+                ),
+            )
     _validate_schema3_assets(root, data, errors)
 
 

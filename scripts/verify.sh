@@ -47,6 +47,9 @@ for forbidden in ("Monerium", "EMS", "CRUSH_", "docs/content/docs"):
 record_source = root / "backends/record-store"
 record_bundle = root / "skills/configure-workflows/references/backends/record-store"
 for name in (
+    "bear.capabilities.json",
+    "bear.md",
+    "bear.py",
     "contract.py",
     "github.capabilities.json",
     "github.md",
@@ -82,9 +85,11 @@ for legacy in ("wayfinder:", "initiative:map", "initiative:task", "workflow:bug"
     if legacy in github_adapter:
         errors.append(f"backends/record-store/github.md: contains legacy label {legacy}")
 for helper in (
+    root / "backends/record-store/bear.py",
     root / "backends/record-store/contract.py",
     root / "backends/record-store/github.py",
     root / "backends/record-store/local-markdown.py",
+    record_bundle / "bear.py",
     record_bundle / "contract.py",
     record_bundle / "github.py",
     record_bundle / "local-markdown.py",

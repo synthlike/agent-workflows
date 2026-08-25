@@ -2,9 +2,9 @@
 id: ISSUE-0046
 title: "Configure and preflight scoped Bear backends"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0043-add-bear-for-non-issue-record-routing.md"
 blocked_by:
   - "ISSUE-0044-declare-backend-record-capabilities-explicitly.md"
@@ -39,6 +39,6 @@ The Bear MCP contract research and canonical capability declarations.
 Record CRUD, live mutation, Bear issue support, and Things.
 
 ## Comments
-
-
 ## Resolution
+
+Added explicit Bear backend configuration with required absolute `command` and scoped `workspace`, strict workspace-relative destination tags, and rejection of Bear `issues` or any Bear route whose immutable adapter declaration lacks required operations. Added a bundled `bear.py` helper that launches exactly `COMMAND mcp-server --only-tags WORKSPACE`, initializes MCP 2025-06-18, validates the `bearcli` identity and echoed scope, and verifies required create/read/list/search/`baseHash` overwrite/tag tool schemas and annotations using only `initialize` and `tools/list`. Bear currently declares the eleven intended non-issue types but no completed operations, so provider preflight can succeed while route approval remains safely blocked until CRUD lands. Updated configuration workflow instructions, generated-asset verification, backend guidance, lifecycle documentation, and changelog. Deterministic tests cover malformed transport, identity, scope, protocol, missing tools, annotations, command availability, backend fields, destination tags, zero-write preflight, and unused assets. A live read-only preflight passed against Bear CLI 2.9.3. `scripts/verify.sh` passes with 111 tests.

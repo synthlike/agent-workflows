@@ -19,6 +19,7 @@ From the consumer workspace root, inspect:
 
 - whether the workspace uses Git, another version-control system, or no version control, and the discovered workspace boundary;
 - Git remotes when present, whether the project uses GitHub Issues, authenticated `github.com` accounts, and the currently active account;
+- an explicitly selected Bear `bearcli` executable and project workspace tag when Bear persistence is considered;
 - the workflows explicitly selected by the user and the exact skill directories discovered by the harness;
 - the installed distribution source and exact release version or immutable commit SHA;
 - `AGENTS.md`, `CLAUDE.md`, or equivalent agent guidance;
@@ -34,6 +35,7 @@ From the consumer workspace root, inspect:
 Prefer existing conventions. For a new project, recommend:
 
 - GitHub persistence for any suitable semantic records when an explicit GitHub Cloud repository and login pass identity and capability preflight; use native sub-issues and dependencies when `issues` is routed there;
+- Bear persistence only for non-issue semantic records when an explicit absolute `bearcli` command and project workspace pass read-only capability preflight and the installed Bear adapter declares the complete record contract;
 - otherwise local Markdown, committed when the workspace uses a commit-based version-control system;
 - domain docs under `docs/domain/`;
 - ARPs under `docs/decisions/`;
@@ -55,6 +57,8 @@ Ask what kind of project this is and how people and agents will collaborate on i
 When GitHub is considered, list authenticated account names and identify the active account without exposing tokens. Ask which login should own backend operations, even when an account is already active, and record the explicit repository and login in the named GitHub backend instance. When several accounts exist, never infer the intended identity from the active account alone. If the selected account is not active, ask the user to run `gh auth switch --hostname github.com --user LOGIN`, wait for confirmation, and recheck; never change global authentication silently.
 
 For every GitHub backend instance, run bundled `references/backends/record-store/github.py --repo OWNER/REPO --login LOGIN --backend INSTANCE preflight` before recommending or asking approval for any route. Confirm the actual API identity, GitHub Cloud repository, enabled Issues, write permission, complete record contract, and—when `issues` uses the instance—native sub-issues and dependencies plus the complete issue contract. Stop on any missing capability or identity mismatch.
+
+For every Bear backend instance, run bundled `references/backends/record-store/bear.py --command ABSOLUTE_BEARCLI --workspace WORKSPACE preflight` before recommending or asking approval for a non-issue route. Confirm the `bearcli` identity, exact single-workspace scope, required MCP tools and schemas, and provider record capabilities. The preflight is read-only and does not provision a tag or note. Stop if provider preflight fails or the immutable adapter declaration lacks the routed type or common operation. Never route `issues` to Bear or add a harness-specific MCP registration.
 
 Generate a label-plan format 2 document with the same explicit repository and login. Show every proposed `workflow:record:*` and `workflow:issue:*` creation or update and apply only the exact reviewed plan after approval. Label provisioning is a separate external mutation; never apply it merely because routes were approved. Do not fall back to task lists, body-text dependencies, or unreviewed labels.
 
@@ -83,7 +87,7 @@ Wait for explicit approval.
 - Do not require or initialize Git. Use the approved consumer workspace root whether it is Git-controlled, controlled by another system, or intentionally unversioned.
 - Ask the harness to rediscover skills after external installation changes. Continue only after it confirms every distributed skill at its consumer-root-contained path.
 - Write `.agents/workflows.yaml` as canonical schema 3 with every backend and all twelve routes explicit. Never write a placeholder or mutable distribution version.
-- Copy the bundled [portable contract module](references/backends/record-store/contract.py) and exactly the guidance/helper pair for each backend type used by a route: [local Markdown guidance](references/backends/record-store/local-markdown.md) and [helper](references/backends/record-store/local-markdown.py), and/or [GitHub guidance](references/backends/record-store/github.md) and [helper](references/backends/record-store/github.py). Do not generate assets for configured but unused backend instances. Do not create a local record destination directory until its first approved write.
+- Copy the bundled [portable contract module](references/backends/record-store/contract.py) and exactly the guidance/helper pair for each backend type used by a route: [local Markdown guidance](references/backends/record-store/local-markdown.md) and [helper](references/backends/record-store/local-markdown.py), [GitHub guidance](references/backends/record-store/github.md) and [helper](references/backends/record-store/github.py), and/or [Bear guidance](references/backends/record-store/bear.md) and [helper](references/backends/record-store/bear.py). Do not generate assets for configured but unused backend instances. Do not create a local record destination directory until its first approved write.
 - Apply only the exact approved GitHub label plan after configuration approval and a fresh stale-state check. Pass the configured repository, login, backend instance, and route destination explicitly to every helper operation.
 - Do not generate legacy issue-tracker guidance or helpers outside `docs/agents/backends/`. Do not move or rewrite existing issues or records.
 - Write `docs/agents/records.md` with all twelve configured routes, common operations, opaque references and revisions, destination-adapter reference rendering, generated backend assets, disabled-route behavior, and approval boundaries. Instruct workflows to use semantic keys and operations without constructing provider paths, identifiers, labels, tags, or links.

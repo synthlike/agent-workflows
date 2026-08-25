@@ -6,9 +6,10 @@ Canonical contracts and implementations are under [`backends/record-store/`](../
 
 - [portable contract](../backends/record-store/contract.md);
 - [local Markdown](../backends/record-store/local-markdown.md); and
-- [GitHub](../backends/record-store/github.md).
+- [GitHub](../backends/record-store/github.md); and
+- [Bear MCP preflight](../backends/record-store/bear.md).
 
-Local Markdown supports all twelve routes and creates configured destinations lazily. GitHub supports all twelve routes through managed issues, explicit identity preflight, `workflow:record:*` labels, and additional `workflow:issue:*` labels for issue-routed objects. GitHub non-issue records close as completed after publication; issue-routed objects retain native lifecycle and relationship semantics.
+Local Markdown supports all twelve routes and creates configured destinations lazily. GitHub supports all twelve routes through managed issues, explicit identity preflight, `workflow:record:*` labels, and additional `workflow:issue:*` labels for issue-routed objects. Bear currently provides scoped read-only provider preflight but declares no completed record operations, so verification rejects Bear routes until its non-issue adapter is complete. GitHub non-issue records close as completed after publication; issue-routed objects retain native lifecycle and relationship semantics.
 
 A configured consumer receives `docs/agents/backends/contract.py` plus exactly one guidance/helper pair per backend type used by a route. Generated copies are consumer-owned and must exactly match the reviewed installed assets at configuration time.
 

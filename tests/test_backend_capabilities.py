@@ -48,6 +48,13 @@ class BackendCapabilityTests(unittest.TestCase):
 
     def test_partial_backend_declarations_are_valid_but_do_not_gain_capabilities(self) -> None:
         non_issue = sorted(consumer.RECORD_TYPES - {"issues"})
+        declared_bear = consumer.parse_backend_capabilities(
+            json.loads((RECORD_STORE / "bear.capabilities.json").read_text()), "bear"
+        )
+        self.assertEqual(set(non_issue), set(declared_bear["record_types"]))
+        self.assertEqual(frozenset(), declared_bear["record_operations"])
+        self.assertEqual(declared_bear, consumer.BACKEND_CAPABILITIES["bear"])
+
         bear = consumer.parse_backend_capabilities(
             {
                 "backend_type": "bear",

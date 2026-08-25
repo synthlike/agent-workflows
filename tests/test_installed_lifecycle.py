@@ -143,7 +143,10 @@ class InstalledLifecycleTests(unittest.TestCase):
                     "  local:\n    type: local-markdown\n",
                     "  local:\n    type: local-markdown\n"
                     "  unused-github:\n    type: github\n"
-                    "    repository: acme/project\n    login: octocat\n",
+                    "    repository: acme/project\n    login: octocat\n"
+                    "  unused-bear:\n    type: bear\n"
+                    "    command: /Applications/Bear.app/Contents/MacOS/bearcli\n"
+                    "    workspace: agent-workflows/project\n",
                 )
             )
             self.assertEqual([], self.verify(root, skill_dirs).errors)
