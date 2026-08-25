@@ -2,9 +2,9 @@
 id: ISSUE-0051
 title: "Correct discovery semantics and inspect backends conditionally"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0050-streamline-deterministic-consumer-configuration.md"
 blocked_by:
 labels: ["lifecycle","configuration"]
@@ -39,6 +39,6 @@ None.
 Consumer plan/apply, skill installation, runtime prompt introspection, and backend mutation.
 
 ## Comments
-
-
 ## Resolution
+
+Corrected discovery semantics and provider inspection order. Manifest format 2 now derives an immutable `model_invocation` value from validated skill frontmatter for every skill. Installed inspection reports separate `installed`, `model_invocable`, and `manual_invocation` sets in JSON and human output; all seven `disable-model-invocation: true` skills pass recursive Pi `.agents/skills/` discovery-root integrity checks without being treated as prompt-visible. `configure-workflows` now explicitly distinguishes installation, discovery, invocation eligibility, and runtime prompt state; requests restart or rediscovery only after post-startup installation or an unavailable manual command; and no longer requires prompt visibility. Exploration is split into provider-neutral initial inspection followed by a project/profile question and conditional GitHub or Bear inspection. Local-only inspection is regression-tested with failing `gh` and `bearcli` sentinels and invokes neither. Updated the authoritative routing specification, manifest/configuration/verification/fresh/adoption guidance, starting flow, and changelog. `scripts/verify.sh` passes with 137 tests.

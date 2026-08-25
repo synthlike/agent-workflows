@@ -77,6 +77,19 @@ class ArtifactRetentionTests(unittest.TestCase):
                 self.assertIn("disabled", text)
                 self.assertIn("without approval", text)
 
+    def test_configuration_separates_discovery_and_defers_backend_inspection(self) -> None:
+        text = (ROOT / "skills/configure-workflows/SKILL.md").read_text()
+        harness = text.split("### Harness discovery", 1)[1].split("### Initial inspection", 1)[0]
+        initial = text.split("### Initial inspection", 1)[1].split("### Backend inspection", 1)[0]
+        backend = text.split("### Backend inspection", 1)[1].split("## Recommend", 1)[0]
+        self.assertIn("disable-model-invocation: true", harness)
+        self.assertIn("absent from the model's available-skills prompt", harness)
+        self.assertIn(".agents/skills/", harness)
+        self.assertNotIn("`gh`", initial)
+        self.assertNotIn("`bearcli`", initial)
+        self.assertIn("only backends that the user is considering", backend)
+        self.assertIn("do not invoke `gh`, `bearcli`", backend)
+
     def test_configuration_uses_project_context_not_rigid_profiles(self) -> None:
         text = (ROOT / "skills/configure-workflows/SKILL.md").read_text()
         self.assertIn("what kind of project this is", text)

@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -34,6 +35,7 @@ class InstalledLifecycleTests(unittest.TestCase):
         selected: tuple[str, ...] = ("clarify-intent",),
         schema_version: int = 3,
         schema3_profile_name: str | None = None,
+        skill_parent: str = ".skills",
     ) -> tuple[Path, list[Path]]:
         root = base / "consumer"
         root.mkdir()
@@ -42,6 +44,7 @@ class InstalledLifecycleTests(unittest.TestCase):
             ROOT,
             root,
             names,
+            parent=skill_parent,
             split_locations=split_locations,
         )
         inventory = {
@@ -70,6 +73,69 @@ class InstalledLifecycleTests(unittest.TestCase):
             self.assertEqual([], result.errors)
             self.assertEqual(["clarify-intent", "configure-workflows"], result.closure)
             self.assertEqual(sorted(MANIFEST["skills"]), result.installed)
+
+    def test_pi_discovery_root_accepts_manual_invocation_skills_hidden_from_prompt(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), skill_parent=".agents/skills/group"
+            )
+            manifest = lifecycle.installed_manifest()
+            inspection = consumer.inspect_skills(root, skill_dirs, manifest)
+            self.assertEqual([], inspection.errors)
+            expected_manual = {
+                name for name, entry in manifest["skills"].items()
+                if entry["model_invocation"] == "manual"
+            }
+            prompt_visible = set(inspection.model_invocable)
+            self.assertEqual(expected_manual, set(inspection.manual_invocation))
+            self.assertTrue(expected_manual.isdisjoint(prompt_visible))
+            self.assertEqual(set(manifest["skills"]), prompt_visible | expected_manual)
+
+            command = next(
+                path for path in skill_dirs if path.name == "configure-workflows"
+            ) / "references/lifecycle.py"
+            completed = subprocess.run(
+                [
+                    sys.executable, "-B", str(command), "inspect",
+                    "--consumer-root", str(root),
+                    "--skills-root", str(root / ".agents/skills"), "--json",
+                ],
+                cwd=root, text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(0, completed.returncode, completed.stderr)
+            output = json.loads(completed.stdout)
+            self.assertEqual(sorted(expected_manual), output["manual_invocation"])
+            self.assertEqual(sorted(prompt_visible), output["model_invocable"])
+            self.assertEqual(sorted(manifest["skills"]), output["installed"])
+
+    def test_local_only_inspection_never_invokes_external_backend_tools(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            root, skill_dirs = self.set_up_consumer(base)
+            binary_dir = base / "bin"
+            binary_dir.mkdir()
+            markers = []
+            for name in ("gh", "bearcli"):
+                marker = base / f"{name}.called"
+                markers.append(marker)
+                executable = binary_dir / name
+                executable.write_text(f"#!/bin/sh\ntouch '{marker}'\nexit 99\n")
+                executable.chmod(0o755)
+            command = next(
+                path for path in skill_dirs if path.name == "configure-workflows"
+            ) / "references/lifecycle.py"
+            environment = dict(os.environ)
+            environment["PATH"] = str(binary_dir) + os.pathsep + environment.get("PATH", "")
+            completed = subprocess.run(
+                [
+                    sys.executable, "-B", str(command), "inspect",
+                    "--consumer-root", str(root),
+                    "--skills-root", str(skill_dirs[0].parent), "--json",
+                ],
+                cwd=root, env=environment, text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(0, completed.returncode, completed.stderr)
+            self.assertTrue(all(not marker.exists() for marker in markers))
 
     def test_verifies_all_local_schema_3_with_twelve_explicit_routes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

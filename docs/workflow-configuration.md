@@ -97,6 +97,7 @@ Schema 3 does not generate provider-specific issue-tracker guidance outside `doc
 - The mapped skill set includes `configure-workflows` and the complete transitive closure of `selected`.
 - Additional manifest-known skills may remain installed without silently becoming selected.
 - Installer lock files are evidence only and do not replace this inventory.
+- Manifest `model_invocation` distinguishes model-invocable skills from manual-invocation skills. Both remain installed and discovered when their directories pass integrity checks; prompt visibility is not an inventory requirement.
 
 ## Installed lifecycle command
 

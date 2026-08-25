@@ -19,6 +19,23 @@ class ReleaseManifestTests(unittest.TestCase):
             {"current_schema": 3, "readable_schemas": [3]},
             manifest["configuration"],
         )
+        self.assertEqual(2, manifest["manifest_version"])
+        manual = {
+            "author-specification",
+            "capture-meeting",
+            "configure-workflows",
+            "plan-implementation",
+            "plan-initiative",
+            "prepare-handoff",
+            "prepare-questionnaire",
+        }
+        self.assertEqual(
+            manual,
+            {
+                name for name, entry in manifest["skills"].items()
+                if entry["model_invocation"] == "manual"
+            },
+        )
         manifest_path = lifecycle.manifest_path(ROOT)
         self.assertNotIn(
             "references/distribution-manifest.json",
@@ -33,6 +50,7 @@ class ReleaseManifestTests(unittest.TestCase):
                 and not lifecycle._is_ignored(path.relative_to(ROOT / "skills" / name))
             }
             self.assertEqual(expected, set(entry["files"]), name)
+            self.assertIn(entry["model_invocation"], {"enabled", "manual"})
 
     def test_manifest_generation_is_deterministic(self) -> None:
         self.assertEqual(
@@ -78,6 +96,20 @@ class ReleaseManifestTests(unittest.TestCase):
             with self.assertRaisesRegex(lifecycle.LifecycleError, "unknown release skills"):
                 lifecycle.generate_manifest(root)
 
+    def test_generation_rejects_invalid_model_invocation_frontmatter(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = self._copy_distribution(Path(directory))
+            skill = root / "skills/clarify-intent/SKILL.md"
+            skill.write_text(
+                skill.read_text().replace(
+                    "license: MIT", "disable-model-invocation: sometimes\nlicense: MIT"
+                )
+            )
+            with self.assertRaisesRegex(
+                lifecycle.LifecycleError, "disable-model-invocation must be one true or false"
+            ):
+                lifecycle.generate_manifest(root)
+
     def test_generation_rejects_distributed_symlink(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = self._copy_distribution(Path(directory))
@@ -92,7 +124,7 @@ class ReleaseManifestTests(unittest.TestCase):
     def test_json_parser_rejects_duplicate_keys(self) -> None:
         with self.assertRaisesRegex(lifecycle.LifecycleError, "duplicate JSON key"):
             lifecycle.parse_json(
-                b'{"manifest_version":1,"manifest_version":1}', "manifest"
+                b'{"manifest_version":2,"manifest_version":2}', "manifest"
             )
 
     @staticmethod

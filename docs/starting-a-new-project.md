@@ -5,7 +5,7 @@ Agent Workflows supports one configured root per consumer workspace. Git is opti
 1. Use an Agent Skills-compatible installer or intact manual copy to install the complete Agent Workflows skill set, including `configure-workflows`. Preserve each skill directory intact and place it where the consumer's agent can discover it. No particular parent directory is required.
 2. Invoke `configure-workflows` from the intended consumer workspace root before using another workflow. Let it detect version control; if none exists, confirm whether the workspace is intentionally unversioned.
 3. Choose the workflows you intend to use. The schema records this explicit selection separately from the complete installed inventory.
-4. Let the installed lifecycle command inspect the harness-discovered directories, require the complete distribution, and calculate the [dependency closure](workflow-dependencies.md).
+4. Let the installed lifecycle command integrity-check the discovery root, distinguish manual-invocation skills from model-invocable skills, require the complete distribution, and calculate the [dependency closure](workflow-dependencies.md).
 5. Accept or change the recommended named backends and all twelve semantic record routes. When selecting GitHub, choose an authenticated account explicitly, then review its capability preflight and complete managed-label plan. When selecting Bear for non-issue records, choose an absolute `bearcli` command and project workspace, then review its read-only scoped preflight.
 6. Review the complete proposed schema-3 `.agents/workflows.yaml`, `AGENTS.md`, and `docs/agents/` dry run. Nothing is written before approval.
 7. [Verify the consumer installation](verifying-installation.md).

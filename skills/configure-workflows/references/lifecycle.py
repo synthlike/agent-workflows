@@ -14,13 +14,15 @@ from typing import Any
 from consumer import dependency_closure, inspect_skills, verify_consumer
 
 
-MANIFEST_FORMAT = 1
+MANIFEST_FORMAT = 2
 MANIFEST_RELATIVE_PATH = PurePosixPath(
     "configure-workflows/references/distribution-manifest.json"
 )
 IGNORED_NAMES = {".DS_Store", "__pycache__"}
 INLINE_CODE = re.compile(r"`([a-z0-9]+(?:-[a-z0-9]+)+)`")
 VERSION = re.compile(r"v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)")
+SKILL_FRONTMATTER = re.compile(r"^---\n(.*?)\n---\n", re.S)
+MODEL_INVOCATION = re.compile(r"^disable-model-invocation:\s*(\S+)\s*$", re.M)
 
 
 class LifecycleError(ValueError):
@@ -136,6 +138,22 @@ def _is_ignored(path: Path) -> bool:
     return any(part in IGNORED_NAMES for part in path.parts) or path.suffix in {".pyc", ".pyo"}
 
 
+def _model_invocation(skill_file: Path, skill_name: str) -> str:
+    try:
+        text = skill_file.read_text()
+    except (OSError, UnicodeDecodeError) as error:
+        raise LifecycleError(f"cannot read skill frontmatter: {skill_name}: {error}") from error
+    frontmatter = SKILL_FRONTMATTER.match(text)
+    if not frontmatter:
+        raise LifecycleError(f"skill has no frontmatter: {skill_name}")
+    declarations = MODEL_INVOCATION.findall(frontmatter.group(1))
+    if len(declarations) > 1 or (declarations and declarations[0] not in {"true", "false"}):
+        raise LifecycleError(
+            f"{skill_name} disable-model-invocation must be one true or false value"
+        )
+    return "manual" if declarations == ["true"] else "enabled"
+
+
 def _skill_files(skill_dir: Path, skill_name: str) -> dict[str, str]:
     files: dict[str, str] = {}
     for path in sorted(skill_dir.rglob("*")):
@@ -169,9 +187,11 @@ def generate_manifest(root: Path) -> dict[str, Any]:
     dependencies = _declared_dependencies(root, names)
     skills: dict[str, Any] = {}
     for name in sorted(names):
+        skill_dir = root / "skills" / name
         skills[name] = {
             "dependencies": dependencies[name],
-            "files": _skill_files(root / "skills" / name, name),
+            "files": _skill_files(skill_dir, name),
+            "model_invocation": _model_invocation(skill_dir / "SKILL.md", name),
         }
     return {
         "configuration": metadata["configuration"],
@@ -224,11 +244,15 @@ def validate_manifest(manifest: dict[str, Any], root: Path | None = None) -> lis
         if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)+", name):
             errors.append(f"invalid skill name: {name}")
             continue
-        if not isinstance(entry, dict) or set(entry) != {"dependencies", "files"}:
+        if not isinstance(entry, dict) or set(entry) != {
+            "dependencies", "files", "model_invocation"
+        }:
             errors.append(f"{name} manifest entry is invalid")
             continue
         dependencies = entry["dependencies"]
         files = entry["files"]
+        if entry["model_invocation"] not in {"enabled", "manual"}:
+            errors.append(f"{name} model_invocation must be enabled or manual")
         if (
             not isinstance(dependencies, list)
             or dependencies != sorted(set(dependencies))
@@ -318,7 +342,7 @@ def _add_consumer_arguments(parser: argparse.ArgumentParser) -> None:
     selection.add_argument(
         "--skills-root",
         type=Path,
-        help="directory whose immediate children are harness-discovered skills",
+        help="harness discovery root containing skill directories recursively",
     )
     selection.add_argument(
         "--skill-dir",
@@ -333,7 +357,7 @@ def _consumer_skill_dirs(args: argparse.Namespace) -> list[Path]:
     if args.skills_root:
         if not args.skills_root.is_dir():
             raise LifecycleError(f"skills root not found: {args.skills_root}")
-        return sorted(path for path in args.skills_root.iterdir() if path.is_dir())
+        return sorted({path.parent for path in args.skills_root.rglob("SKILL.md")})
     return args.skill_dir
 
 
@@ -355,6 +379,10 @@ def _print_result(result: dict[str, Any], as_json: bool, success: str) -> None:
         print("Closure: " + ", ".join(result["closure"]))
     if "installed" in result:
         print("Installed: " + ", ".join(result["installed"]))
+    if "model_invocable" in result:
+        print("Model-invocable: " + ", ".join(result["model_invocable"]))
+    if "manual_invocation" in result:
+        print("Manual invocation: " + ", ".join(result["manual_invocation"]))
 
 
 def main() -> int:
@@ -413,6 +441,8 @@ def main() -> int:
             result = {
                 "errors": sorted(set(inspection.errors)),
                 "installed": sorted(inspection.installed),
+                "manual_invocation": list(inspection.manual_invocation),
+                "model_invocable": list(inspection.model_invocable),
                 "ok": not inspection.errors,
                 "release": manifest["distribution"]["version"],
             }

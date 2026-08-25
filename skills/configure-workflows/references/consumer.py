@@ -118,6 +118,8 @@ def required_backend_operations(record_type: str) -> tuple[str, set[str]]:
 @dataclass(frozen=True)
 class Inspection:
     installed: dict[str, Path]
+    model_invocable: tuple[str, ...]
+    manual_invocation: tuple[str, ...]
     errors: list[str]
 
 
@@ -384,7 +386,21 @@ def inspect_skills(
                 errors.append(
                     f"{name} is missing installed dependencies: {', '.join(sorted(missing))}"
                 )
-    return Inspection(installed=installed, errors=errors)
+    verified_names = set(installed) & manifest["skills"].keys()
+    model_invocable = tuple(sorted(
+        name for name in verified_names
+        if manifest["skills"][name]["model_invocation"] == "enabled"
+    ))
+    manual_invocation = tuple(sorted(
+        name for name in verified_names
+        if manifest["skills"][name]["model_invocation"] == "manual"
+    ))
+    return Inspection(
+        installed=installed,
+        model_invocable=model_invocable,
+        manual_invocation=manual_invocation,
+        errors=errors,
+    )
 
 
 def _contained_path(root: Path, value: Any, label: str, errors: list[str]) -> Path | None:

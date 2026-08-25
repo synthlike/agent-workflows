@@ -15,7 +15,7 @@ Prefer adoption over migration:
 - Enable research, questionnaires, and technical baselines by default, while preserving existing locations and retention policies.
 - Record the exact installed distribution source and release version or immutable commit SHA.
 - Record explicitly selected workflows separately from transitive dependencies and map every harness-discovered skill path.
-- Confirm harness discovery of the complete closure before final configuration.
+- Integrity-check the complete installed closure. Do not treat Pi skills hidden by `disable-model-invocation` as missing; restart or rediscover only after post-startup installation or an unavailable manual command.
 - Keep one `.agents/workflows.yaml` at the consumer workspace root; do not introduce nested configurations.
 
 ## Ownership during adoption

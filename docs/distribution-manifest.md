@@ -6,7 +6,7 @@ The manifest has this shape:
 
 ```json
 {
-  "manifest_version": 1,
+  "manifest_version": 2,
   "distribution": {
     "source": "github.com/example/agent-workflows",
     "version": "vMAJOR.MINOR.PATCH"
@@ -18,6 +18,7 @@ The manifest has this shape:
   "skills": {
     "configure-workflows": {
       "dependencies": [],
+      "model_invocation": "manual",
       "files": {
         "SKILL.md": "<sha256>"
       }
@@ -31,6 +32,7 @@ The manifest has this shape:
 - `configuration` declares the only configuration schema accepted by the installed verifier.
 - `skills` contains every distributed skill.
 - `dependencies` is the sorted, unique list of additional direct dependencies. `configure-workflows` is required implicitly and is not repeated in each list.
+- `model_invocation` is `enabled` unless validated skill frontmatter sets `disable-model-invocation: true`, in which case it is `manual`. This records invocation eligibility; it does not claim what a running model saw in its startup prompt.
 - `files` maps every distributed file inside the skill directory to its lowercase SHA-256 digest.
 - `configure-workflows/references/distribution-manifest.json` is excluded from its own file map.
 

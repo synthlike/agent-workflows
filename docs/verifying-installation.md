@@ -10,7 +10,9 @@ python3 PATH/TO/configure-workflows/references/lifecycle.py verify-consumer \
   --skills-root /path/to/discoverable/skills
 ```
 
-Use repeated `--skill-dir` arguments when the harness discovers skills from several parents. Add `--json` for deterministic machine-readable output. See [Workflow configuration](workflow-configuration.md) for the inventory contract.
+Use repeated `--skill-dir` arguments when the harness supplies exact skills from several roots. `--skills-root` recursively inspects skill directories under one discovery root. Add `--json` for deterministic machine-readable output. See [Workflow configuration](workflow-configuration.md) for the inventory contract.
+
+`inspect` distinguishes `installed`, `model_invocable`, and `manual_invocation`. These sets come from integrity-checked directories and immutable manifest policy. They do not claim what a running model actually received in its startup prompt. For Pi, manual-invocation skills may be absent from that prompt while remaining available through `/skill:name`.
 
 ## Checks
 
@@ -25,4 +27,4 @@ Verification fails when:
 
 The verifier compares every installed file and dependency with the manifest embedded in the installed `configure-workflows` directory. It does not require a distribution source checkout.
 
-Harness-specific discovery remains outside the lifecycle command: the harness or installer supplies the exact directories it discovered.
+Harness-specific runtime prompt state remains outside the lifecycle command. For Pi, a complete integrity-checked project `.agents/skills/` root that existed at startup is sufficient discovery evidence; restart or rediscover only after post-startup installation or when a manual command is unavailable. Other harnesses supply their supported discovery roots or exact directories.

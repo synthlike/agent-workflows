@@ -116,11 +116,11 @@ records:
 
 ### Configuration workflow
 
-14. `configure-workflows` MUST inspect existing record locations, version-control state and workspace boundary, remotes when present, authenticated accounts, generated adapter assets, and relevant MCP discovery before recommending routes.
-15. It MUST ask about desired persistence in semantic record terms rather than workflow names.
+14. `configure-workflows` MUST begin with provider-neutral inspection of existing workflow configuration and guidance, record locations, version-control state and workspace boundary, distribution integrity, and project structure.
+15. It MUST then ask about project/collaboration profile and desired persistence in semantic record terms rather than workflow names.
 16. It MUST recommend existing conventions before toolkit defaults.
-17. It MUST validate every expanded route against backend capabilities before presenting a dry run.
-18. The dry run MUST show the complete schema-3 configuration, detected version-control state, chosen consumer root, landing-checkpoint behavior, backend preflight results, generated adapter files, external provisioning plans, and every consumer-workspace or external mutation.
+17. It MUST inspect remotes, authenticated accounts, provider capabilities, labels, MCP executables, or MCP scopes only for external backends the user is considering. A local-only profile MUST NOT invoke an external-backend tool.
+18. It MUST validate every expanded route against backend capabilities before presenting a dry run. The dry run MUST show the complete schema-3 configuration, detected version-control state, chosen consumer root, landing-checkpoint behavior, applicable backend preflight results, generated adapter files, external provisioning plans, and every consumer-workspace or external mutation.
 19. No generated file, label, backend record, or external configuration MAY be changed before explicit approval.
 20. A disabled route MUST prohibit persistence without approval. Temporary or external output MAY still occur where the workflow permits it. Git MUST NOT be required for configuration or workflow execution. When no version-control system is detected, `configure-workflows` MUST ask whether the workspace is intentionally unversioned, explain the missing history and commit checkpoint, and MUST NOT initialize version control without approval. When version control exists, it MUST preserve that system's conventions rather than assume Git.
 

@@ -9,7 +9,7 @@
     "source": "github.com/synthlike/agent-workflows",
     "version": "v0.5.0"
   },
-  "manifest_version": 1,
+  "manifest_version": 2,
   "skills": {
     "author-specification": {
       "dependencies": [
@@ -18,7 +18,8 @@
       "files": {
         "SKILL.md": "caedff69b482878b19e49d24a464cdad1d4b079257abfcb5f5b146fc5955ba52",
         "references/specification-template.md": "099893f4c0ba785e4be898222579649b51b594630b39ea113b9e0c44a63026e0"
-      }
+      },
+      "model_invocation": "manual"
     },
     "capture-meeting": {
       "dependencies": [
@@ -30,7 +31,8 @@
       "files": {
         "SKILL.md": "1522fb3fc76ff13186885b8f4721c98e4a9873c2d7d52b9b85093f603f2922c9",
         "references/meeting-template.md": "49ab8809ff00a4325e74e68e556f4714d37742847fe0397793b5864b19097850"
-      }
+      },
+      "model_invocation": "manual"
     },
     "capture-regression": {
       "dependencies": [
@@ -38,13 +40,15 @@
       ],
       "files": {
         "SKILL.md": "4cf25cb206852b0f84268cc2af58f03cd6f412ebd5012034292c4d664da8204d"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "clarify-intent": {
       "dependencies": [],
       "files": {
         "SKILL.md": "c5e5fb9fbfd8a38c874cd41efc27cc8b29fb614a60e4a652f3e5b9b8c46e9f7e"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "close-initiative": {
       "dependencies": [
@@ -57,12 +61,13 @@
       "files": {
         "SKILL.md": "0d5fc5134e830a72db623d6ef2b1a43f559264ca8d2db16aa05f613124950f53",
         "references/initiative-closure-template.md": "550923ddb3902658d621f4afc7375db9e5d06a0c59b12d42d672bfdfe92ef153"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "configure-workflows": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "4df39964f6cd3185c1b24511b0fcb486f509a3f7dee67089db0f83e70e83a3bf",
+        "SKILL.md": "e082e23410a5d141d90220f9027aac21078601e4673a7bbd787d751fa568808b",
         "references/agents-section.md": "6a5f9f0ccd71186a3f11439d553a44c1a6c83605b477c5b3044b3880df4de594",
         "references/backends/record-store/bear.capabilities.json": "b4ac3509abc45ff2591c3b8cba94c1fc1eff8a11e10522938cd960c2fcd1bc2d",
         "references/backends/record-store/bear.md": "7e1822bb443fd71327db86ed40e9e1ab2b42e2808d00ec20b09250b08268c6eb",
@@ -74,10 +79,11 @@
         "references/backends/record-store/local-markdown.capabilities.json": "add6a704c838c8f5b1161212819277dac95c70ee1cba194f60a9b470ae431966",
         "references/backends/record-store/local-markdown.md": "d75f874173844c18b54ace53d449320831134601c5c0ac0fae317d8c17b65370",
         "references/backends/record-store/local-markdown.py": "cd173aff05f238137d7e7cde284b97f0f03550633af8a06905ec09b1fe49aeec",
-        "references/consumer.py": "997bd15b982eb8d3d105abd9f9a23e2dd33024ce9013fa945bad40e8f5f42fa3",
-        "references/lifecycle.py": "8bd872f5dbd65403ad4acb865129fcba5189aa356557476e360586784fd211f2",
+        "references/consumer.py": "2812dae3f8009e87aa2fb2aa1451be8a9bfff30931174aef19bb1cb1a20c0ff8",
+        "references/lifecycle.py": "a74a29184b74156239e9e64658e8ed0aee2eabc2ef6daaf0629a32dc30b873c8",
         "references/workflow-config.example.yaml": "2ca10cf6381a51f976fc12a2a4b3e21c54e0186c45a0e189acbcb8ebb09a1dc7"
-      }
+      },
+      "model_invocation": "manual"
     },
     "develop-rfc": {
       "dependencies": [
@@ -90,7 +96,8 @@
       "files": {
         "SKILL.md": "dd86b6844ba1535908dd3b26c1e7fb818a6c2998ae093952190e5e3f21ef96bd",
         "references/rfc-template.md": "c8db27ddbed10cf5f975b400bdcf64de947d4bde7fd1c5258d69af4091bd8955"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "establish-technical-baseline": {
       "dependencies": [
@@ -101,7 +108,8 @@
       "files": {
         "SKILL.md": "b8e7fffeeab1610570c0ad1c19f75a099075ea6c09918724303e71eab665b7bf",
         "references/technical-baseline-template.md": "533f55813ae86b5f812bf983f1a31ba8fe2a98b1b34796df0a17cca76e7158e2"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "frame-product-problem": {
       "dependencies": [
@@ -117,7 +125,8 @@
       "files": {
         "SKILL.md": "bd46d280b09be84a6d439691899758112bb72d8434165ab7c501a43f51886b63",
         "references/problem-framing-template.md": "bb46fdf6472d926fdb8e5ac33e4febf7f9854dbc189ee08013196265fa5b7cba"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "investigate-failure": {
       "dependencies": [
@@ -128,7 +137,8 @@
       "files": {
         "SKILL.md": "148e44e86b58cd7b5f34308e07c96cc4286eeaa087f55c24480662bca3ed3d3c",
         "references/failure-findings-template.md": "64a668a1271493f15311c140c56a8ddcbc489e423225968405caf063da252d90"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "model-domain": {
       "dependencies": [
@@ -138,7 +148,8 @@
       "files": {
         "SKILL.md": "8d3b818639b8c17eba17e61f1e6f2c673b5bb8895da051c3ee81889f5ea2ef28",
         "references/context-template.md": "eafc2407a6773e51f18c28b3f892decf796a3ed01e2dc0138aa561b540f5b116"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "plan-implementation": {
       "dependencies": [
@@ -149,7 +160,8 @@
       "files": {
         "SKILL.md": "13a1628aa6186ff5cd8e538a821b23d10e766e03209eb29d2f67baeb391f83ea",
         "references/issue-template.md": "1110472be63689c089fbc32ab2796d62da432402aad71eb672d1a5c15dae25a5"
-      }
+      },
+      "model_invocation": "manual"
     },
     "plan-initiative": {
       "dependencies": [
@@ -165,26 +177,30 @@
       "files": {
         "SKILL.md": "163a3dafff6b11cd2b9cf8c80abe82d155f90f7e1dc606da2bfd96b4c95a9b0c",
         "references/map-template.md": "970ff9e3b2f5956964d67f1b5bcbcecd39a5aff8baf7a47b461c1102e353988b"
-      }
+      },
+      "model_invocation": "manual"
     },
     "prepare-handoff": {
       "dependencies": [],
       "files": {
         "SKILL.md": "813c6ca1dcc320cef9c708d6e5c2d074e2b1e66c8eda99dd9d700c5f1b3ad770"
-      }
+      },
+      "model_invocation": "manual"
     },
     "prepare-questionnaire": {
       "dependencies": [],
       "files": {
         "SKILL.md": "648b5a8ac266ee0530b2c9a8c4cca834052f5c23fc4de9cf13d9032924edc20c",
         "references/questionnaire-template.md": "743f8a80e3c5df32c662c3a3cf586e0ec4e08f8accb316d6d461f14ca7369054"
-      }
+      },
+      "model_invocation": "manual"
     },
     "prototype-design": {
       "dependencies": [],
       "files": {
         "SKILL.md": "d96b135f8a90b355232358faf809a5025058a01f0f44d5ec5143e1c889d871cd"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "record-arp": {
       "dependencies": [
@@ -193,13 +209,15 @@
       "files": {
         "SKILL.md": "c7bbd187438a1a9e32026c929b85faf75b870fc7f71526dedc5fde9b433002cc",
         "references/arp-template.md": "41cb359f5039d6a153a4e60a945a452b4ba2c69a75e01bebd770d1940798ca1c"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "research-question": {
       "dependencies": [],
       "files": {
         "SKILL.md": "1d54ca57d3c3bcb647a36df7f9d48e09e3aa0e3d404bb07aafbb492ffa9154b0"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "review-implementation": {
       "dependencies": [
@@ -210,7 +228,8 @@
       "files": {
         "SKILL.md": "9fe8e03587980e72539e2153f61ca37ae8317fc54e6b2f4ae4a1f4fea2f44f49",
         "references/implementation-review-template.md": "e61a8cccb5afee4594d1ff5ee9483332eccfce09a512dfddc104f830a6825402"
-      }
+      },
+      "model_invocation": "enabled"
     },
     "triage-issue": {
       "dependencies": [
@@ -223,7 +242,8 @@
       "files": {
         "SKILL.md": "fdb53988fb5970ac146b4a1c8924e1e5c3474313e97deea9a958007d69cd98be",
         "references/triage-proposal-template.md": "1fdf8d11bd1bb69608a42e5fe247b2c9238f168b61115fccecc471a8f27727b7"
-      }
+      },
+      "model_invocation": "enabled"
     }
   }
 }

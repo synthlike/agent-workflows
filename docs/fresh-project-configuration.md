@@ -14,15 +14,17 @@ npx skills@latest add synthlike/agent-workflows \
   --copy
 ```
 
-The installer may ask which harness should discover the skills. Ask the harness for every exact discovered directory and confirm that all distributed skills are present. Preserve each skill directory intact and do not replace an existing directory.
+The installer may ask which harness should discover the skills. Preserve each skill directory intact and do not replace an existing directory. Installation, harness discovery, and model invocation eligibility are distinct: a skill with `disable-model-invocation: true` is intentionally absent from the model prompt but remains discoverable through its manual command.
 
-If inspection reports an absent, unexpected, duplicate, incomplete, or modified skill, stop configuration. Correct the installation through the external installer or a reviewed intact manual copy, ask the harness to rediscover skills, and inspect again.
+For Pi, an integrity-checked complete installation under the project `.agents/skills/` discovery root is sufficient evidence when it existed at startup. Restart or request rediscovery only when files were added after startup or a manual `/skill:name` command is unavailable. For other harnesses, supply the exact directories from their supported discovery seam.
+
+If inspection reports an absent, unexpected, duplicate, incomplete, or modified skill, stop configuration. Correct the installation through the external installer or a reviewed intact manual copy, then inspect again under the preceding restart rule.
 
 ## 2. Select, configure, and confirm
 
-Invoke `configure-workflows` from the intended consumer workspace root. It detects Git, another version-control system, or an unversioned workspace; when none is found, confirm whether that state is intentional. Tell it which workflows you explicitly selected even though all skills are installed. It records selected intent separately from the complete harness-discovered inventory and verifies dependency closure.
+Invoke `configure-workflows` from the intended consumer workspace root. Initial inspection covers only workspace/version-control state, existing workflow guidance and artifact conventions, distribution integrity, and project structure. Then describe the project and collaboration profile and select workflows. The workflow records selected intent separately from the complete installed inventory and verifies dependency closure.
 
-Review the proposed schema-3 `.agents/workflows.yaml`, record-backend guidance, workflow guidance, and concise agent pointer. For GitHub, also select an authenticated account explicitly and review the successful identity-aware capability preflight, generated helper destination, and complete stale-safe label plan. Nothing is written before approval. Optional artifact and issue directories remain absent.
+Provider inspection is conditional. A local-only setup invokes neither `gh` nor `bearcli`. When GitHub is considered, select an authenticated account explicitly and review identity-aware capability preflight and a stale-safe label plan. When Bear is considered, review its explicit command/workspace and read-only scoped preflight. Review the proposed schema-3 `.agents/workflows.yaml`, record-backend guidance, workflow guidance, and concise agent pointer. Nothing is written before approval. Optional artifact and issue directories remain absent.
 
 ## 3. Verify and land
 

@@ -15,20 +15,33 @@ Release identity, complete skill inventory, dependencies, and file integrity are
 
 ## Explore
 
-From the consumer workspace root, inspect:
+### Harness discovery
+
+Distinguish installation, discovery, and model invocation eligibility. A skill with `disable-model-invocation: true` may be discovered by the harness while absent from the model's available-skills prompt. Do not classify that skill as missing solely because it is absent from the prompt. Manifest `model_invocation` records static invocation policy, not actual runtime prompt contents.
+
+For Pi, a complete integrity-checked installation under the project `.agents/skills/` discovery root is sufficient discovery evidence when the skills existed at startup. Request a restart or rediscovery only when files were installed after startup or a manual `/skill:name` command is unavailable. Other harnesses may supply their exact discovered directories through their supported discovery seam.
+
+### Initial inspection
+
+From the consumer workspace root, inspect only:
 
 - whether the workspace uses Git, another version-control system, or no version control, and the discovered workspace boundary;
-- Git remotes when present, whether the project uses GitHub Issues, authenticated `github.com` accounts, and the currently active account;
-- an explicitly selected Bear `bearcli` executable and project workspace tag when Bear persistence is considered;
-- the workflows explicitly selected by the user and the exact skill directories discovered by the harness;
-- the installed distribution source and exact release version or immutable commit SHA;
+- the complete installed distribution integrity, invocation policy, source, exact release version or immutable commit SHA, and selected-workflow intent;
 - `AGENTS.md`, `CLAUDE.md`, or equivalent agent guidance;
 - `.agents/workflows.yaml`, `docs/agents/records.md`, and generated assets under `docs/agents/backends/`;
-- existing domain glossaries or context maps;
-- directories containing ADRs, ARPs, RFCs, specifications, plans, meeting notes, research, questionnaires, technical baselines, prototypes, or handoffs;
-- local issue conventions such as `.project/` or `.scratch/`;
-- monorepo signals relevant to domain-document layout; and
-- the nature of the project and how people and agents will collaborate on it.
+- existing domain glossaries, context maps, artifact directories, local issue conventions, and other record-location conventions; and
+- project structure, including monorepo signals relevant to record layout.
+
+Then ask what kind of project this is and how people and agents will collaborate on it. Use the answer to identify a local, GitHub, mixed, or Bear-backed profile before any provider-specific inspection.
+
+### Backend inspection
+
+Inspect only backends that the user is considering:
+
+- for GitHub, inspect remotes when relevant, authenticated `github.com` accounts, the active account, repository capabilities, and managed labels; and
+- for Bear, inspect the explicitly selected `bearcli` executable, project workspace tag, and read-only MCP capabilities.
+
+For a local-only profile, do not invoke `gh`, `bearcli`, or another external-backend tool.
 
 ## Recommend
 
@@ -52,7 +65,7 @@ Prefer existing conventions. For a new project, recommend:
 
 Git is not required. Do not ask whether Git exists when inspection already answers that question. When no version-control system is detected, ask whether the workspace is intentionally unversioned or whether the user intends to initialize or identify a version-controlled root. Explain that unversioned workspaces have no commit checkpoint or version-control history, but never initialize, change, or configure version control without approval. When another version-control system is present, preserve its conventions and use its landing terminology rather than assuming Git.
 
-Ask what kind of project this is and how people and agents will collaborate on it. Profile questions may offer all-local, all-GitHub, mixed local/GitHub, or Bear-for-non-issues with a complete local/GitHub issue backend as shortcuts, but expand every answer into explicit routes for `issues`, `domain`, `arps`, `rfcs`, `specs`, `meetings`, `research`, `questionnaires`, `technical_baselines`, `problem_framing`, `prototypes`, and `handoffs`. Show and confirm the enabled state, named backend, and complete destination for every route, including disabled routes. Combine the answer with repository evidence to recommend each capability individually and explain the reason. An `enabled: false` route prohibits repository writes without approval but does not prohibit temporary or external output. Do not ask for facts available in the repository. If distribution identity cannot be established from installation metadata or the repository, ask for it rather than proposing a mutable value such as a branch name, `latest`, or `unreleased`.
+Use the project and collaboration answer from initial inspection. Profile questions may offer all-local, all-GitHub, mixed local/GitHub, or Bear-for-non-issues with a complete local/GitHub issue backend as shortcuts, but expand every answer into explicit routes for `issues`, `domain`, `arps`, `rfcs`, `specs`, `meetings`, `research`, `questionnaires`, `technical_baselines`, `problem_framing`, `prototypes`, and `handoffs`. Show and confirm the enabled state, named backend, and complete destination for every route, including disabled routes. Combine the answer with repository evidence to recommend each capability individually and explain the reason. An `enabled: false` route prohibits repository writes without approval but does not prohibit temporary or external output. Do not ask for facts available in the repository. If distribution identity cannot be established from installation metadata or the repository, ask for it rather than proposing a mutable value such as a branch name, `latest`, or `unreleased`.
 
 When GitHub is considered, list authenticated account names and identify the active account without exposing tokens. Ask which login should own backend operations, even when an account is already active, and record the explicit repository and login in the named GitHub backend instance. When several accounts exist, never infer the intended identity from the active account alone. If the selected account is not active, ask the user to run `gh auth switch --hostname github.com --user LOGIN`, wait for confirmation, and recheck; never change global authentication silently.
 
@@ -62,7 +75,7 @@ For every Bear backend instance, run bundled `references/backends/record-store/b
 
 Generate a label-plan format 2 document with the same explicit repository and login. Show every proposed `workflow:record:*` and `workflow:issue:*` creation or update and apply only the exact reviewed plan after approval. Label provisioning is a separate external mutation; never apply it merely because routes were approved. Do not fall back to task lists, body-text dependencies, or unreviewed labels.
 
-Use the lifecycle command to calculate the selected closure and inspect the exact harness-discovered directories. Require the complete distribution, even when the user explicitly selects only a subset of workflows. If any skill is absent, stop and list every missing skill. Ask the user to complete installation through their external installer or an intact manual copy, then confirm harness discovery and inspect again. Never create, replace, or remove a skill directory.
+Use the lifecycle command to calculate the selected closure and inspect the integrity-checked installed directories supplied through the harness discovery seam. Require the complete distribution, even when the user explicitly selects only a subset of workflows. Treat manifest-declared manual-invocation skills as installed when their discovered directories pass integrity checks; do not require them to appear in the model prompt. If any skill directory is absent, stop and list every missing skill. Ask the user to complete installation through their external installer or an intact manual copy, then request restart or rediscovery only when the files were added after harness startup or a manual command remains unavailable. Never create, replace, or remove a skill directory.
 
 ## Confirm
 
@@ -85,7 +98,7 @@ Wait for explicit approval.
 
 - Never write project configuration while the complete distribution is absent or fails integrity inspection.
 - Do not require or initialize Git. Use the approved consumer workspace root whether it is Git-controlled, controlled by another system, or intentionally unversioned.
-- Ask the harness to rediscover skills after external installation changes. Continue only after it confirms every distributed skill at its consumer-root-contained path.
+- After external installation changes, ask the harness to restart or rediscover skills only when files were added after startup or a manual skill command is unavailable. Continue after the integrity-checked discovery evidence matches every distributed skill at its consumer-root-contained path.
 - Write `.agents/workflows.yaml` as canonical schema 3 with every backend and all twelve routes explicit. Never write a placeholder or mutable distribution version.
 - Copy the bundled [portable contract module](references/backends/record-store/contract.py) and exactly the guidance/helper pair for each backend type used by a route: [local Markdown guidance](references/backends/record-store/local-markdown.md) and [helper](references/backends/record-store/local-markdown.py), [GitHub guidance](references/backends/record-store/github.md) and [helper](references/backends/record-store/github.py), and/or [Bear guidance](references/backends/record-store/bear.md) and [helper](references/backends/record-store/bear.py). Do not generate assets for configured but unused backend instances. Do not create a local record destination directory until its first approved write.
 - Apply only the exact approved GitHub label plan after configuration approval and a fresh stale-state check. Pass the configured repository, login, backend instance, and route destination explicitly to every helper operation.
