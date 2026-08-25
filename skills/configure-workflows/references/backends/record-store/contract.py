@@ -42,6 +42,26 @@ class RecordReference:
     title: str
     href: str | None = None
 
+    @classmethod
+    def from_dict(cls, value: Any) -> "RecordReference":
+        required = {"backend", "id", "title"}
+        allowed = required | {"href"}
+        if (
+            not isinstance(value, dict)
+            or not required.issubset(value)
+            or set(value) - allowed
+        ):
+            raise RecordError("malformed_reference", "reference has missing or unknown fields")
+        if any(
+            not isinstance(value[key], str) or not value[key]
+            for key in ("backend", "id", "title")
+        ):
+            raise RecordError("malformed_reference", "reference identity and title are required")
+        href = value.get("href")
+        if href is not None and not isinstance(href, str):
+            raise RecordError("malformed_reference", "reference href must be a string or null")
+        return cls(value["backend"], value["id"], value["title"], href)
+
     def as_dict(self) -> dict[str, str | None]:
         return {
             "backend": self.backend,
@@ -240,6 +260,9 @@ class IssueResponse:
 class RecordAdapter(Protocol):
     def execute(self, request: RecordRequest) -> RecordResponse:
         """Execute one validated portable operation or raise RecordError."""
+
+    def render_reference(self, reference: RecordReference) -> str:
+        """Render one opaque reference for content owned by this adapter."""
 
 
 class IssueAdapter(Protocol):

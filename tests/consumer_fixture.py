@@ -186,7 +186,7 @@ def write_schema3_guidance(root: Path, configure_workflows_dir: Path) -> None:
         "# Record routing\n\nConfiguration: `.agents/workflows.yaml`\n\n"
         "Use create, read, list/search, guarded update, and archive through the configured adapter. "
         "Issues additionally support comment, claim, resolve, cancel, parent, block, and frontier. "
-        "Treat returned references and revisions as opaque. Pass the latest revision to mutations. "
+        "Treat returned references and revisions as opaque. Pass complete references to the destination adapter for rendering and pass the latest revision to mutations. "
         "Obtain approval before every mutation. A disabled route prohibits persistence without new approval.\n\n"
         "Backend guidance and helpers are under `docs/agents/backends/`.\n\n"
         + route_lines + "\n"

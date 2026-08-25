@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from contract import RecordError, RecordRequest
+from contract import RecordError, RecordReference, RecordRequest
 
 
 class RecordAdapterContract:
@@ -38,6 +38,28 @@ class RecordAdapterContract:
         self.assertEqual(created.title, created.reference.title)
         self.assertTrue(created.reference.href)
         self.assertTrue(created.revision.startswith("sha256:"))
+
+    def test_contract_renders_opaque_cross_backend_references(self):
+        rendered = self.adapter.render_reference(
+            RecordReference(
+                backend="other-instance",
+                id="provider-native-id",
+                title="Related [record]",
+                href="https://example.test/records/42",
+            )
+        )
+        self.assertEqual(
+            "[Related \\[record\\]](<https://example.test/records/42>)",
+            rendered,
+        )
+        self.assertEqual(
+            "Unlinked record",
+            self.adapter.render_reference(
+                RecordReference.from_dict(
+                    {"backend": "other-instance", "id": "native", "title": "Unlinked record"}
+                )
+            ),
+        )
 
     def test_contract_list_and_search(self):
         first = self.create(title="Runtime compatibility", content="Supported versions")

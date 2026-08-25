@@ -6,7 +6,7 @@ license: MIT
 
 # Review Implementation
 
-Review one bounded implementation. Find material discrepancies; do not silently repair them.
+Review one bounded implementation. Find material discrepancies; do not silently repair them. Read `.agents/workflows.yaml` and `docs/agents/records.md`, resolve the `issues` route, and follow its generated adapter guidance for any approved publication. If the route is disabled, do not persist the review without approval.
 
 ## Establish scope
 
@@ -78,4 +78,4 @@ Present the complete review and verdict before any issue operation. Ask the user
 - route an approved finding for triage; or
 - request further evidence.
 
-Use the configured backend for approved issue operations. Do not create follow-up issues, alter status, or modify the implementation without separate approval and workflow. Report performed operations and stable links.
+Use the `issues` adapter for approved operations, reading the latest revision before guarded `comment` or `update`. Add the review to the requesting issue; do not create a separate review record. Do not create follow-up issues, alter status, or modify the implementation without separate approval and workflow. Report performed operations and adapter-returned references; do not construct paths, provider identifiers, or links.

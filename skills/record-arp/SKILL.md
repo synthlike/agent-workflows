@@ -20,8 +20,8 @@ If the outcome is still unresolved, use `develop-rfc`. Never invent consensus.
 
 ## Record
 
-Read `.agents/workflows.yaml` and use the configured ARP path and prefix. Search existing records for overlap, contradiction, or supersession. Allocate the next identifier and use [the ARP template](references/arp-template.md).
+Read `.agents/workflows.yaml` and `docs/agents/records.md`. Resolve the `arps` route and follow its generated adapter guidance. If the route is disabled, do not persist without approval. Use adapter `list` or search for overlap, contradiction, or supersession. Use adapter `create`, which allocates the identifier, with [the ARP template](references/arp-template.md).
 
 Keep it concise. Link the source RFC, map ticket, meeting, or issue. Explain why the decision was selected, not the full chronology of discussion. Record non-obvious consequences.
 
-When replacing an earlier decision, mark the old record as superseded and cross-link both records. Do not rewrite history by deleting accepted records.
+When replacing an earlier decision, read its current revision and use guarded `update` to mark it superseded. Use adapter-returned references for both records and let the destination adapter render them; do not construct paths, identifiers, or links. Do not rewrite history by deleting accepted records.

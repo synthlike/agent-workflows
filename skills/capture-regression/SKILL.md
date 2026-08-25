@@ -10,7 +10,7 @@ Turn an established defect into a durable check that fails for the diagnosed rea
 
 ## Verify the starting point
 
-Read project guidance, the defect issue, specification or other source of expected behavior, linked investigation findings, existing tests and fixtures, test commands, repository status, and affected implementation.
+Read `.agents/workflows.yaml` and `docs/agents/records.md`. Resolve the `issues` route and follow its generated adapter guidance for any approved issue update. If the route is disabled, do not persist an issue update without approval. Read project guidance, the defect issue, specification or other source of expected behavior, referenced investigation findings, existing tests and fixtures, test commands, workspace status, and affected implementation.
 
 Proceed only when the defect is accepted and either reliably reproduced or supported by a sufficiently established failure mechanism. If the behavior or cause remains speculative, stop and use `investigate-failure`; do not encode an assumption as a contract.
 
@@ -61,6 +61,8 @@ Run the approved narrow command. Confirm that:
 If it passes before the fix or fails for another reason, stop and revise the proposed seam or return to investigation. Do not weaken the expected behavior to manufacture the desired result.
 
 ## Report and hand off
+
+If approved, add the regression result to the requesting issue through guarded `comment` or `update`; do not create a separate regression record. Use adapter-returned references and let the issue adapter render them rather than constructing paths, provider identifiers, or links.
 
 Report:
 

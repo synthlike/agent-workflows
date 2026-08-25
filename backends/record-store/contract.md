@@ -25,6 +25,8 @@ A stored record returns:
 - opaque revision; and
 - a structured reference containing backend instance, native stable ID, title, and optional href.
 
+The destination adapter renders structured references for its own canonical content. Workflows pass the complete reference unchanged and never construct provider links.
+
 List and search return zero or more complete stored records in stable adapter order.
 
 ## Stable errors
@@ -41,6 +43,7 @@ Adapters raise a machine-readable code and safe message. The initial portable co
 - `duplicate_id`;
 - `stale_revision`;
 - `malformed_record`;
+- `malformed_reference`;
 - `archived_record`;
 - `claim_conflict`;
 - `invalid_state`;

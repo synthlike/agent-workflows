@@ -7,7 +7,7 @@ license: MIT
 
 # Prepare Handoff
 
-Write a compact handoff tailored to the next session's purpose. Read `.agents/workflows.yaml` when present. Save durable handoffs under the configured handoff path when repository retention is enabled. When it is disabled, save outside the repository and do not write a handoff into the repository without approval.
+Write a compact handoff tailored to the next session's purpose. Read `.agents/workflows.yaml` and `docs/agents/records.md`. Resolve the `handoffs` route and follow its generated adapter guidance. When the route is disabled, keep the handoff temporary or external and do not persist it without approval.
 
 Include:
 
@@ -20,4 +20,4 @@ Include:
 
 Do not duplicate specifications, RFCs, ARPs, maps, issues, commits, or diffs. Link them. Redact credentials, secrets, and unnecessary personal information.
 
-Report the path. Create the configured directory only when writing its first approved handoff.
+After approval, use adapter `create` or revision-gated `update` and report its returned reference. Do not construct a path, provider identifier, or link. The adapter owns lazy destination creation.

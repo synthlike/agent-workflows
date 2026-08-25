@@ -10,7 +10,7 @@ Close one initiative from evidence, not issue counts. Preserve gaps and lessons 
 
 ## Load the initiative
 
-Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-workflows`.
+Read `.agents/workflows.yaml` and `docs/agents/records.md`. Resolve the `issues` route and follow its generated adapter guidance. Initiative maps remain issue structures. If record guidance is absent, stop and ask the user to run `configure-workflows`. If the route is disabled, do not persist closure changes without approval.
 
 Identify the initiative map or equivalent parent artifact, original destination, success criteria, accepted scope changes, linked decision and implementation work, specifications, accepted ARPs, domain documentation, and project guidance. If the destination or closure boundary is ambiguous, ask before proceeding.
 
@@ -67,8 +67,8 @@ Wait for explicit approval. Do not change statuses or create follow-up work mere
 
 ## Record closure
 
-After approval, add a concise closure summary to the existing initiative map or equivalent parent artifact. Link evidence, specifications, ARPs, issues, and supporting lessons rather than copying them. Do not create a separate canonical closure-report type.
+After approval, read the latest parent revision and add a concise closure summary through guarded issue `update`. Pass adapter-returned references for evidence, specifications, ARPs, issues, and supporting lessons to the issue adapter for rendering rather than copying them. Do not construct paths, identifiers, or links. Do not create a separate canonical closure-report type.
 
-Perform only approved issue operations through the configured backend. Create follow-up issues only after their scope is approved, preserve partial gaps explicitly, and do not silently resolve blocked work.
+Perform only approved operations through the `issues` adapter. Create follow-up issues only after their scope is approved, preserve partial gaps explicitly, and do not silently resolve blocked work.
 
 Report the recorded outcome, updated artifacts and issues, created follow-ups, verification performed, and remaining limitations. If evidence is insufficient to select an outcome, stop with the missing evidence and do not close the initiative.

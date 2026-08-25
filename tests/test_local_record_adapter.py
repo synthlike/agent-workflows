@@ -244,6 +244,13 @@ Preserve this shape.
             issue_ids = list(executor.map(create_issue, range(12)))
         self.assertEqual(12, len(set(issue_ids)))
 
+    def test_malformed_structured_reference_is_rejected(self):
+        with self.assertRaises(RecordError) as raised:
+            RecordReference.from_dict(
+                {"backend": "local", "id": "record", "unexpected": "value"}
+            )
+        self.assertEqual("malformed_reference", raised.exception.code)
+
     def test_contract_shapes_are_json_serializable(self):
         reference = RecordReference("local", "docs/research/item.md", "Item", "docs/research/item.md")
         record = StoredRecord(

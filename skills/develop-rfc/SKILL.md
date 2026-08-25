@@ -6,11 +6,11 @@ license: MIT
 
 # Develop RFC
 
-Read `.agents/workflows.yaml` and use the configured RFC path. If RFCs are not configured, ask before creating one.
+Read `.agents/workflows.yaml` and `docs/agents/records.md`. Resolve the `rfcs` route and follow its generated adapter guidance. If the route is disabled, ask before persistence and use an approved temporary or external draft when appropriate.
 
 ## Start or resume
 
-Search existing RFCs and ARPs for overlap. Resume the existing artifact when it asks the same material question. Otherwise allocate the next configured RFC identifier and use [the RFC template](references/rfc-template.md).
+Use adapter `list` or search for overlapping RFCs and ARPs. Resume the existing RFC through revision-gated `update` when it asks the same material question. Otherwise use adapter `create`, which allocates the identifier, with [the RFC template](references/rfc-template.md).
 
 ## Develop
 
@@ -31,6 +31,6 @@ After acceptance:
 
 - invoke `record-arp` for each outcome meeting the ARP threshold;
 - invoke `author-specification` when agreed behavior needs a coherent contract; and
-- create implementation work through the configured issue backend.
+- create implementation work through the `issues` route.
 
-Link resulting artifacts. Do not duplicate their full content in the RFC.
+Use adapter-returned references for resulting records and let the destination adapter render them. Do not construct paths, identifiers, or links, and do not duplicate full content in the RFC.

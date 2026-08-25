@@ -93,6 +93,13 @@ class LocalMarkdownAdapter:
                     lock.seek(0)
                     msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
 
+    def render_reference(self, reference: RecordReference) -> str:
+        title = reference.title.replace("\\", "\\\\").replace("[", "\\[").replace("]", "\\]")
+        if reference.href is None:
+            return title
+        href = reference.href.replace("<", "%3C").replace(">", "%3E")
+        return f"[{title}](<{href}>)"
+
     def execute(self, request: RecordRequest) -> RecordResponse:
         request.validate()
         if request.backend != self.backend:
@@ -871,6 +878,9 @@ def build_parser() -> argparse.ArgumentParser:
     archive.add_argument("--record-type", default="research")
     archive.add_argument("--expected-revision", required=True)
 
+    render = commands.add_parser("render-reference")
+    render.add_argument("--reference-file", required=True)
+
     issue_create = commands.add_parser("issue-create")
     issue_create.add_argument("--title", required=True)
     issue_create.add_argument("--body-file", required=True)
@@ -930,6 +940,14 @@ def main(arguments: list[str] | None = None) -> int:
     args = build_parser().parse_args(arguments)
     adapter = LocalMarkdownAdapter(args.root, args.backend)
     try:
+        if args.operation == "render-reference":
+            try:
+                value = json.loads(Path(args.reference_file).read_text())
+            except (OSError, json.JSONDecodeError) as error:
+                raise RecordError("malformed_reference", f"cannot read reference: {error}") from error
+            reference = RecordReference.from_dict(value)
+            print(json.dumps({"rendered": adapter.render_reference(reference)}, indent=2, sort_keys=True))
+            return 0
         if args.operation.startswith("issue-"):
             operation = args.operation.removeprefix("issue-")
             labels = getattr(args, "label", None)

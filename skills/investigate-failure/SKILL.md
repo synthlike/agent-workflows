@@ -10,7 +10,7 @@ Diagnose one unexpected behavior. Investigation produces evidence; it does not s
 
 ## Bound the investigation
 
-Read project guidance, the requesting issue or report, specifications and accepted ARPs, relevant code and configuration, tests, logs, recent changes, repository status, and existing related issues.
+Read `.agents/workflows.yaml` and `docs/agents/records.md`. Resolve the `issues` route and follow its generated adapter guidance for any approved publication. If the route is disabled, do not persist findings without approval. Read project guidance, the requesting issue or report, specifications and accepted ARPs, relevant code and configuration, tests, logs, recent changes, workspace status, and existing related issues.
 
 State:
 
@@ -76,11 +76,10 @@ A confirmed defect may next use `capture-regression`, but do not create a perman
 
 Present the findings before writing them to an issue or project document. Ask whether to:
 
-- append concise evidence to the requesting issue;
-- save detailed supporting findings beside the requesting artifact;
+- add detailed findings and a concise summary to the requesting issue or parent through guarded `comment` or `update`;
 - continue investigation; or
 - propose separately tracked regression or repair work.
 
-Use the configured issue backend for approved issue operations. Do not create follow-up work, change issue status, or treat a recommendation as approved without confirmation.
+Use the `issues` adapter for approved operations and read the latest revision before mutation. Do not create a separate failure-findings record. Use adapter-returned references and let destination adapters render them; do not construct paths, provider identifiers, or links. Do not create follow-up work, change issue status, or treat a recommendation as approved without confirmation.
 
 Report every command run, file changed, probe removed or retained, source consulted, remaining uncertainty, and approved durable output. If investigation is blocked, stop with the evidence gathered and the smallest concrete requirement for resuming; do not claim a diagnosis.

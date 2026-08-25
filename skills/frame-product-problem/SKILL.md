@@ -48,7 +48,7 @@ Create a concise problem hypothesis only after the founder's framing is coherent
 
 List counter-hypotheses and narrower segment hypotheses fairly. Identify the assumptions most likely to invalidate the opportunity rather than the easiest claims to confirm.
 
-Use [the problem-framing template](references/problem-framing-template.md). Prefer an existing project-approved product or discovery documentation location. If none exists, propose a repository-contained location and ask for approval. Never assume a fixed consumer path.
+Read `.agents/workflows.yaml` and `docs/agents/records.md`. Resolve the `problem_framing` route and follow its generated adapter guidance. Use [the problem-framing template](references/problem-framing-template.md). Prefer an existing brief found through adapter `list` or search and use revision-gated `update` when it owns the same hypothesis. Otherwise propose adapter `create`. If the route is disabled, do not persist without approval; use an approved temporary or external brief. Never assume or construct a backend destination.
 
 The brief is supporting evidence. It does not replace domain documentation, an RFC, ARP, specification, issue, or current behavior.
 
@@ -62,8 +62,8 @@ Show a complete dry run containing:
 4. prioritized risky assumptions;
 5. unresolved founder questions;
 6. proposed validation plan and evidence thresholds;
-7. exact brief location and structure; and
-8. every file to create or change.
+7. target semantic record and structure; and
+8. every adapter mutation and workspace file to create or change.
 
 Wait for explicit approval before writing. Preserve existing discovery history; update and link rather than overwrite contradictory evidence.
 
@@ -99,4 +99,4 @@ Cite the evidence for every state. Preserve segment differences, negative cases,
 
 Recommend one next direction with rationale: continue, narrow, reframe, pivot, or stop. The founder decides. Never label the product idea or problem “validated” unless the project has explicit evidence criteria and the cited customer or behavioral evidence meets them.
 
-Before updating the brief, show changed evidence states, revised hypotheses, retained contradictions, recommendation, and exact file changes for approval. Report the resulting brief path, evidence links, open assumptions, approved next workflows, and every repository change.
+Before updating the brief, show changed evidence states, revised hypotheses, retained contradictions, recommendation, expected revision, and exact mutations for approval. Report the resulting adapter reference, evidence references, open assumptions, approved next workflows, and every workspace change. Let adapters render references; do not construct paths, provider identifiers, or links.

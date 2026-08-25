@@ -16,7 +16,7 @@
         "develop-rfc"
       ],
       "files": {
-        "SKILL.md": "a6baa695bc28e0388e66dc021339e6357309165294773b0f46935e9217b069d8",
+        "SKILL.md": "caedff69b482878b19e49d24a464cdad1d4b079257abfcb5f5b146fc5955ba52",
         "references/specification-template.md": "099893f4c0ba785e4be898222579649b51b594630b39ea113b9e0c44a63026e0"
       }
     },
@@ -28,7 +28,7 @@
         "record-arp"
       ],
       "files": {
-        "SKILL.md": "43f7efc5dc0ba8d7fee86b4047e75532e9977ea24442a6b88e2874d7a54437ae",
+        "SKILL.md": "1522fb3fc76ff13186885b8f4721c98e4a9873c2d7d52b9b85093f603f2922c9",
         "references/meeting-template.md": "49ab8809ff00a4325e74e68e556f4714d37742847fe0397793b5864b19097850"
       }
     },
@@ -37,13 +37,13 @@
         "investigate-failure"
       ],
       "files": {
-        "SKILL.md": "ed473eecc6b674216145e4412a158145d1f4e6699291ff57fc83a749cd7d73f7"
+        "SKILL.md": "4cf25cb206852b0f84268cc2af58f03cd6f412ebd5012034292c4d664da8204d"
       }
     },
     "clarify-intent": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "5387c7c1b8511bb3f2e7333314a9cca75c8ab4ba31c9beb1529c3865163218e0"
+        "SKILL.md": "c5e5fb9fbfd8a38c874cd41efc27cc8b29fb614a60e4a652f3e5b9b8c46e9f7e"
       }
     },
     "close-initiative": {
@@ -55,18 +55,18 @@
         "triage-issue"
       ],
       "files": {
-        "SKILL.md": "8c4927d019115d19262ab4fd186d61a26d5bf4d955d94407521447bb253789c6",
+        "SKILL.md": "0d5fc5134e830a72db623d6ef2b1a43f559264ca8d2db16aa05f613124950f53",
         "references/initiative-closure-template.md": "550923ddb3902658d621f4afc7375db9e5d06a0c59b12d42d672bfdfe92ef153"
       }
     },
     "configure-workflows": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "af0525bb5d500d2777edb6c8285212e459a9f77858d3f573baf9f8b17acc282c",
+        "SKILL.md": "d7c8170ad0e9e6ae9ebec27d470d15d0e8911703ee777c143a9f4db067038d44",
         "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
-        "references/backends/record-store/contract.py": "57408e6dd5f6070e40a408ebde7cf1cafd61581e1b464cb7a350a39df0279ee6",
-        "references/backends/record-store/local-markdown.md": "5c5c09434a5c8a6d1fb24d242a991f1f03019e8acf6512dc428884f91e2a0c04",
-        "references/backends/record-store/local-markdown.py": "0a8e05bac3d4671ab19e098e761d2c9093e51a068ff5d3f6bb68b5d4094f8d16",
+        "references/backends/record-store/contract.py": "b0e1611d61418982331c6dc49a7a79e73b43204d6bd9d9e157927e38231d5347",
+        "references/backends/record-store/local-markdown.md": "e8356bd039dbfcf5c7606a1f22d70f035bc0a3fcf6ad8e2bad07931fabddd0bf",
+        "references/backends/record-store/local-markdown.py": "cd173aff05f238137d7e7cde284b97f0f03550633af8a06905ec09b1fe49aeec",
         "references/consumer.py": "2290dff220e0752ebf39aa386f991fbd4b86707534ee7c9f5f5791fcc90a8a9a",
         "references/github-issues.py": "8d3e1538bfba53528d38c5bcd976e9feeac83610b254ebb1c56a7afd482e678e",
         "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
@@ -85,7 +85,7 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "7053da851553cca2244e270f9ea48668a97d65f4fe1e5b70de560d430e9b0e05",
+        "SKILL.md": "dd86b6844ba1535908dd3b26c1e7fb818a6c2998ae093952190e5e3f21ef96bd",
         "references/rfc-template.md": "c8db27ddbed10cf5f975b400bdcf64de947d4bde7fd1c5258d69af4091bd8955"
       }
     },
@@ -96,7 +96,7 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "98dbb645b286aa3a98e0c802949f0621e2abe29e4f79df14f27c03b5c29bac4c",
+        "SKILL.md": "b8e7fffeeab1610570c0ad1c19f75a099075ea6c09918724303e71eab665b7bf",
         "references/technical-baseline-template.md": "533f55813ae86b5f812bf983f1a31ba8fe2a98b1b34796df0a17cca76e7158e2"
       }
     },
@@ -112,7 +112,7 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "189b7dd6b1c9a9430e8594b4bf70752eccde5a67ed2949e762d4aeb2c587eb96",
+        "SKILL.md": "bd46d280b09be84a6d439691899758112bb72d8434165ab7c501a43f51886b63",
         "references/problem-framing-template.md": "bb46fdf6472d926fdb8e5ac33e4febf7f9854dbc189ee08013196265fa5b7cba"
       }
     },
@@ -123,7 +123,7 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "71e2a50a49a0d268100b2a3622ee6d4878c21d20d6148b13dc99ce72fb7b14c5",
+        "SKILL.md": "148e44e86b58cd7b5f34308e07c96cc4286eeaa087f55c24480662bca3ed3d3c",
         "references/failure-findings-template.md": "64a668a1271493f15311c140c56a8ddcbc489e423225968405caf063da252d90"
       }
     },
@@ -133,7 +133,7 @@
         "record-arp"
       ],
       "files": {
-        "SKILL.md": "ca45cb63ca6b74b3c2222944462488e2fd8e6e98f9dace64ad47256a2a73e056",
+        "SKILL.md": "8d3b818639b8c17eba17e61f1e6f2c673b5bb8895da051c3ee81889f5ea2ef28",
         "references/context-template.md": "eafc2407a6773e51f18c28b3f892decf796a3ed01e2dc0138aa561b540f5b116"
       }
     },
@@ -144,7 +144,7 @@
         "plan-initiative"
       ],
       "files": {
-        "SKILL.md": "3bd22e3ef262194f1c7c944ec45e4b5b1a771b2e7805ede849c9d5d95e8c44f2",
+        "SKILL.md": "13a1628aa6186ff5cd8e538a821b23d10e766e03209eb29d2f67baeb391f83ea",
         "references/issue-template.md": "1110472be63689c089fbc32ab2796d62da432402aad71eb672d1a5c15dae25a5"
       }
     },
@@ -160,27 +160,27 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "fed1dd7195e6505cfbbff464d84758e2983353489d2f2995bb66853e3f4f42fc",
+        "SKILL.md": "163a3dafff6b11cd2b9cf8c80abe82d155f90f7e1dc606da2bfd96b4c95a9b0c",
         "references/map-template.md": "970ff9e3b2f5956964d67f1b5bcbcecd39a5aff8baf7a47b461c1102e353988b"
       }
     },
     "prepare-handoff": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "c2c3376f5ef20035a83cde64931e507c9e815ec1e0b60c27189980c3428d6aef"
+        "SKILL.md": "813c6ca1dcc320cef9c708d6e5c2d074e2b1e66c8eda99dd9d700c5f1b3ad770"
       }
     },
     "prepare-questionnaire": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "4cf8c53281a787c68cb775ff3f47b79535eeeeb19ab0e4f26dee913b5eb14290",
+        "SKILL.md": "648b5a8ac266ee0530b2c9a8c4cca834052f5c23fc4de9cf13d9032924edc20c",
         "references/questionnaire-template.md": "743f8a80e3c5df32c662c3a3cf586e0ec4e08f8accb316d6d461f14ca7369054"
       }
     },
     "prototype-design": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "1b0e190c5f3e95199742251afe5852db974b456b8b070e999013a0a644edb344"
+        "SKILL.md": "d96b135f8a90b355232358faf809a5025058a01f0f44d5ec5143e1c889d871cd"
       }
     },
     "record-arp": {
@@ -188,14 +188,14 @@
         "develop-rfc"
       ],
       "files": {
-        "SKILL.md": "3b70964d1e7d7ea98d91da783f245da418f0b8b934ba7dd83a5c36514d0a1e50",
+        "SKILL.md": "c7bbd187438a1a9e32026c929b85faf75b870fc7f71526dedc5fde9b433002cc",
         "references/arp-template.md": "41cb359f5039d6a153a4e60a945a452b4ba2c69a75e01bebd770d1940798ca1c"
       }
     },
     "research-question": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "86215410eec6bbe8bf088aee31ea66c357d6d78b2c06f0a3742e1c1e4a11db5d"
+        "SKILL.md": "1d54ca57d3c3bcb647a36df7f9d48e09e3aa0e3d404bb07aafbb492ffa9154b0"
       }
     },
     "review-implementation": {
@@ -205,7 +205,7 @@
         "triage-issue"
       ],
       "files": {
-        "SKILL.md": "666edb469d6e0710e826d82f6cbeb318119366bf0f8d1e1e272e4535e3d380ea",
+        "SKILL.md": "9fe8e03587980e72539e2153f61ca37ae8317fc54e6b2f4ae4a1f4fea2f44f49",
         "references/implementation-review-template.md": "e61a8cccb5afee4594d1ff5ee9483332eccfce09a512dfddc104f830a6825402"
       }
     },
@@ -218,7 +218,7 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "10abd67b1a66c152b109cfa3adc251cbd47fd619fbbe49b897e64cc2f02167bb",
+        "SKILL.md": "fdb53988fb5970ac146b4a1c8924e1e5c3474313e97deea9a958007d69cd98be",
         "references/triage-proposal-template.md": "1fdf8d11bd1bb69608a42e5fe247b2c9238f168b61115fccecc471a8f27727b7"
       }
     }

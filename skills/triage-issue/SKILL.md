@@ -1,6 +1,6 @@
 ---
 name: triage-issue
-description: Evaluate an incoming report, identify its correct disposition, and propose actionable issue scope or another workflow before any backend write.
+description: Evaluate an incoming report, identify its correct disposition, and propose actionable issue scope or another workflow before any issue mutation.
 license: MIT
 ---
 
@@ -10,7 +10,7 @@ Turn one incoming report into an evidence-based disposition. Triage decides the 
 
 ## Load the project contract
 
-Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-workflows`.
+Read `.agents/workflows.yaml` and `docs/agents/records.md`. Resolve the `issues` route and follow its generated adapter guidance. If record guidance is absent, stop and ask the user to run `configure-workflows`. If the route is disabled, do not persist triage output or mutate an issue without approval.
 
 Read the complete report or request, relevant project guidance, current repository evidence, domain documentation, specifications, accepted ARPs, RFC resolutions, and related open and resolved issues. Search by behavior and outcome, not only matching words.
 
@@ -72,12 +72,12 @@ Before any issue creation or material rewrite, present:
 4. missing facts and decisions;
 5. recommended disposition and routing;
 6. proposed title, outcome, acceptance criteria, links, and blockers when an issue is appropriate; and
-7. exact backend operations that approval would perform.
+7. exact adapter operations that approval would perform.
 
 Wait for approval. A duplicate, unsupported report, or answered question may need no new issue; explain the disposition and ask before preserving evidence in an existing artifact.
 
 ## Publish
 
-Perform only the approved operations through the configured backend. Recheck duplicates immediately before creating a new issue. Preserve backend conventions, assign no owner or priority unless approved, and do not mark implementation complete.
+Perform only the approved adapter operations through the `issues` route. Recheck duplicates with adapter `list` or search immediately before `create`. Read the latest revision before guarded updates. Preserve issue semantics, assign no owner or priority unless approved, and do not mark implementation complete.
 
-Report the stable issue or artifact reference, performed operations, unresolved evidence, and recommended next workflow. If backend state changed or new evidence invalidates the approved draft, stop and present a revised proposal rather than publishing stale scope.
+Report the adapter-returned issue or record reference, performed operations, unresolved evidence, and recommended next workflow. Treat references and revisions as opaque; do not construct paths, provider identifiers, labels, tags, or links. If issue state changed or new evidence invalidates the approved draft, stop and present a revised proposal rather than publishing stale scope.

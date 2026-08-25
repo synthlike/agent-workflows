@@ -9,11 +9,11 @@ SKILLS = ROOT / "skills"
 SKILL_EXPECTATIONS = {
     "establish-technical-baseline": (
         "## Establish the boundary", "## Verify the stack", "## Assess applicable foundations",
-        "## Choose a location", "## Confirm", "## Write and report", "Wait for explicit approval",
-        "every changed file", "do not claim that a baseline is established", "Verified fact",
+        "## Choose persistence", "## Confirm", "## Write and report", "Wait for explicit approval",
+        "every adapter mutation", "do not claim that a baseline is established", "Verified fact",
         "Approved convention", "Recommendation", "Accepted decision", "Open decision",
         "Deferred product question", "supporting index", "link the ARP instead of copying",
-        "Prefer an existing project-approved", "configured technical-baseline path",
+        "existing technical baseline found through adapter", "`technical_baselines` route",
         "Preserve existing documentation and conventions",
     ),
     "investigate-failure": (
@@ -37,7 +37,7 @@ SKILL_EXPECTATIONS = {
         "Reported impact", "Verified evidence", "Do not invent urgency, severity",
         "`investigate-failure`", "`research-question`", "`clarify-intent`", "`develop-rfc`",
         "`plan-implementation`", "Before any issue creation or material rewrite", "Wait for approval",
-        "Perform only the approved operations",
+        "Perform only the approved adapter operations",
     ),
     "review-implementation": (
         "## Establish scope", "specifications define agreed behavior", "accepted ARPs constrain",
@@ -57,7 +57,7 @@ SKILL_EXPECTATIONS = {
         "Ask exactly one question at a time", "the proposed solution",
         "current behavior, alternatives, and workarounds", "Founder belief", "Direct observation",
         "External evidence", "Interpretation", "Unknown", "counter-hypotheses",
-        "Prefer an existing project-approved", "Never assume a fixed consumer path",
+        "existing brief found through adapter", "Never assume or construct a backend destination",
         "Wait for explicit approval before writing", "supporting evidence",
         "ask about concrete past behavior", "avoid pitching the solution",
         "avoid hypothetical compliments", "respect consent, privacy, confidentiality",

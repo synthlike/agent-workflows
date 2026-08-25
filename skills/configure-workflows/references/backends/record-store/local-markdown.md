@@ -42,6 +42,15 @@ python3 "$helper" --root . --backend local --destination docs/research \
   archive question --record-type research --expected-revision 'sha256:...'
 ```
 
+To render a structured reference inside local Markdown, save the complete returned reference object as JSON and pass it unchanged to the destination adapter:
+
+```bash
+python3 "$helper" --root . --backend local --destination docs/specs \
+  render-reference --reference-file reference.json
+```
+
+The operation accepts references from other backend instances and returns destination-owned Markdown. Workflows must not construct the link themselves.
+
 Create uses exclusive file creation. ARPs and RFCs allocate the next prefixed number inside create. Other records allocate a title slug and numeric suffix. An explicitly imported semantic ID fails on collision. Archive retains the record and excludes it from normal listing.
 
 ## Issues
