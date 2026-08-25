@@ -18,7 +18,7 @@ Give fresh consumer projects concise plain-language guidance for workflow-genera
 
 ## Acceptance criteria
 
-- [x] `configure-project` recommends the default only when the project has no established writing policy.
+- [x] `configure-workflows` recommends the default only when the project has no established writing policy.
 - [x] Generated `docs/agents/workflows.md` includes a `## Documentation style` section with direct, actionable guidance.
 - [x] Customization documentation identifies the guidance as project-overridable and does not claim ASD-STE100 compliance.
 - [x] The real fresh-install smoke scenario generates the default section.
@@ -40,4 +40,4 @@ None.
 
 ## Resolution
 
-Resolved on 2026-08-24. `configure-project` now preserves existing writing policy or adds a concise plain-language default to `docs/agents/workflows.md`. Consumer customization guidance distinguishes this default from verified ASD-STE100 compliance. The smoke scenario, changelog, and distribution manifest were updated. The real `skills@latest` and Pi smoke test passes, as do all 56 tests and structural, release, installation, syntax, and link checks.
+Resolved on 2026-08-24. `configure-workflows` now preserves existing writing policy or adds a concise plain-language default to `docs/agents/workflows.md`. Consumer customization guidance distinguishes this default from verified ASD-STE100 compliance. The smoke scenario, changelog, and distribution manifest were updated. The real `skills@latest` and Pi smoke test passes, as do all 56 tests and structural, release, installation, syntax, and link checks.

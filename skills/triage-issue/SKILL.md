@@ -10,7 +10,7 @@ Turn one incoming report into an evidence-based disposition. Triage decides the 
 
 ## Load the project contract
 
-Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-project`.
+Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-workflows`.
 
 Read the complete report or request, relevant project guidance, current repository evidence, domain documentation, specifications, accepted ARPs, RFC resolutions, and related open and resolved issues. Search by behavior and outcome, not only matching words.
 

@@ -36,12 +36,12 @@ The decision owner is the only v0.1.0 user. Building that generalized update sys
 ### Requirements
 
 - v0.2 MUST support fresh adoption in Git-backed repositories beyond this source repository.
-- `configure-project` MUST remain mandatory and carry the deterministic lifecycle command plus current release manifest.
+- `configure-workflows` MUST remain mandatory and carry the deterministic lifecycle command plus current release manifest.
 - Each release MUST publish machine-readable identity, configuration compatibility, direct dependencies, and distributed-file SHA-256 data.
 - Fresh configuration MUST calculate closure from user-selected workflows rather than requiring manual dependency calculation.
 - Missing dependencies MUST come from a verified current-release bundle.
 - The dry run MUST show every skill destination and configuration change before writing.
-- The already discovered `configure-project` parent MUST be the default destination for missing skills, with explicit repository-contained overrides.
+- The already discovered `configure-workflows` parent MUST be the default destination for missing skills, with explicit repository-contained overrides.
 - Configuration MUST complete only after the consumer's harness confirms discovery of the closure.
 - v0.2 MUST use schema 2 with selected workflows and discovered skill paths in the single root `.agents/workflows.yaml`.
 - Consumer verification MUST run from installed lifecycle assets without a source checkout.

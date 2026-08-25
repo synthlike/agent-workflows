@@ -31,7 +31,7 @@ installation:
     capture-regression: skills/capture-regression
     clarify-intent: skills/clarify-intent
     close-initiative: skills/close-initiative
-    configure-project: skills/configure-project
+    configure-workflows: skills/configure-workflows
     develop-rfc: skills/develop-rfc
     establish-technical-baseline: skills/establish-technical-baseline
     frame-product-problem: skills/frame-product-problem

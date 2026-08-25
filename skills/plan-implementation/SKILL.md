@@ -7,7 +7,7 @@ license: MIT
 
 # Plan Implementation
 
-Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-project`.
+Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-workflows`.
 
 ## Gather context
 

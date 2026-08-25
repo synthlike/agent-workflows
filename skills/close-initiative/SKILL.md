@@ -10,7 +10,7 @@ Close one initiative from evidence, not issue counts. Preserve gaps and lessons 
 
 ## Load the initiative
 
-Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-project`.
+Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-workflows`.
 
 Identify the initiative map or equivalent parent artifact, original destination, success criteria, accepted scope changes, linked decision and implementation work, specifications, accepted ARPs, domain documentation, and project guidance. If the destination or closure boundary is ambiguous, ask before proceeding.
 

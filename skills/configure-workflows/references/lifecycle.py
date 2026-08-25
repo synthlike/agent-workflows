@@ -16,7 +16,7 @@ from consumer import dependency_closure, inspect_skills, verify_consumer
 
 MANIFEST_FORMAT = 1
 MANIFEST_RELATIVE_PATH = PurePosixPath(
-    "configure-project/references/distribution-manifest.json"
+    "configure-workflows/references/distribution-manifest.json"
 )
 IGNORED_NAMES = {".DS_Store", "__pycache__"}
 INLINE_CODE = re.compile(r"`([a-z0-9]+(?:-[a-z0-9]+)+)`")
@@ -77,9 +77,9 @@ def _metadata(root: Path) -> dict[str, Any]:
             or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)+", name)
             for name in declared_skills
         )
-        or "configure-project" not in declared_skills
+        or "configure-workflows" not in declared_skills
     ):
-        raise LifecycleError("release skills must be valid, unique, sorted, and include configure-project")
+        raise LifecycleError("release skills must be valid, unique, sorted, and include configure-workflows")
     configuration = metadata["configuration"]
     if not isinstance(configuration, dict) or set(configuration) != {
         "current_schema",
@@ -126,7 +126,7 @@ def _declared_dependencies(root: Path, names: set[str]) -> dict[str, list[str]]:
         targets = {
             target
             for target in INLINE_CODE.findall(text)
-            if target in names and target not in {name, "configure-project"}
+            if target in names and target not in {name, "configure-workflows"}
         }
         dependencies[name] = sorted(targets)
     return dependencies
@@ -151,8 +151,8 @@ def _skill_files(skill_dir: Path, skill_name: str) -> dict[str, str]:
         pure = PurePosixPath(relative.as_posix())
         if pure.is_absolute() or ".." in pure.parts:
             raise LifecycleError(f"distributed file escapes skill directory: {skill_name}/{relative}")
-        if skill_name == "configure-project" and pure == MANIFEST_RELATIVE_PATH.relative_to(
-            "configure-project"
+        if skill_name == "configure-workflows" and pure == MANIFEST_RELATIVE_PATH.relative_to(
+            "configure-workflows"
         ):
             continue
         key = pure.as_posix()

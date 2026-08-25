@@ -19,9 +19,9 @@ v0.1 needs a stable boundary between this distribution, installation mechanisms,
 
 v0.1 uses a behavior-based vendored installation contract:
 
-- each installation includes `configure-project` and an intact, dependency-closed set of selected skill directories;
+- each installation includes `configure-workflows` and an intact, dependency-closed set of selected skill directories;
 - the agent harness or installer chooses the discoverable physical skill location;
-- each Git repository has one root `.agents/workflows.yaml`, established through an approved `configure-project` dry run before other workflows are used;
+- each Git repository has one root `.agents/workflows.yaml`, established through an approved `configure-workflows` dry run before other workflows are used;
 - vendored skill directories are distribution-managed, while configuration, generated guidance, backend state, local modifications, and project artifacts are consumer-owned; and
 - updates are reviewed replacements, preserve consumer-owned files, surface local modifications, and perform no automatic migration.
 

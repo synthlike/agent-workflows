@@ -26,7 +26,7 @@ Make distribution identity a consistent, verifiable result of configuring a cons
 - [x] Bundled examples represent a valid immutable distribution identity or are explicitly marked as incomplete examples that setup must replace.
 - [x] Consumer configuration verification accepts exact release identifiers and immutable commit SHAs.
 - [x] Consumer configuration verification rejects mutable identities such as `latest`, branch names, and `unreleased` for completed installations.
-- [x] Existing consumer-owned configuration is changed only through an approved `configure-project` dry run.
+- [x] Existing consumer-owned configuration is changed only through an approved `configure-workflows` dry run.
 - [x] Relevant structural verification and fixture tests pass.
 
 ## Blocked by
@@ -41,4 +41,4 @@ Creating the first release tag, implementing updates, or defining a package regi
 
 ## Resolution
 
-Resolved on 2026-08-24. `configure-project` now requires immutable distribution identity in exploration, dry runs, and writes. Templates and examples expose required placeholders and identify themselves as incomplete. `scripts/verify_workflow_config.py` accepts exact semantic release versions or 40/64-character commit SHAs and rejects mutable or placeholder values; source verification and five identity tests pass.
+Resolved on 2026-08-24. `configure-workflows` now requires immutable distribution identity in exploration, dry runs, and writes. Templates and examples expose required placeholders and identify themselves as incomplete. `scripts/verify_workflow_config.py` accepts exact semantic release versions or 40/64-character commit SHAs and rejects mutable or placeholder values; source verification and five identity tests pass.

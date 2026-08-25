@@ -2,8 +2,8 @@
 
 Agent Workflows supports one configured consumer root per Git repository.
 
-1. Use an Agent Skills-compatible installer or intact manual copy to install the complete Agent Workflows skill set, including `configure-project`. Preserve each skill directory intact and place it where the consumer's agent can discover it. No particular parent directory is required.
-2. Invoke `configure-project` from the Git repository root before using another workflow.
+1. Use an Agent Skills-compatible installer or intact manual copy to install the complete Agent Workflows skill set, including `configure-workflows`. Preserve each skill directory intact and place it where the consumer's agent can discover it. No particular parent directory is required.
+2. Invoke `configure-workflows` from the Git repository root before using another workflow.
 3. Choose the workflows you intend to use. The schema records this explicit selection separately from the complete installed inventory.
 4. Let the installed lifecycle command inspect the harness-discovered directories, require the complete distribution, and calculate the [dependency closure](workflow-dependencies.md).
 5. Accept or change the recommended issue backend and artifact capabilities. When selecting GitHub, choose an authenticated account explicitly, then review its capability preflight and complete managed-label plan.
@@ -13,7 +13,7 @@ Agent Workflows supports one configured consumer root per Git repository.
 9. When a founder has an early product idea, invoke `frame-product-problem` before treating it as requirements. Approve a project-owned discovery location, challenge the problem and audience, and plan non-leading customer validation.
 10. When the principal application stack is already selected, invoke `establish-technical-baseline` before product-dependent architecture work. Approve a project-owned documentation location and keep unknown product questions deferred.
 
-If inspection reports an incomplete or modified distribution, stop configuration and correct the installation through the external installer or a reviewed intact manual copy. `configure-project` does not write skill directories. See [Fresh-project configuration](fresh-project-configuration.md).
+If inspection reports an incomplete or modified distribution, stop configuration and correct the installation through the external installer or a reviewed intact manual copy. `configure-workflows` does not write skill directories. See [Fresh-project configuration](fresh-project-configuration.md).
 
 `.agents/workflows.yaml` is the repository's single canonical workflow configuration. It records immutable distribution identity, user-selected workflows, and every harness-discovered skill path. Monorepos may choose suitable repository-contained paths, but nested configurations and inheritance are not supported.
 

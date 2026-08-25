@@ -14,7 +14,7 @@ installation:
     - clarify-intent
   skills:
     clarify-intent: .claude/skills/clarify-intent
-    configure-project: .claude/skills/configure-project
+    configure-workflows: .claude/skills/configure-workflows
 
 issue_tracker:
   backend: local-markdown
@@ -33,7 +33,7 @@ artifacts:
   specifications: {enabled: true, path: docs/specifications}
 ```
 
-Each artifact capability has an `enabled` retention policy and a repository-contained `path`. Disabled capabilities prohibit repository writes without approval but may still produce temporary or external output. Fresh projects enable research, questionnaires, and technical baselines; they disable retained prototypes, durable handoffs, and meeting notes by default. `configure-project` adjusts these recommendations to the project's nature, collaboration model, repository evidence, and existing conventions.
+Each artifact capability has an `enabled` retention policy and a repository-contained `path`. Disabled capabilities prohibit repository writes without approval but may still produce temporary or external output. Fresh projects enable research, questionnaires, and technical baselines; they disable retained prototypes, durable handoffs, and meeting notes by default. `configure-workflows` adjusts these recommendations to the project's nature, collaboration model, repository evidence, and existing conventions.
 
 Supported `issue_tracker.backend` values are `local-markdown` and `github`. Local Markdown requires a repository-contained `root`. GitHub requires an explicit account identity, matching backend guidance, and the generated helper:
 
@@ -43,37 +43,37 @@ issue_tracker:
   login: octocat
 ```
 
-`configure-project` lists authenticated account names and asks which login to record. It never assumes that the currently active account is intended and never changes global `gh` authentication silently. Every helper invocation verifies that the configured login is authenticated and active before repository access. Runtime preflight also verifies GitHub Cloud, enabled Issues, and repository write access.
+`configure-workflows` lists authenticated account names and asks which login to record. It never assumes that the currently active account is intended and never changes global `gh` authentication silently. Every helper invocation verifies that the configured login is authenticated and active before repository access. Runtime preflight also verifies GitHub Cloud, enabled Issues, and repository write access.
 
 ## Installation inventory
 
 - `selected` records user intent, not the calculated dependency set. Names are unique and must exist in the installed distribution manifest.
 - `skills` maps every harness-discovered installed skill to its repository-relative directory.
 - Skill paths are unique, remain inside the consumer root, and end with the corresponding skill name.
-- The mapped skill set includes `configure-project` and the complete transitive closure of `selected`.
+- The mapped skill set includes `configure-workflows` and the complete transitive closure of `selected`.
 - Additional manifest-known skills may remain installed without silently becoming selected.
 - Installer lock files are evidence only and do not replace this inventory.
 
 ## Installed lifecycle command
 
-Run the command carried by the installed `configure-project` directory. The exact path depends on the harness-discovered skill location.
+Run the command carried by the installed `configure-workflows` directory. The exact path depends on the harness-discovered skill location.
 
 Show release identity:
 
 ```bash
-python3 PATH/TO/configure-project/references/lifecycle.py show-manifest
+python3 PATH/TO/configure-workflows/references/lifecycle.py show-manifest
 ```
 
 Calculate closure:
 
 ```bash
-python3 PATH/TO/configure-project/references/lifecycle.py closure clarify-intent
+python3 PATH/TO/configure-workflows/references/lifecycle.py closure clarify-intent
 ```
 
 Inspect supplied skill directories without reading configuration:
 
 ```bash
-python3 PATH/TO/configure-project/references/lifecycle.py inspect \
+python3 PATH/TO/configure-workflows/references/lifecycle.py inspect \
   --consumer-root . \
   --skills-root .claude/skills
 ```
@@ -81,7 +81,7 @@ python3 PATH/TO/configure-project/references/lifecycle.py inspect \
 Verify the complete schema-2 consumer:
 
 ```bash
-python3 PATH/TO/configure-project/references/lifecycle.py verify-consumer \
+python3 PATH/TO/configure-workflows/references/lifecycle.py verify-consumer \
   --consumer-root . \
   --skills-root .claude/skills
 ```

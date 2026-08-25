@@ -1,11 +1,11 @@
 ---
-name: configure-project
+name: configure-workflows
 description: Configure a repository to use these workflows by selecting issue tracking, artifact paths, and optional capabilities. Use once when adopting the workflow kit in a new or existing project.
 disable-model-invocation: true
 license: MIT
 ---
 
-# Configure Project
+# Configure Workflows
 
 Inspect first, propose second, and write only after confirmation. Installation must not silently migrate existing artifacts.
 

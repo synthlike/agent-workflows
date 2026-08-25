@@ -23,7 +23,7 @@ The v0.2 lifecycle command owns update replacement through a two-phase transacti
 
 1. accept a self-contained target bundle by local path or HTTPS URL;
 2. stage it, verify its manifest, and bind an immutable update plan to the complete bundle's SHA-256;
-3. present the plan through `configure-project` for explicit approval;
+3. present the plan through `configure-workflows` for explicit approval;
 4. before apply, recheck the target bundle and current installed-file hashes;
 5. journal the operation, stage replacements beside each destination, and retain backups;
 6. replace only approved distribution-managed skill directories;

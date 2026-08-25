@@ -2,7 +2,7 @@
 
 A supported fresh setup installs the complete Agent Workflows skill set. The distribution is small, every dependency is available, and project configuration can still select only the workflows the user intends to use.
 
-Human intent and approval remain in `configure-project`. Its installed lifecycle command performs deterministic inspection and verification. It never installs or changes skill directories.
+Human intent and approval remain in `configure-workflows`. Its installed lifecycle command performs deterministic inspection and verification. It never installs or changes skill directories.
 
 ## 1. Install and discover all skills
 
@@ -20,7 +20,7 @@ If inspection reports an absent, unexpected, duplicate, incomplete, or modified 
 
 ## 2. Select, configure, and confirm
 
-Invoke `configure-project` from the consumer Git root. Tell it which workflows you explicitly selected even though all skills are installed. It records selected intent separately from the complete harness-discovered inventory and verifies dependency closure.
+Invoke `configure-workflows` from the consumer Git root. Tell it which workflows you explicitly selected even though all skills are installed. It records selected intent separately from the complete harness-discovered inventory and verifies dependency closure.
 
 Review the proposed schema-2 `.agents/workflows.yaml`, backend guidance, workflow guidance, and concise agent pointer. For GitHub, also select an authenticated account explicitly and review the successful identity-aware capability preflight, generated helper destination, and complete stale-safe label plan. Nothing is written before approval. Optional artifact and issue directories remain absent.
 
@@ -29,7 +29,7 @@ Review the proposed schema-2 `.agents/workflows.yaml`, backend guidance, workflo
 Run the installed verifier against the exact discovered directories. For a common single-root installation:
 
 ```bash
-python3 PATH/TO/configure-project/references/lifecycle.py verify-consumer \
+python3 PATH/TO/configure-workflows/references/lifecycle.py verify-consumer \
   --consumer-root . \
   --skills-root .claude/skills
 ```

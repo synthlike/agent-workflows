@@ -38,7 +38,7 @@ None.
 
 ## Comments
 
-2026-08-24 — synthlike: `skills@latest` 1.5.23 copied only `configure-project` and `frame-product-problem` into a temporary Pi consumer. The smoke script derived `v0.4.0` from release metadata, completed dependency closure, confirmed Pi discovery, wrote schema 2, verified without a source checkout, and preserved lazy ownership. `/tmp/agent-workflows-v0.4.0.tar.gz` validates with SHA-256 `dd64ea9ef78ab5308553a2d22db9af0f1beaa28418e2f14c6cdf2164007edbe4`. All 50 grouped tests and repository checks pass before the release commit.
+2026-08-24 — synthlike: `skills@latest` 1.5.23 copied only `configure-workflows` and `frame-product-problem` into a temporary Pi consumer. The smoke script derived `v0.4.0` from release metadata, completed dependency closure, confirmed Pi discovery, wrote schema 2, verified without a source checkout, and preserved lazy ownership. `/tmp/agent-workflows-v0.4.0.tar.gz` validates with SHA-256 `dd64ea9ef78ab5308553a2d22db9af0f1beaa28418e2f14c6cdf2164007edbe4`. All 50 grouped tests and repository checks pass before the release commit.
 
 ## Resolution
 

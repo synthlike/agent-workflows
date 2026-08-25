@@ -7,7 +7,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "skills/configure-project/references"))
+sys.path.insert(0, str(ROOT / "skills/configure-workflows/references"))
 import lifecycle  # noqa: E402
 
 
@@ -18,7 +18,7 @@ class ReleaseManifestTests(unittest.TestCase):
         manifest_path = lifecycle.manifest_path(ROOT)
         self.assertNotIn(
             "references/distribution-manifest.json",
-            manifest["skills"]["configure-project"]["files"],
+            manifest["skills"]["configure-workflows"]["files"],
         )
         for name, entry in manifest["skills"].items():
             expected = {
@@ -45,7 +45,7 @@ class ReleaseManifestTests(unittest.TestCase):
             lifecycle.validate_manifest(unknown),
         )
         missing = copy.deepcopy(manifest)
-        del missing["skills"]["configure-project"]
+        del missing["skills"]["configure-workflows"]
         errors = lifecycle.validate_manifest(missing, ROOT)
         self.assertIn("manifest is stale or does not match distributed skills", errors)
 

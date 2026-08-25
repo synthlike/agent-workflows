@@ -9,7 +9,7 @@ license: MIT
 
 Use this when the route to an outcome cannot fit in one planning session. This workflow resolves decisions; it does not normally execute the resulting implementation.
 
-Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-project`.
+Read `.agents/workflows.yaml` and `docs/agents/issue-tracker.md`. If backend instructions are absent, stop and ask the user to run `configure-workflows`.
 
 ## Concepts
 

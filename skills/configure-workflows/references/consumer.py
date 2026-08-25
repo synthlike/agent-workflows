@@ -157,7 +157,7 @@ def dependency_closure(selected: set[str], manifest: dict[str, Any]) -> set[str]
     unknown = selected - skills.keys()
     if unknown:
         raise ValueError(f"unknown selected skills: {', '.join(sorted(unknown))}")
-    result = {"configure-project", *selected}
+    result = {"configure-workflows", *selected}
     pending = list(result)
     while pending:
         name = pending.pop()
@@ -237,7 +237,7 @@ def inspect_skills(
             continue
         expected = set(entry["files"])
         allowed_extra = set()
-        if name == "configure-project":
+        if name == "configure-workflows":
             allowed_extra.add("references/distribution-manifest.json")
         actual: set[str] = set()
         for path in directory.rglob("*"):
@@ -258,12 +258,12 @@ def inspect_skills(
         for relative in sorted(expected & actual):
             if _sha256(directory / relative) != entry["files"][relative]:
                 errors.append(f"{name} has modified distributed file: {relative}")
-        if name == "configure-project":
+        if name == "configure-workflows":
             installed_manifest = directory / "references/distribution-manifest.json"
             if not installed_manifest.is_file():
-                errors.append("configure-project is missing its distribution manifest")
+                errors.append("configure-workflows is missing its distribution manifest")
             elif installed_manifest.read_bytes() != manifest_bytes:
-                errors.append("configure-project has a mismatched distribution manifest")
+                errors.append("configure-workflows has a mismatched distribution manifest")
         for target in MARKDOWN_LINK.findall(text):
             if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", target) or target.startswith("#"):
                 continue
@@ -277,8 +277,8 @@ def inspect_skills(
             if not resolved.exists():
                 errors.append(f"{name} has a broken relative reference: {target}")
     names = set(installed)
-    if "configure-project" not in names:
-        errors.append("installed skill set is missing required configure-project")
+    if "configure-workflows" not in names:
+        errors.append("installed skill set is missing required configure-workflows")
     missing_distribution = set(manifest["skills"]) - names
     if missing_distribution:
         errors.append(
@@ -357,9 +357,9 @@ def _validate_common_configuration(root: Path, data: dict[str, Any], errors: lis
         else:
             installation = data.get("installation")
             skills = installation.get("skills") if isinstance(installation, dict) else None
-            configure_path = skills.get("configure-project") if isinstance(skills, dict) else None
-            if isinstance(configure_path, str):
-                bundled = root / configure_path / "references/github-issues.py"
+            workflows_path = skills.get("configure-workflows") if isinstance(skills, dict) else None
+            if isinstance(workflows_path, str):
+                bundled = root / workflows_path / "references/github-issues.py"
                 if bundled.is_file() and helper.read_bytes() != bundled.read_bytes():
                     errors.append("GitHub backend helper does not match the installed helper")
     guidance_files = [root / name for name in ("AGENTS.md", "CLAUDE.md") if (root / name).is_file()]

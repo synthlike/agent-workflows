@@ -19,18 +19,18 @@ labels: [v0.2, lifecycle, verification]
 
 ## What to build
 
-Package a deterministic lifecycle command with `configure-project` and make an installed schema-2 consumer able to verify itself without an Agent Workflows source checkout or fixed skill parent directory.
+Package a deterministic lifecycle command with `configure-workflows` and make an installed schema-2 consumer able to verify itself without an Agent Workflows source checkout or fixed skill parent directory.
 
 ## Acceptance criteria
 
-- [x] The lifecycle command and current manifest are distributed inside `configure-project` through relative references.
+- [x] The lifecycle command and current manifest are distributed inside `configure-workflows` through relative references.
 - [x] The command exposes deterministic human-readable and machine-readable manifest, closure, inspection, and verification operations.
 - [x] Schema 2 retains v0.1 distribution, backend, and artifact configuration and adds unique selected workflows plus a skill-to-repository-relative-path inventory.
 - [x] Validation rejects unknown selection, incomplete closure, stale or duplicate inventory, path collisions, escaping paths, wrong directory names, mutable identity, and mismatched manifest files.
 - [x] Verification checks every distributed file hash, internal relative references, required guidance, backend settings, and lazy disabled capabilities.
 - [x] Missing, extra, and modified files are distinguished without mutation.
 - [x] Verification accepts exact harness-discovered directories from one or several repository-contained locations without assuming `.agents/skills/`.
-- [x] A copied `configure-project` and copied closure verify a consumer fixture after the source checkout is made unavailable.
+- [x] A copied `configure-workflows` and copied closure verify a consumer fixture after the source checkout is made unavailable.
 - [x] Existing v0.1 verification remains available until the known migration issue is complete.
 - [x] Complete structural verification passes.
 

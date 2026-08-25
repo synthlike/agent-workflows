@@ -55,22 +55,22 @@
         "triage-issue"
       ],
       "files": {
-        "SKILL.md": "d768053b5c37adf8e0c2fba80f15a68c19f5a7fca9f05245dd3282ea114cdab7",
+        "SKILL.md": "8c4927d019115d19262ab4fd186d61a26d5bf4d955d94407521447bb253789c6",
         "references/initiative-closure-template.md": "550923ddb3902658d621f4afc7375db9e5d06a0c59b12d42d672bfdfe92ef153"
       }
     },
-    "configure-project": {
+    "configure-workflows": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "1ded34815ca03ca27694fbf82d6f5d3ff7149ab9cbbafda2c5efbf535f174682",
+        "SKILL.md": "88deccbd3b6f8e9b42bc2d884b1c77a645c03c0cfc72ac65fd380094514b0594",
         "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
-        "references/consumer.py": "321b589f89bf1cd0ebf1efa4d7bc148b8a3ef9bf3f863dfd2b30cbf1801f6fa5",
+        "references/consumer.py": "bf5adc0f4875022884e78a7338a9afd3cfd2b36a103e5e23deacdd536162a969",
         "references/github-issues.py": "8d3e1538bfba53528d38c5bcd976e9feeac83610b254ebb1c56a7afd482e678e",
         "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
         "references/issue-tracker-github.md": "544ee3347f5d0abbaf961e7650e46ac1cc6dcb88234c66c6287a2b24081292a6",
         "references/issue-tracker-local-markdown.md": "918cd42abc92a36a03083076d09f79f7aea24c9b05d4cd618ace72eeecb20e14",
-        "references/lifecycle.py": "5c8c2c94b5268c80d83d0ff973513b43a361d9bd4425f8402bd300d76affd210",
-        "references/workflow-config.example.yaml": "dc2fe70ebdbd5e2fa0b117d63fbf2dfd012a7c8219acdb7100d1b197bf700f67"
+        "references/lifecycle.py": "c0eaf69ba9cc90362d3a9b9050f7132402717691d39f3516b631138cd32a0144",
+        "references/workflow-config.example.yaml": "f90e55c8b777c7e6177fd987ba1daf897aee5e4c1e3273d024e725a454b3de0e"
       }
     },
     "develop-rfc": {
@@ -141,7 +141,7 @@
         "plan-initiative"
       ],
       "files": {
-        "SKILL.md": "23f275b0a5af036c491c56e38e5fa1fc534869a7f6a9a45874e59b2cc3decd41",
+        "SKILL.md": "e4492d993882d405d77d0b9a88aa4b4415b9a7d4ea131f58522c473e01b4ace6",
         "references/issue-template.md": "1110472be63689c089fbc32ab2796d62da432402aad71eb672d1a5c15dae25a5"
       }
     },
@@ -157,7 +157,7 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "746bbc6b4256657d6d06c6e4feb9be5107abffefd880f30eedbeae939d67f6b6",
+        "SKILL.md": "fed1dd7195e6505cfbbff464d84758e2983353489d2f2995bb66853e3f4f42fc",
         "references/map-template.md": "970ff9e3b2f5956964d67f1b5bcbcecd39a5aff8baf7a47b461c1102e353988b"
       }
     },
@@ -215,7 +215,7 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "2dc19fef656c8c612092c0df14795024c4f2a5307b55b1bc1e2231008c5291bd",
+        "SKILL.md": "10abd67b1a66c152b109cfa3adc251cbd47fd619fbbe49b897e64cc2f02167bb",
         "references/triage-proposal-template.md": "1fdf8d11bd1bb69608a42e5fe247b2c9238f168b61115fccecc471a8f27727b7"
       }
     }

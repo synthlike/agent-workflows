@@ -4,7 +4,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REFERENCES = ROOT / "skills/configure-project/references"
+REFERENCES = ROOT / "skills/configure-workflows/references"
 sys.path.insert(0, str(REFERENCES))
 from consumer import parse_config  # noqa: E402
 
@@ -41,7 +41,7 @@ class ArtifactRetentionTests(unittest.TestCase):
                 self.assertIn("without approval", text)
 
     def test_configuration_uses_project_context_not_rigid_profiles(self) -> None:
-        text = (ROOT / "skills/configure-project/SKILL.md").read_text()
+        text = (ROOT / "skills/configure-workflows/SKILL.md").read_text()
         self.assertIn("what kind of project this is", text)
         self.assertIn("how people and agents will collaborate", text)
         self.assertIn("recommend each capability individually", text)

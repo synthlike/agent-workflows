@@ -54,7 +54,7 @@ for adapter in sorted((root / "backends/issue-tracker").glob("*.md")):
         if operation.lower() not in text:
             errors.append(f"{adapter.relative_to(root)}: does not mention contract operation {operation}")
 
-bundled = root / "skills/configure-project/references"
+bundled = root / "skills/configure-workflows/references"
 for source_name, bundled_name in (
     ("contract.md", "issue-tracker-contract.md"),
     ("github.md", "issue-tracker-github.md"),
@@ -83,7 +83,7 @@ for legacy in ("wayfinder:", "initiative:map", "initiative:task"):
         errors.append(f"backends/issue-tracker/github.md: contains legacy label {legacy}")
 for helper in (
     root / "backends/issue-tracker/github.py",
-    root / "skills/configure-project/references/github-issues.py",
+    root / "skills/configure-workflows/references/github-issues.py",
 ):
     try:
         compile(helper.read_text(), str(helper.relative_to(root)), "exec")
@@ -91,7 +91,7 @@ for helper in (
         errors.append(f"{helper.relative_to(root)}: invalid Python: {error}")
 
 config_examples = [
-    root / "skills/configure-project/references/workflow-config.example.yaml",
+    root / "skills/configure-workflows/references/workflow-config.example.yaml",
     root / "examples/github/workflows.yaml",
     root / "examples/local-markdown/workflows.yaml",
 ]
@@ -162,9 +162,9 @@ print(f"Verified {len(skills)} skills, {len(list((root / 'backends/issue-tracker
 PY
 python3 -B "$root/scripts/verify_workflow_config.py" "$root/.agents/workflows.yaml"
 python3 -B "$root/scripts/verify_workflow_dependencies.py"
-python3 -B "$root/skills/configure-project/references/lifecycle.py" \
+python3 -B "$root/skills/configure-workflows/references/lifecycle.py" \
   check-release --root "$root"
-python3 -B "$root/skills/configure-project/references/lifecycle.py" \
+python3 -B "$root/skills/configure-workflows/references/lifecycle.py" \
   verify-consumer \
   --consumer-root "$root" \
   --skills-root "$root/skills"

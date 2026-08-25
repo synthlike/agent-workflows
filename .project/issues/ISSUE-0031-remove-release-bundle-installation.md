@@ -18,7 +18,7 @@ Remove the custom archive distribution and missing-skill application mechanism. 
 
 ## Acceptance criteria
 
-- [x] `configure-project` requires all distributed skills and reports incomplete installation without trying to add files.
+- [x] `configure-workflows` requires all distributed skills and reports incomplete installation without trying to add files.
 - [x] Bundle build, validation, download, staging, planning, and apply commands and modules are removed.
 - [x] Bundle and fresh-apply tests are removed; manifest, closure, consumer verification, complete-install smoke, and documentation checks remain.
 - [x] Active onboarding, distribution, adoption, update, dependency, and skill guidance contain no release-bundle mechanism.
@@ -39,4 +39,4 @@ None.
 
 ## Resolution
 
-Resolved on 2026-08-24. ARP-0007 establishes complete external installation as the sole supported model. `configure-project` and its lifecycle command now inspect, calculate closure, and verify but never create or replace skill directories. The custom archive, download, validation, staging, fresh-plan, and apply implementation and tests were removed. Active documentation now describes only complete installation and the deterministic distribution manifest; historical release records remain intact with decision cross-links. The real `skills@latest` and Pi smoke test installed and discovered all 20 skills, selected one workflow in schema 2, verified without a source checkout, and preserved lazy directories. All 32 remaining tests and repository checks pass.
+Resolved on 2026-08-24. ARP-0007 establishes complete external installation as the sole supported model. `configure-workflows` and its lifecycle command now inspect, calculate closure, and verify but never create or replace skill directories. The custom archive, download, validation, staging, fresh-plan, and apply implementation and tests were removed. Active documentation now describes only complete installation and the deterministic distribution manifest; historical release records remain intact with decision cross-links. The real `skills@latest` and Pi smoke test installed and discovered all 20 skills, selected one workflow in schema 2, verified without a source checkout, and preserved lazy directories. All 32 remaining tests and repository checks pass.

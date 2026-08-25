@@ -23,7 +23,7 @@ Align GitHub issue labels with the adapted `plan-initiative` vocabulary while re
 ## Acceptance criteria
 
 - [x] GitHub map and decision-ticket labels use the `initiative:` namespace.
-- [x] The source backend and bundled `configure-project` adapter remain byte-for-byte aligned.
+- [x] The source backend and bundled `configure-workflows` adapter remain byte-for-byte aligned.
 - [x] Wayfinder remains named only where needed for historical attribution or explicit migration guidance.
 - [x] The distribution manifest is regenerated and all verification passes.
 

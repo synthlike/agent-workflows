@@ -23,7 +23,7 @@ Give installers and manual operators one release-facing table from which they ca
 ## Acceptance criteria
 
 - [x] Release documentation publishes every v0.1 skill and its additional direct skill dependencies.
-- [x] Documentation states that `configure-project` is required for every installation and that cycles are valid.
+- [x] Documentation states that `configure-workflows` is required for every installation and that cycles are valid.
 - [x] A verification check fails when a dependency names an unknown skill, an installed skill lacks a table row, or an explicit cross-skill invocation is missing from the table.
 - [x] Verification can calculate and report the transitive closure for any selected skill set.
 - [x] Documentation-only artifact references do not create false workflow dependencies.
@@ -41,4 +41,4 @@ A custom package manifest or automatic dependency resolver for third-party insta
 
 ## Resolution
 
-Resolved on 2026-08-24. `docs/workflow-dependencies.md` now publishes the v0.1 direct dependency table and defines the inline-code routing convention. `scripts/verify_workflow_dependencies.py` validates table completeness and synchronization, rejects unknown dependencies, and reports transitive closures with implicit `configure-project` inclusion and cycle support. Six dependency tests and the complete structural verification suite pass.
+Resolved on 2026-08-24. `docs/workflow-dependencies.md` now publishes the v0.1 direct dependency table and defines the inline-code routing convention. `scripts/verify_workflow_dependencies.py` validates table completeness and synchronization, rejects unknown dependencies, and reports transitive closures with implicit `configure-workflows` inclusion and cycle support. Six dependency tests and the complete structural verification suite pass.

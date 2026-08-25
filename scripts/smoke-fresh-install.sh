@@ -24,7 +24,7 @@ discovery="$consumer/pi-discovery.json"
     -y
 )
 
-command="$consumer/.pi/skills/configure-project/references/lifecycle.py"
+command="$consumer/.pi/skills/configure-workflows/references/lifecycle.py"
 test -f "$command"
 
 pi_real="$(python3 -c 'import os, shutil; print(os.path.realpath(shutil.which("pi")))')"
@@ -44,7 +44,7 @@ if discovery["diagnostics"]:
     raise SystemExit("Pi discovery diagnostics: " + "; ".join(discovery["diagnostics"]))
 discovered = {item["name"]: item["path"] for item in discovery["skills"]}
 manifest = json.loads(
-    (root / ".pi/skills/configure-project/references/distribution-manifest.json").read_text()
+    (root / ".pi/skills/configure-workflows/references/distribution-manifest.json").read_text()
 )
 expected = set(manifest["skills"])
 if set(discovered) != expected:
@@ -82,7 +82,7 @@ PY
 
 mkdir -p "$consumer/docs/agents"
 cp \
-  "$consumer/.pi/skills/configure-project/references/issue-tracker-local-markdown.md" \
+  "$consumer/.pi/skills/configure-workflows/references/issue-tracker-local-markdown.md" \
   "$consumer/docs/agents/issue-tracker.md"
 cat > "$consumer/docs/agents/workflows.md" <<'MD'
 # Engineering workflows

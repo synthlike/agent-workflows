@@ -2,7 +2,7 @@
 
 This is the human-readable dependency table used to calculate closure for explicitly selected workflows. Exact skill names in `SKILL.md` inline code are the authoritative dependency declarations; both this table and the [current distribution manifest](distribution-manifest.md) are verified against them.
 
-Every installation must include `configure-project`, the workflows selected by the consumer, and the complete transitive closure of their additional direct dependencies. Dependency cycles are valid. A generic installer may not resolve this table automatically, so the installer or operator must select the resulting closure.
+Every installation must include `configure-workflows`, the workflows selected by the consumer, and the complete transitive closure of their additional direct dependencies. Dependency cycles are valid. A generic installer may not resolve this table automatically, so the installer or operator must select the resulting closure.
 
 | Skill | Additional direct skill dependencies |
 | --- | --- |
@@ -11,7 +11,7 @@ Every installation must include `configure-project`, the workflows selected by t
 | `capture-regression` | `investigate-failure` |
 | `clarify-intent` | None |
 | `close-initiative` | `author-specification`, `model-domain`, `record-arp`, `review-implementation`, `triage-issue` |
-| `configure-project` | None |
+| `configure-workflows` | None |
 | `develop-rfc` | `author-specification`, `clarify-intent`, `prototype-design`, `record-arp`, `research-question` |
 | `establish-technical-baseline` | `develop-rfc`, `record-arp`, `research-question` |
 | `frame-product-problem` | `author-specification`, `capture-meeting`, `model-domain`, `plan-initiative`, `prepare-questionnaire`, `prototype-design`, `record-arp`, `research-question` |

@@ -22,7 +22,7 @@ The full v0.2 lifecycle design assumed an installed population needing reusable 
 
 v0.2 supports the fresh-project lifecycle:
 
-- `configure-project` carries the deterministic lifecycle command and current machine-readable manifest;
+- `configure-workflows` carries the deterministic lifecycle command and current machine-readable manifest;
 - fresh configuration calculates dependency closure, obtains missing skills from the verified current release bundle, presents every destination, and records schema-2 selected workflows and discovered paths;
 - installed consumer verification runs without a source checkout; and
 - the currently used installer and harness receive a real fresh-project smoke test.
@@ -31,7 +31,7 @@ The sole v0.1.0 installation migrates through one reviewed repository-local impl
 
 Reusable update planning, replacement, transaction journals, rollback, interruption recovery, self-update, legacy baseline manifests, and standalone bootstrap assets are deferred to v0.3. Until then, v0.2 consumers follow the reviewed manual update contract.
 
-This decision supersedes [ARP-0003](ARP-0003-apply-workflow-updates-transactionally.md) as v0.2 scope. It refines [ARP-0002](ARP-0002-use-configure-project-as-the-lifecycle-bootstrap.md): its bootstrap, manifest, schema-2 inventory, and fresh closure decisions remain accepted, while its public v0.1 bootstrap requirement is deferred.
+This decision supersedes [ARP-0003](ARP-0003-apply-workflow-updates-transactionally.md) as v0.2 scope. It refines [ARP-0002](ARP-0002-use-configure-workflows-as-the-lifecycle-bootstrap.md): its bootstrap, manifest, schema-2 inventory, and fresh closure decisions remain accepted, while its public v0.1 bootstrap requirement is deferred.
 
 ## Rationale
 

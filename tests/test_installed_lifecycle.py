@@ -7,7 +7,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REFERENCES = ROOT / "skills/configure-project/references"
+REFERENCES = ROOT / "skills/configure-workflows/references"
 sys.path.insert(0, str(REFERENCES))
 import consumer  # noqa: E402
 import lifecycle  # noqa: E402
@@ -52,13 +52,13 @@ class InstalledLifecycleTests(unittest.TestCase):
             root, skill_dirs = self.set_up_consumer(Path(directory), split_locations=True)
             result = self.verify(root, skill_dirs)
             self.assertEqual([], result.errors)
-            self.assertEqual(["clarify-intent", "configure-project"], result.closure)
+            self.assertEqual(["clarify-intent", "configure-workflows"], result.closure)
             self.assertEqual(sorted(MANIFEST["skills"]), result.installed)
 
     def test_copied_lifecycle_verifies_without_source_checkout(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(Path(directory), split_locations=True)
-            command = next(path for path in skill_dirs if path.name == "configure-project") / "references/lifecycle.py"
+            command = next(path for path in skill_dirs if path.name == "configure-workflows") / "references/lifecycle.py"
             invocation = [
                 sys.executable,
                 "-B",
@@ -81,7 +81,7 @@ class InstalledLifecycleTests(unittest.TestCase):
             output = json.loads(completed.stdout)
             self.assertTrue(output["ok"])
             self.assertEqual(DISTRIBUTION_VERSION, output["release"])
-            self.assertEqual(["clarify-intent", "configure-project"], output["closure"])
+            self.assertEqual(["clarify-intent", "configure-workflows"], output["closure"])
 
     def test_manifest_closure_inspection_and_verification_have_json_output(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -135,7 +135,7 @@ class InstalledLifecycleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(
                 Path(directory),
-                names=("configure-project", "develop-rfc"),
+                names=("configure-workflows", "develop-rfc"),
                 selected=("develop-rfc",),
             )
             errors = self.verify(root, skill_dirs).errors
@@ -163,7 +163,7 @@ class InstalledLifecycleTests(unittest.TestCase):
             config.write_text(
                 config.read_text().replace(
                     "    clarify-intent: .skills/clarify-intent",
-                    "    clarify-intent: .skills/configure-project",
+                    "    clarify-intent: .skills/configure-workflows",
                 )
             )
             errors = self.verify(root, skill_dirs).errors
@@ -236,7 +236,7 @@ class InstalledLifecycleTests(unittest.TestCase):
             with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
                 root, skill_dirs = self.set_up_consumer(Path(directory))
                 manifest = next(
-                    path for path in skill_dirs if path.name == "configure-project"
+                    path for path in skill_dirs if path.name == "configure-workflows"
                 ) / "references/distribution-manifest.json"
                 if case == "missing":
                     manifest.unlink()

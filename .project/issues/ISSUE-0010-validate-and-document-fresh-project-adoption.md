@@ -24,7 +24,7 @@ Prove and document the complete v0.2 fresh-project path through the installer an
 
 ## Acceptance criteria
 
-- [x] A real Agent Skills-compatible installer smoke test starts with `configure-project` and an intentionally incomplete selected set in a temporary Git repository.
+- [x] A real Agent Skills-compatible installer smoke test starts with `configure-workflows` and an intentionally incomplete selected set in a temporary Git repository.
 - [x] The installed lifecycle calculates closure, adds only missing skills, records schema 2, receives harness discovery confirmation, and verifies without a source checkout.
 - [x] Smoke scenarios cover the default sibling destination, path override, multiple discovered locations, occupied destination, changed dry-run input, and staged-copy failure.
 - [x] Existing-project adoption preserves surrounding guidance, artifact conventions, backend state, and project files.
@@ -47,4 +47,4 @@ A broad harness matrix, reusable updater, transaction engine, public v0.1 migrat
 
 ## Resolution
 
-Resolved on 2026-08-24. `scripts/smoke-fresh-install.sh` uses `skills@latest` 1.5.23 to copy only `configure-project` and `develop-rfc` into a temporary Git repository for Pi, then plans and adds the five missing closure skills, confirms all seven skills through Pi's SDK resource loader, writes schema 2, verifies from copied lifecycle assets outside the source checkout, checks lazy directories, and cleans up. Unit and fixture scenarios cover overrides, multiple roots, occupied and changed inputs, failures, and existing-project preservation. Current docs and changelog define the v0.2 fresh path and defer reusable updates to v0.3. All 56 tests, links, release checks, script syntax checks, and the real smoke test pass.
+Resolved on 2026-08-24. `scripts/smoke-fresh-install.sh` uses `skills@latest` 1.5.23 to copy only `configure-workflows` and `develop-rfc` into a temporary Git repository for Pi, then plans and adds the five missing closure skills, confirms all seven skills through Pi's SDK resource loader, writes schema 2, verifies from copied lifecycle assets outside the source checkout, checks lazy directories, and cleans up. Unit and fixture scenarios cover overrides, multiple roots, occupied and changed inputs, failures, and existing-project preservation. Current docs and changelog define the v0.2 fresh path and defer reusable updates to v0.3. All 56 tests, links, release checks, script syntax checks, and the real smoke test pass.

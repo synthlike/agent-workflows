@@ -1,4 +1,4 @@
-# Incomplete example: configure-project must replace both REQUIRED values.
+# Incomplete example: configure-workflows must replace both REQUIRED values.
 schema_version: 2
 distribution:
   source: REQUIRED_DISTRIBUTION_SOURCE
@@ -6,7 +6,7 @@ distribution:
 installation:
   selected: [REQUIRED_SELECTED_SKILL]
   skills:
-    configure-project: REQUIRED_CONFIGURE_PROJECT_PATH
+    configure-workflows: REQUIRED_CONFIGURE_WORKFLOWS_PATH
     REQUIRED_SELECTED_SKILL: REQUIRED_SELECTED_SKILL_PATH
 issue_tracker:
   backend: local-markdown

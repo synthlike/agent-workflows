@@ -24,7 +24,7 @@ Give new and existing consumers one consistent installation and update story tha
 
 ## Acceptance criteria
 
-- [x] README installation guidance requires `configure-project` plus the dependency closure of selected workflows.
+- [x] README installation guidance requires `configure-workflows` plus the dependency closure of selected workflows.
 - [x] Third-party installer commands are explicitly illustrative rather than guaranteed interfaces.
 - [x] Documentation permits any harness-discoverable skill location and an equivalent intact manual copy.
 - [x] Setup guidance explains one configuration per Git root, immutable source-version recording, approved dry runs, and lazy optional directories.

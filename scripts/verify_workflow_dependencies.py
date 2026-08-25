@@ -25,7 +25,7 @@ def declared_dependencies(root: Path, names: set[str]) -> dict[str, set[str]]:
         declared[name] = {
             target
             for target in INLINE_CODE.findall(text)
-            if target in names and target not in {name, "configure-project"}
+            if target in names and target not in {name, "configure-workflows"}
         }
     return declared
 
@@ -86,7 +86,7 @@ def closure(selected: set[str], dependencies: dict[str, set[str]]) -> set[str]:
     unknown = selected - dependencies.keys()
     if unknown:
         raise ValueError(f"unknown selected skills: {', '.join(sorted(unknown))}")
-    result = {"configure-project", *selected}
+    result = {"configure-workflows", *selected}
     pending = list(result)
     while pending:
         name = pending.pop()

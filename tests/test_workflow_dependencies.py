@@ -15,7 +15,7 @@ class WorkflowDependencyTests(unittest.TestCase):
         rows: tuple[str, ...] = (
             "| `alpha-skill` | None |",
             "| `beta-skill` | None |",
-            "| `configure-project` | None |",
+            "| `configure-workflows` | None |",
         ),
     ) -> tuple[tempfile.TemporaryDirectory[str], Path, Path]:
         temporary = tempfile.TemporaryDirectory()
@@ -23,7 +23,7 @@ class WorkflowDependencyTests(unittest.TestCase):
         for name, body in (
             ("alpha-skill", alpha_body),
             ("beta-skill", "No cross-workflow routing."),
-            ("configure-project", "Configure the consumer."),
+            ("configure-workflows", "Configure the consumer."),
         ):
             directory = root / "skills" / name
             directory.mkdir(parents=True)
@@ -49,7 +49,7 @@ class WorkflowDependencyTests(unittest.TestCase):
             rows=(
                 "| `alpha-skill` | `missing-skill` |",
                 "| `beta-skill` | None |",
-                "| `configure-project` | None |",
+                "| `configure-workflows` | None |",
             )
         )
         with temporary:
@@ -60,7 +60,7 @@ class WorkflowDependencyTests(unittest.TestCase):
         temporary, root, table = self.fixture(
             rows=(
                 "| `alpha-skill` | None |",
-                "| `configure-project` | None |",
+                "| `configure-workflows` | None |",
             )
         )
         with temporary:
@@ -83,12 +83,12 @@ class WorkflowDependencyTests(unittest.TestCase):
 
     def test_calculates_dependency_closure_with_cycles(self) -> None:
         dependencies = {
-            "configure-project": set(),
+            "configure-workflows": set(),
             "alpha-skill": {"beta-skill"},
             "beta-skill": {"alpha-skill"},
         }
         self.assertEqual(
-            {"configure-project", "alpha-skill", "beta-skill"},
+            {"configure-workflows", "alpha-skill", "beta-skill"},
             closure({"alpha-skill"}, dependencies),
         )
 

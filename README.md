@@ -34,7 +34,7 @@ Use them to discover what is worth building, clarify requirements, make technica
 ### Keep work moving
 
 - Prepare concise context for another agent or session with `prepare-handoff`.
-- Adapt the workflow kit to a new or existing repository with `configure-project`.
+- Adapt the workflow kit to a new or existing repository with `configure-workflows`.
 
 ## Common workflows
 
@@ -93,7 +93,7 @@ npx skills@latest add synthlike/agent-workflows \
 
 Then, from your repository root, ask your agent to configure the kit:
 
-> Use `configure-project` to configure this repository. Show me the complete dry run and ask before writing anything.
+> Use `configure-workflows` to configure this repository. Show me the complete dry run and ask before writing anything.
 
 Once configured, ask for a workflow by name. For example:
 

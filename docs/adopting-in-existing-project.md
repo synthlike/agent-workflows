@@ -1,8 +1,8 @@
 # Adopting in an existing project
 
-Install intact copies of the complete Agent Workflows skill set, then run `configure-project` from the Git repository root. Review existing skill names and destinations first; never replace a project-owned skill directory. Schema 2 records explicitly selected workflows separately from the complete installed inventory. Let the skill inspect existing conventions before proposing changes and explicitly approve the configuration dry run before it writes anything.
+Install intact copies of the complete Agent Workflows skill set, then run `configure-workflows` from the Git repository root. Review existing skill names and destinations first; never replace a project-owned skill directory. Schema 2 records explicitly selected workflows separately from the complete installed inventory. Let the skill inspect existing conventions before proposing changes and explicitly approve the configuration dry run before it writes anything.
 
-If the complete distribution cannot be installed without conflicting with an existing skill, stop adoption and resolve ownership or naming outside `configure-project`. The workflow reports installation problems but never creates, replaces, or removes skill directories.
+If the complete distribution cannot be installed without conflicting with an existing skill, stop adoption and resolve ownership or naming outside `configure-workflows`. The workflow reports installation problems but never creates, replaces, or removes skill directories.
 
 Prefer adoption over migration:
 

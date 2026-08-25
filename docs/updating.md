@@ -16,7 +16,7 @@ Changing recorded distribution identity after accepting an update is an explicit
 
 ## Reviewed update procedure
 
-1. From the currently installed `configure-project`, [verify the installation](verifying-installation.md) against its embedded manifest. Stop if verification surfaces locally added, missing, or modified skill files; the lifecycle will not merge them automatically.
+1. From the currently installed `configure-workflows`, [verify the installation](verifying-installation.md) against its embedded manifest. Stop if verification surfaces locally added, missing, or modified skill files; the lifecycle will not merge them automatically.
 2. Compare `.agents/workflows.yaml`'s exact `distribution.source` and `distribution.version` with the proposed release and review the intervening changelog entries.
 3. Use an Agent Skills-compatible installer or an equivalent manual copy to replace only the intact, dependency-closed vendored skill selection. Third-party installer update behavior is not guaranteed.
 4. Review the complete diff. Consumer-owned configuration, guidance, backend state, and artifacts must remain unchanged.
@@ -24,6 +24,6 @@ Changing recorded distribution identity after accepting an update is an explicit
 6. Recalculate selected-workflow closure against the target release and review any dependency additions or removals.
 7. After accepting the installed source, update `distribution.source`, `distribution.version`, and schema-2 skill inventory through a reviewed consumer change.
 8. For a GitHub backend, compare the newly bundled helper with `docs/agents/github-issues.py`. If it changed, review and approve that consumer-owned helper update separately; confirm the configured login, rerun preflight, and review any new label plan before external writes.
-9. Run installed verification from the new `configure-project` and commit the reviewed update.
+9. Run installed verification from the new `configure-workflows` and commit the reviewed update.
 
-Do not proceed when an installer cannot surface conflicts or preserve consumer-owned files. `configure-project` verifies installations but never installs or replaces skill directories. Migration, when required, remains separate explicit work. General update transactions and recovery remain future work and may be reprioritized when adoption or demonstrated update pain warrants it.
+Do not proceed when an installer cannot surface conflicts or preserve consumer-owned files. `configure-workflows` verifies installations but never installs or replaces skill directories. Migration, when required, remains separate explicit work. General update transactions and recovery remain future work and may be reprioritized when adoption or demonstrated update pain warrants it.
