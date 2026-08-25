@@ -2,7 +2,7 @@
 id: ISSUE-0057
 title: "Publish deterministic configuration as v0.6.0"
 kind: "implementation"
-status: open
+status: cancelled
 created: 2026-08-25
 assignee: 
 parent: "ISSUE-0050-streamline-deterministic-consumer-configuration.md"
@@ -38,6 +38,6 @@ The configure-workflows plan/apply cutover and complete regressions.
 Skill updates, provider provisioning, schema migration, and backend-record migration.
 
 ## Comments
-
-
 ## Resolution
+
+Superseded by the decision to publish all completed schema-3, Bear, discovery, canonical template, deterministic plan/apply, and strict cross-backend migration work together as the first immutable `v0.5.0` release under ISSUE-0053. No separate `v0.6.0` release remains planned for the already integrated deterministic configuration scope.

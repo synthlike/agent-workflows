@@ -30,7 +30,7 @@ Pi discovery distinguishes installed integrity, model invocation eligibility, an
 - Apply approved consumer configuration plans transactionally — exact digest-gated plans are fully rechecked, staged on the destination filesystem, verified after atomic target writes, and rolled back on caught failure without touching skills, record destinations, or provider state.
 - Route configure-workflows through plan and apply — one unresolved-intent interview produces one complete plan and one local-file approval; provider inspection is conditional and GitHub provisioning remains separately approved.
 - Consumer configuration apply never mutates distribution-managed skill directories.
-- The next unpublished release is `v0.5.0`, not `v0.5.1`; deterministic plan/apply follows in `v0.6.0`.
+- The next unpublished release is one complete `v0.5.0` containing schema 3, Bear, discovery/templates, deterministic plan/apply, and strict cross-backend migration; the separate planned `v0.6.0` is superseded.
 
 ## Execution plan
 
@@ -41,11 +41,11 @@ Independent first slices:
 
 Dependent slices:
 
-- Publish the complete v0.5.0 release after Bear documentation/smoke completion and both first slices.
 - Generate deterministic consumer configuration plans after both first slices.
 - Apply approved consumer configuration plans transactionally.
 - Route configure-workflows through plan and apply.
-- Publish deterministic configuration as v0.6.0 after v0.5.0 and the plan/apply cutover.
+- Complete strict cross-backend migration under ISSUE-0058.
+- Publish one complete v0.5.0 after Bear documentation/smoke, deterministic configuration, and migration conformance are complete.
 
 ## Not yet specified
 
