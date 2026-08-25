@@ -68,6 +68,23 @@ def schema3_profile(profile: str) -> tuple[str, dict[str, str]]:
             name: "github" if name in github_routes else "local"
             for name in SCHEMA3_ROUTES
         }
+    if profile in {"bear-local", "bear-github"}:
+        issue_backend = "local" if profile == "bear-local" else "github"
+        issue_settings = (
+            "  local:\n    type: local-markdown\n"
+            if issue_backend == "local"
+            else "  github:\n    type: github\n    repository: acme/project\n    login: octocat\n"
+        )
+        backends = (
+            issue_settings
+            + "  bear:\n    type: bear\n"
+            "    command: /Applications/Bear.app/Contents/MacOS/bearcli\n"
+            "    workspace: agent-workflows/project"
+        )
+        return backends, {
+            name: issue_backend if name == "issues" else "bear"
+            for name in SCHEMA3_ROUTES
+        }
     raise ValueError(f"unknown schema-3 profile: {profile}")
 
 
@@ -89,6 +106,8 @@ def write_schema3_routed_config(
         destination = (
             f"label: workflow:record:{name}"
             if backend == "github"
+            else f"tag: {name}"
+            if backend == "bear"
             else local_destination
         )
         route_blocks.append(
@@ -135,6 +154,8 @@ def write_schema3_routed_guidance(
         names.update({"local-markdown.md", "local-markdown.py"})
     if "github" in assignments.values():
         names.update({"github.md", "github.py"})
+    if "bear" in assignments.values():
+        names.update({"bear.md", "bear.py"})
     for name in sorted(names):
         shutil.copy2(backend_source / name, backend_target / name)
 
@@ -147,6 +168,8 @@ def write_schema3_routed_guidance(
         + (
             f"workflow:record:{name}"
             if backend == "github"
+            else f"workspace-relative tag {name}"
+            if backend == "bear"
             else SCHEMA3_ROUTES[name][1]
         )
         + "` (adapter-owned)"
@@ -156,7 +179,7 @@ def write_schema3_routed_guidance(
         "# Record routing\n\nConfiguration: `.agents/workflows.yaml`\n\n"
         "Use create, read, list/search, guarded update, and archive through the configured adapter. "
         "Issues additionally support comment, claim, resolve, cancel, parent, block, and frontier. "
-        "Treat returned references and revisions as opaque. Pass complete references to the destination adapter for rendering and pass the latest revision to mutations. "
+        "Treat returned references and revisions as opaque. Bear destinations are workspace-relative tags. Pass complete references to the destination adapter for rendering and pass the latest revision to mutations. "
         "Obtain approval before every mutation. A disabled route prohibits persistence without new approval.\n\n"
         "Backend guidance and helpers are under `docs/agents/backends/`.\n\n"
         + route_lines

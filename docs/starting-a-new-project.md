@@ -6,7 +6,7 @@ Agent Workflows supports one configured root per consumer workspace. Git is opti
 2. Invoke `configure-workflows` from the intended consumer workspace root before using another workflow. Let it detect version control; if none exists, confirm whether the workspace is intentionally unversioned.
 3. Choose the workflows you intend to use. The schema records this explicit selection separately from the complete installed inventory.
 4. Let the installed lifecycle command inspect the harness-discovered directories, require the complete distribution, and calculate the [dependency closure](workflow-dependencies.md).
-5. Accept or change the recommended named backends and all twelve semantic record routes. When selecting GitHub, choose an authenticated account explicitly, then review its capability preflight and complete managed-label plan.
+5. Accept or change the recommended named backends and all twelve semantic record routes. When selecting GitHub, choose an authenticated account explicitly, then review its capability preflight and complete managed-label plan. When selecting Bear for non-issue records, choose an absolute `bearcli` command and project workspace, then review its read-only scoped preflight.
 6. Review the complete proposed schema-3 `.agents/workflows.yaml`, `AGENTS.md`, and `docs/agents/` dry run. Nothing is written before approval.
 7. [Verify the consumer installation](verifying-installation.md).
 8. When the workspace uses version control, commit or otherwise land the installed skill directories, configuration, and guidance before creating project artifacts. In an intentionally unversioned workspace, acknowledge that no such history checkpoint exists.

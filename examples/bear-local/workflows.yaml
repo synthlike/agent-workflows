@@ -1,0 +1,70 @@
+# Incomplete example: configure-workflows must replace every REQUIRED value and pass Bear preflight.
+schema_version: 3
+
+distribution:
+  source: REQUIRED_DISTRIBUTION_SOURCE
+  version: REQUIRED_EXACT_VERSION_OR_COMMIT_SHA
+
+installation:
+  selected: [REQUIRED_SELECTED_SKILL]
+  skills:
+    configure-workflows: REQUIRED_CONFIGURE_WORKFLOWS_PATH
+    REQUIRED_SELECTED_SKILL: REQUIRED_SELECTED_SKILL_PATH
+
+backends:
+  local:
+    type: local-markdown
+  notes:
+    type: bear
+    command: /Applications/Bear.app/Contents/MacOS/bearcli
+    workspace: REQUIRED_BEAR_WORKSPACE
+
+records:
+  issues:
+    enabled: true
+    backend: local
+    destination: {root: .project}
+  domain:
+    enabled: true
+    backend: notes
+    destination: {tag: domain}
+  arps:
+    enabled: true
+    backend: notes
+    destination: {tag: arps}
+  rfcs:
+    enabled: true
+    backend: notes
+    destination: {tag: rfcs}
+  specs:
+    enabled: true
+    backend: notes
+    destination: {tag: specs}
+  meetings:
+    enabled: false
+    backend: notes
+    destination: {tag: meetings}
+  research:
+    enabled: true
+    backend: notes
+    destination: {tag: research}
+  questionnaires:
+    enabled: true
+    backend: notes
+    destination: {tag: questionnaires}
+  technical_baselines:
+    enabled: true
+    backend: notes
+    destination: {tag: technical_baselines}
+  problem_framing:
+    enabled: true
+    backend: notes
+    destination: {tag: problem_framing}
+  prototypes:
+    enabled: false
+    backend: notes
+    destination: {tag: prototypes}
+  handoffs:
+    enabled: false
+    backend: notes
+    destination: {tag: handoffs}

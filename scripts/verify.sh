@@ -101,6 +101,7 @@ for helper in (
 
 config_examples = [
     root / "skills/configure-workflows/references/workflow-config.example.yaml",
+    root / "examples/bear-local/workflows.yaml",
     root / "examples/github/workflows.yaml",
     root / "examples/local-markdown/workflows.yaml",
 ]

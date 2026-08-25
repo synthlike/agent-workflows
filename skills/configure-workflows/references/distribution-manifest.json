@@ -62,7 +62,7 @@
     "configure-workflows": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "0624c91a42b0bedf9f6d5d460e5fbd411f5539f4ad0b09c56567e5d329ffad49",
+        "SKILL.md": "4df39964f6cd3185c1b24511b0fcb486f509a3f7dee67089db0f83e70e83a3bf",
         "references/agents-section.md": "6a5f9f0ccd71186a3f11439d553a44c1a6c83605b477c5b3044b3880df4de594",
         "references/backends/record-store/bear.capabilities.json": "b4ac3509abc45ff2591c3b8cba94c1fc1eff8a11e10522938cd960c2fcd1bc2d",
         "references/backends/record-store/bear.md": "7e1822bb443fd71327db86ed40e9e1ab2b42e2808d00ec20b09250b08268c6eb",

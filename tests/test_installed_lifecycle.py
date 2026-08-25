@@ -132,6 +132,149 @@ class InstalledLifecycleTests(unittest.TestCase):
                 }
                 self.assertEqual(expected_assets, actual_assets)
 
+    def test_verifies_bear_with_local_or_github_issues(self) -> None:
+        cases = {
+            "bear-local": {"contract.py", "bear.md", "bear.py", "local-markdown.md", "local-markdown.py"},
+            "bear-github": {"contract.py", "bear.md", "bear.py", "github.md", "github.py"},
+        }
+        for profile, expected_assets in cases.items():
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as directory:
+                root, skill_dirs = self.set_up_consumer(
+                    Path(directory), schema3_profile_name=profile
+                )
+                self.assertEqual([], self.verify(root, skill_dirs).errors)
+                data = consumer.parse_config((root / ".agents/workflows.yaml").read_text())
+                self.assertEqual(consumer.RECORD_TYPES, set(data["records"]))
+                self.assertNotEqual("bear", data["records"]["issues"]["backend"])
+                for name in consumer.RECORD_TYPES - {"issues"}:
+                    self.assertEqual("bear", data["records"][name]["backend"])
+                    self.assertEqual({"tag": name}, data["records"][name]["destination"])
+                self.assertEqual(
+                    expected_assets,
+                    {path.name for path in (root / "docs/agents/backends").iterdir()},
+                )
+                guidance = (root / "docs/agents/records.md").read_text()
+                self.assertIn("Bear destinations are workspace-relative tags", guidance)
+                self.assertIn("references and revisions as opaque", guidance)
+                self.assertIn("disabled route prohibits persistence", guidance)
+
+    def test_bear_instances_share_one_generated_helper(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), schema3_profile_name="bear-local"
+            )
+            config = root / ".agents/workflows.yaml"
+            config.write_text(
+                config.read_text()
+                .replace(
+                    "  bear:\n    type: bear\n"
+                    "    command: /Applications/Bear.app/Contents/MacOS/bearcli\n"
+                    "    workspace: agent-workflows/project\n",
+                    "  bear:\n    type: bear\n"
+                    "    command: /Applications/Bear.app/Contents/MacOS/bearcli\n"
+                    "    workspace: agent-workflows/project\n"
+                    "  bear-secondary:\n    type: bear\n"
+                    "    command: /Applications/Bear.app/Contents/MacOS/bearcli\n"
+                    "    workspace: agent-workflows/secondary\n",
+                )
+                .replace(
+                    "  specs:\n    enabled: true\n    backend: bear",
+                    "  specs:\n    enabled: true\n    backend: bear-secondary",
+                )
+            )
+            self.assertEqual([], self.verify(root, skill_dirs).errors)
+            assets = [path.name for path in (root / "docs/agents/backends").iterdir()]
+            self.assertEqual(1, assets.count("bear.py"))
+            self.assertEqual(1, assets.count("bear.md"))
+
+    def test_bear_routes_reject_issues_and_incomplete_capabilities_without_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), schema3_profile_name="bear-local"
+            )
+            config = root / ".agents/workflows.yaml"
+            config.write_text(
+                config.read_text().replace(
+                    "  issues:\n    enabled: true\n    backend: local\n    destination: {root: .project}",
+                    "  issues:\n    enabled: true\n    backend: bear\n    destination: {tag: issues}",
+                )
+            )
+            errors = self.verify(root, skill_dirs).errors
+            self.assertIn("records.issues is unsupported by the bear record contract", errors)
+            self.assertFalse((root / ".project").exists())
+
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), schema3_profile_name="bear-local"
+            )
+            incomplete = dict(consumer.BACKEND_CAPABILITIES["bear"])
+            incomplete["record_operations"] = incomplete["record_operations"] - {"archive"}
+            with patch.dict(consumer.BACKEND_CAPABILITIES, {"bear": incomplete}):
+                errors = self.verify(root, skill_dirs).errors
+            self.assertIn(
+                "records.specs backend contract is missing record operations: archive",
+                errors,
+            )
+            self.assertFalse((root / "docs/specs").exists())
+
+    def test_bear_generated_assets_are_exact_and_cross_backend_references_render(self) -> None:
+        for profile, other in (("bear-local", "local-markdown.py"), ("bear-github", "github.py")):
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as directory:
+                root, skill_dirs = self.set_up_consumer(
+                    Path(directory), schema3_profile_name=profile
+                )
+                self.assertEqual([], self.verify(root, skill_dirs).errors)
+                backend_dir = root / "docs/agents/backends"
+                bear_reference = {
+                    "backend": "bear", "id": "BEAR/42", "title": "Bear record",
+                    "href": "bear://x-callback-url/open-note?id=BEAR%2F42",
+                }
+                other_reference = {
+                    "backend": "other", "id": "native", "title": "Other record",
+                    "href": "https://example.test/records/42",
+                }
+                for helper, common, reference in (
+                    (
+                        backend_dir / "bear.py",
+                        ["--command", "/missing/bearcli", "--workspace", "agent-workflows/project", "--backend", "bear"],
+                        other_reference,
+                    ),
+                    (
+                        backend_dir / other,
+                        (["--root", str(root), "--backend", "local", "--destination", "docs/specs"]
+                         if other == "local-markdown.py"
+                         else ["--login", "unused", "--backend", "github", "--destination-label", "workflow:record:specs"]),
+                        bear_reference,
+                    ),
+                ):
+                    reference_file = root / f"{helper.stem}-bear-reference.json"
+                    reference_file.write_text(json.dumps(reference))
+                    completed = subprocess.run(
+                        [sys.executable, "-B", str(helper), *common, "render-reference", "--reference-file", str(reference_file)],
+                        cwd=root, text=True, capture_output=True, check=False,
+                    )
+                    self.assertEqual(0, completed.returncode, completed.stderr)
+                    self.assertEqual(
+                        f"[{reference['title']}](<{reference['href']}>)",
+                        json.loads(completed.stdout)["rendered"],
+                    )
+
+    def test_bear_generated_asset_integrity_failures_are_rejected(self) -> None:
+        for case in ("missing", "modified", "unexpected"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                root, skill_dirs = self.set_up_consumer(
+                    Path(directory), schema3_profile_name="bear-local"
+                )
+                backend_dir = root / "docs/agents/backends"
+                if case == "missing":
+                    (backend_dir / "bear.py").unlink()
+                elif case == "modified":
+                    path = backend_dir / "bear.py"
+                    path.write_text(path.read_text() + "\n# modified\n")
+                else:
+                    (backend_dir / "bear-stale.py").write_text("# stale\n")
+                self.assertTrue(self.verify(root, skill_dirs).errors)
+
     def test_schema_3_does_not_generate_assets_for_unused_backend_instances(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(
@@ -342,43 +485,46 @@ class InstalledLifecycleTests(unittest.TestCase):
                 )
 
     def test_copied_lifecycle_verifies_without_source_checkout(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root, skill_dirs = self.set_up_consumer(
-                Path(directory), split_locations=True, schema_version=3
-            )
-            command = next(path for path in skill_dirs if path.name == "configure-workflows") / "references/lifecycle.py"
-            invocation = [
-                sys.executable,
-                "-B",
-                str(command),
-                "verify-consumer",
-                "--consumer-root",
-                str(root),
-            ]
-            for path in skill_dirs:
-                invocation.extend(("--skill-dir", str(path)))
-            invocation.append("--json")
-            completed = subprocess.run(
-                invocation,
-                cwd=Path(directory),
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-            self.assertEqual(0, completed.returncode, completed.stderr)
-            output = json.loads(completed.stdout)
-            self.assertTrue(output["ok"])
-            self.assertEqual(DISTRIBUTION_VERSION, output["release"])
-            self.assertEqual(["clarify-intent", "configure-workflows"], output["closure"])
-            helper = root / "docs/agents/backends/local-markdown.py"
-            helper_result = subprocess.run(
-                [sys.executable, "-B", str(helper), "--help"],
-                cwd=root,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-            self.assertEqual(0, helper_result.returncode, helper_result.stderr)
+        for profile in ("all-local", "bear-local"):
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as directory:
+                root, skill_dirs = self.set_up_consumer(
+                    Path(directory), split_locations=True, schema_version=3,
+                    schema3_profile_name=profile,
+                )
+                command = next(path for path in skill_dirs if path.name == "configure-workflows") / "references/lifecycle.py"
+                invocation = [
+                    sys.executable,
+                    "-B",
+                    str(command),
+                    "verify-consumer",
+                    "--consumer-root",
+                    str(root),
+                ]
+                for path in skill_dirs:
+                    invocation.extend(("--skill-dir", str(path)))
+                invocation.append("--json")
+                completed = subprocess.run(
+                    invocation,
+                    cwd=Path(directory),
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
+                self.assertEqual(0, completed.returncode, completed.stderr)
+                output = json.loads(completed.stdout)
+                self.assertTrue(output["ok"])
+                self.assertEqual(DISTRIBUTION_VERSION, output["release"])
+                self.assertEqual(["clarify-intent", "configure-workflows"], output["closure"])
+                helper_name = "bear.py" if profile == "bear-local" else "local-markdown.py"
+                helper = root / "docs/agents/backends" / helper_name
+                helper_result = subprocess.run(
+                    [sys.executable, "-B", str(helper), "--help"],
+                    cwd=root,
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
+                self.assertEqual(0, helper_result.returncode, helper_result.stderr)
 
     def test_manifest_closure_inspection_and_verification_have_json_output(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

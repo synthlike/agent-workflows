@@ -4,13 +4,17 @@ from pathlib import Path
 import importlib.util
 import json
 import os
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-BACKEND = ROOT / "backends/record-store/bear.py"
+RECORD_STORE = ROOT / "backends/record-store"
+sys.path.insert(0, str(RECORD_STORE))
+BACKEND = RECORD_STORE / "bear.py"
 SPEC = importlib.util.spec_from_file_location("bear_preflight_backend", BACKEND)
 assert SPEC and SPEC.loader
 bear = importlib.util.module_from_spec(SPEC)
@@ -124,6 +128,29 @@ class BearPreflightTests(unittest.TestCase):
             ["mcp-server", "--only-tags", "agent-workflows/project"],
             calls[0]["argv"],
         )
+
+    def test_bundled_helper_preflights_without_a_source_checkout(self) -> None:
+        installed = self.root / "installed"
+        installed.mkdir()
+        bundle = REFERENCES / "backends/record-store"
+        shutil.copy2(bundle / "bear.py", installed / "bear.py")
+        shutil.copy2(bundle / "contract.py", installed / "contract.py")
+        completed = subprocess.run(
+            [
+                sys.executable, "-B", str(installed / "bear.py"),
+                "--command", str(self.command),
+                "--workspace", "agent-workflows/project",
+                "preflight",
+            ],
+            cwd=self.root,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        result = json.loads(completed.stdout)
+        self.assertTrue(result["ok"])
+        self.assertTrue(result["read_only"])
 
     def test_preflight_rejects_transport_identity_scope_and_capability_failures(self) -> None:
         cases = {

@@ -15,7 +15,7 @@ A configured consumer receives `docs/agents/backends/contract.py` plus exactly o
 
 ## Conformance and limitations
 
-Local Markdown and GitHub run the same backend-independent record and issue-extension suites. Installed-consumer tests cover all-local, all-GitHub, and mixed routes; exact generated assets; disabled routes; capability rejection; cross-backend references; and source-checkout-free verification. GitHub provider behavior is tested with deterministic mocked API responses rather than writes to a live repository.
+Local Markdown and GitHub run the same backend-independent record and issue-extension suites; Bear runs the shared non-issue record suite. Installed-consumer tests cover all-local, all-GitHub, local/GitHub mixed, Bear-plus-local, and Bear-plus-GitHub routes; exact generated assets; disabled routes; capability rejection; cross-backend references; and source-checkout-free verification. GitHub and Bear provider behavior is tested with deterministic mocked responses rather than writes to live stores.
 
 Configuration rejects a routed backend unless its adapter-owned declaration includes the routed record type and its complete required operation set: common record operations for non-issue routes or the issue extension for `issues`. Generated helpers assume the workflow has already resolved an enabled route and obtained approval; they intentionally do not discover configuration or enforce conversational approval themselves. Workflows must not invoke a mutation helper for a disabled route without new approval.
 

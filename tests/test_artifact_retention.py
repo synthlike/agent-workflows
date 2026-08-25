@@ -23,6 +23,7 @@ class ArtifactRetentionTests(unittest.TestCase):
     def test_all_configuration_examples_use_complete_schema_3_routes(self) -> None:
         paths = (
             REFERENCES / "workflow-config.example.yaml",
+            ROOT / "examples/bear-local/workflows.yaml",
             ROOT / "examples/local-markdown/workflows.yaml",
             ROOT / "examples/github/workflows.yaml",
         )
@@ -81,7 +82,8 @@ class ArtifactRetentionTests(unittest.TestCase):
         self.assertIn("what kind of project this is", text)
         self.assertIn("how people and agents will collaborate", text)
         self.assertIn("recommend each capability individually", text)
-        self.assertIn("Profile questions may offer all-local, all-GitHub, or mixed", text)
+        self.assertIn("Profile questions may offer all-local, all-GitHub, mixed", text)
+        self.assertIn("Bear-for-non-issues", text)
         self.assertIn("expand every answer into explicit routes", text)
         self.assertIn("complete destination for every route", text)
 

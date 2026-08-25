@@ -2,9 +2,9 @@
 id: ISSUE-0048
 title: "Install and verify mixed Bear record routing"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0043-add-bear-for-non-issue-record-routing.md"
 blocked_by:
   - "ISSUE-0047-implement-the-bear-non-issue-record-adapter.md"
@@ -38,6 +38,6 @@ The conforming Bear non-issue adapter.
 Things-backed issues, Bear-backed issues, and migration of existing records.
 
 ## Comments
-
-
 ## Resolution
+
+Added complete Bear-plus-local and Bear-plus-GitHub installed-consumer profiles with all twelve explicit routes: `issues` remains on a complete issue backend while all eleven non-issue routes use workspace-relative Bear tags. Generated consumers now receive exactly one shared contract and one guidance/helper pair per used backend type; multiple Bear instances share the same pair and unused Bear instances generate nothing. Added a complete Bear-plus-local configuration example and expanded `configure-workflows` recommendations and user guidance. Installed verification now proves successful Bear profiles, exact guidance, disabled-route boundaries, unsupported Bear `issues`, incomplete capability rejection before mutation, missing/modified/unexpected Bear asset rejection, Bear/local/GitHub cross-reference rendering, and source-checkout-free lifecycle operation. The bundled Bear helper also completes deterministic mocked preflight from an isolated installed directory without source access. Existing shared and Bear-specific suites cover stale writes, collisions including archived records, malformed managed notes/references, pagination, and portable failures. No live Bear mutation occurs in verification. `scripts/verify.sh` passes with 133 tests.
