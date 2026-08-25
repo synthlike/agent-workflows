@@ -34,7 +34,7 @@ Users need to choose persistence independently for every durable record without 
    - `handoffs`.
 7. Every record route MUST contain `enabled`, `backend`, and `destination`, even when disabled.
 8. `enabled` MUST be Boolean. `backend` MUST reference a configured instance. `destination` MUST be a non-empty mapping accepted by that instance's adapter for the record type.
-9. Local Markdown destinations MUST use repository-contained relative paths. `arps` and `rfcs` MUST additionally define non-empty prefixes. The local `issues` destination MUST define its issue root.
+9. Local Markdown destinations MUST use consumer-root-contained relative paths. `arps` and `rfcs` MUST additionally define non-empty prefixes. The local `issues` destination MUST define its issue root.
 10. GitHub destinations MUST define their complete managed record label. Routes using the same GitHub instance MUST not claim conflicting labels.
 11. Unknown backend settings, record keys, route fields, and destination fields MUST fail validation rather than be ignored.
 12. Profiles MAY simplify the configuration interview, but the reviewed and written configuration MUST contain all backend instances and all twelve expanded record routes without profile inheritance.
@@ -116,13 +116,13 @@ records:
 
 ### Configuration workflow
 
-14. `configure-workflows` MUST inspect existing record locations, remotes, authenticated accounts, generated adapter assets, and relevant MCP discovery before recommending routes.
+14. `configure-workflows` MUST inspect existing record locations, version-control state and workspace boundary, remotes when present, authenticated accounts, generated adapter assets, and relevant MCP discovery before recommending routes.
 15. It MUST ask about desired persistence in semantic record terms rather than workflow names.
 16. It MUST recommend existing conventions before toolkit defaults.
 17. It MUST validate every expanded route against backend capabilities before presenting a dry run.
-18. The dry run MUST show the complete schema-3 configuration, backend preflight results, generated adapter files, external provisioning plans, and every repository or external mutation.
+18. The dry run MUST show the complete schema-3 configuration, detected version-control state, chosen consumer root, landing-checkpoint behavior, backend preflight results, generated adapter files, external provisioning plans, and every consumer-workspace or external mutation.
 19. No generated file, label, backend record, or external configuration MAY be changed before explicit approval.
-20. A disabled route MUST prohibit persistence without approval. Temporary or external output MAY still occur where the workflow permits it.
+20. A disabled route MUST prohibit persistence without approval. Temporary or external output MAY still occur where the workflow permits it. Git MUST NOT be required for configuration or workflow execution. When no version-control system is detected, `configure-workflows` MUST ask whether the workspace is intentionally unversioned, explain the missing history and commit checkpoint, and MUST NOT initialize version control without approval. When version control exists, it MUST preserve that system's conventions rather than assume Git.
 
 ### Record contract
 
@@ -228,6 +228,7 @@ records:
 - Existing record or GitHub label migration.
 - Cross-backend mirroring, synchronization, or route-change movement.
 - Distributed transactions across backends.
+- Initializing, migrating, or configuring a version-control system.
 - Atomic claiming where the provider has no compare-and-set operation.
 - Harness-specific MCP configuration management.
 - New semantic authority types or standalone failure, review, and closure reports.

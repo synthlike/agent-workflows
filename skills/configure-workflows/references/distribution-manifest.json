@@ -62,16 +62,16 @@
     "configure-workflows": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "30501c017982787d32bc52477d8817c631cb75824fff54dd2825e06288dd8926",
+        "SKILL.md": "af0525bb5d500d2777edb6c8285212e459a9f77858d3f573baf9f8b17acc282c",
         "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
         "references/backends/record-store/contract.py": "57408e6dd5f6070e40a408ebde7cf1cafd61581e1b464cb7a350a39df0279ee6",
         "references/backends/record-store/local-markdown.md": "5c5c09434a5c8a6d1fb24d242a991f1f03019e8acf6512dc428884f91e2a0c04",
-        "references/backends/record-store/local-markdown.py": "9fa06f0a795b26e0a2a5b46bde1a8dc19a7246b42ac1f9ce602ecea70c85e608",
-        "references/consumer.py": "9b53dc5ae99bce186312f90e05f1fefe953a82981548a013a7d0b237f94c84a3",
+        "references/backends/record-store/local-markdown.py": "0a8e05bac3d4671ab19e098e761d2c9093e51a068ff5d3f6bb68b5d4094f8d16",
+        "references/consumer.py": "2290dff220e0752ebf39aa386f991fbd4b86707534ee7c9f5f5791fcc90a8a9a",
         "references/github-issues.py": "8d3e1538bfba53528d38c5bcd976e9feeac83610b254ebb1c56a7afd482e678e",
         "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
         "references/issue-tracker-github.md": "544ee3347f5d0abbaf961e7650e46ac1cc6dcb88234c66c6287a2b24081292a6",
-        "references/issue-tracker-local-markdown.md": "918cd42abc92a36a03083076d09f79f7aea24c9b05d4cd618ace72eeecb20e14",
+        "references/issue-tracker-local-markdown.md": "3f2816d77e76e33552552172db98d3117621be2ead357745d25b9100094be427",
         "references/lifecycle.py": "8bd872f5dbd65403ad4acb865129fcba5189aa356557476e360586784fd211f2",
         "references/workflow-config.example.yaml": "2ca10cf6381a51f976fc12a2a4b3e21c54e0186c45a0e189acbcb8ebb09a1dc7"
       }
@@ -144,7 +144,7 @@
         "plan-initiative"
       ],
       "files": {
-        "SKILL.md": "e4492d993882d405d77d0b9a88aa4b4415b9a7d4ea131f58522c473e01b4ace6",
+        "SKILL.md": "3bd22e3ef262194f1c7c944ec45e4b5b1a771b2e7805ede849c9d5d95e8c44f2",
         "references/issue-template.md": "1110472be63689c089fbc32ab2796d62da432402aad71eb672d1a5c15dae25a5"
       }
     },

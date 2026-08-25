@@ -1,6 +1,6 @@
 # Issue tracker: Local Markdown
 
-Issues are committed Markdown files under the configured root, normally `.project/`.
+Issues are stored Markdown files under the configured root, normally `.project/`.
 
 ## Layout
 
@@ -15,7 +15,7 @@ Issues are committed Markdown files under the configured root, normally `.projec
             └── 01-answer-a-question.md
 ```
 
-General issues use repository-wide IDs. Decision tickets inside an effort may use effort-local numbers because their path is their stable identity.
+General issues use workspace-wide IDs. Decision tickets inside an effort may use effort-local numbers because their path is their stable identity.
 
 ## Issue format
 

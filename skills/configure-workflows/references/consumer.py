@@ -313,11 +313,11 @@ def inspect_skills(
 
 def _contained_path(root: Path, value: Any, label: str, errors: list[str]) -> Path | None:
     if not isinstance(value, str) or not value:
-        errors.append(f"{label} must be a non-empty repository-relative path")
+        errors.append(f"{label} must be a non-empty consumer-root-relative path")
         return None
     path = Path(value)
     if path.is_absolute():
-        errors.append(f"{label} must be repository-relative: {value}")
+        errors.append(f"{label} must be consumer-root-relative: {value}")
         return None
     resolved_root = root.resolve()
     try:
@@ -589,7 +589,7 @@ def verify_consumer(
             not isinstance(name, str) or not isinstance(path, str)
             for name, path in (raw_skills.items() if isinstance(raw_skills, dict) else [])
         ):
-            errors.append("installation.skills must map skill names to repository-relative paths")
+            errors.append("installation.skills must map skill names to consumer-root-relative paths")
         else:
             inventory_names = set(raw_skills)
             unknown = inventory_names - manifest["skills"].keys()

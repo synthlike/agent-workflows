@@ -66,7 +66,7 @@ Every issue mutation requires the latest opaque revision. A frontier issue is op
 
 ## Local reference scope
 
-The local reference adapter supports all twelve record routes. Eleven non-issue types use embedded machine-readable metadata, exact-byte revisions, repository-relative structured references, and retained archive state. ARPs and RFCs allocate prefixed identifiers; other records allocate collision-safe slugs.
+The local reference adapter supports all twelve record routes. Eleven non-issue types use embedded machine-readable metadata, exact-byte revisions, consumer-root-relative structured references, and retained archive state. ARPs and RFCs allocate prefixed identifiers; other records allocate collision-safe slugs.
 
 Issues retain the established Markdown frontmatter, lifecycle states, comment and resolution sections, relative relationships, and stable filename ordering. Claims and allocation remain non-atomic across unsynchronized working trees.
 

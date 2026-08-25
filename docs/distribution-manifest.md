@@ -34,7 +34,7 @@ The manifest has this shape:
 - `files` maps every distributed file inside the skill directory to its lowercase SHA-256 digest.
 - `configure-workflows/references/distribution-manifest.json` is excluded from its own file map.
 
-A supported consumer installs the complete skill inventory. `.agents/workflows.yaml` separately records which workflows the user explicitly selected and the exact repository-relative path of every harness-discovered skill. Installed verification compares those paths and files with the embedded manifest and does not require a source checkout.
+A supported consumer installs the complete skill inventory. `.agents/workflows.yaml` separately records which workflows the user explicitly selected and the exact consumer-root-relative path of every harness-discovered skill. Installed verification compares those paths and files with the embedded manifest and does not require a source checkout.
 
 ## Maintainer commands
 

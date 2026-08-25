@@ -167,7 +167,7 @@ class LocalMarkdownAdapter:
         value = settings["root"]
         path = Path(value)
         if not value or path.is_absolute():
-            raise RecordError("invalid_destination", "local issue root must be repository-relative")
+            raise RecordError("invalid_destination", "local issue root must be consumer-root-relative")
         issue_root = (self.root / path).resolve()
         try:
             issue_root.relative_to(self.root)
@@ -571,7 +571,7 @@ class LocalMarkdownAdapter:
         value = settings["path"]
         path = Path(value)
         if not value or path.is_absolute():
-            raise RecordError("invalid_destination", "local destination must be repository-relative")
+            raise RecordError("invalid_destination", "local destination must be consumer-root-relative")
         destination = (self.root / path).resolve()
         try:
             destination.relative_to(self.root)

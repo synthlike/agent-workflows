@@ -27,6 +27,13 @@ class ArtifactRetentionTests(unittest.TestCase):
             with self.subTest(capability=name):
                 self.assertEqual(expected, records[name])
 
+    def test_configuration_does_not_require_git(self) -> None:
+        text = (ROOT / "skills/configure-workflows/SKILL.md").read_text()
+        self.assertIn("Git is not required", text)
+        self.assertIn("whether the workspace is intentionally unversioned", text)
+        self.assertIn("never initialize, change, or configure version control without approval", text)
+        self.assertIn("preserve its conventions", text)
+
     def test_affected_workflows_follow_repository_retention_policy(self) -> None:
         for name in (
             "research-question",

@@ -1,6 +1,6 @@
 # Workflow configuration
 
-`.agents/workflows.yaml` is the single canonical configuration at the consumer Git root. New all-local configurations use schema 3. During the phase-1 implementation bridge, installed lifecycle verification also reads existing schema-2 consumers; the final cutover removes that compatibility.
+`.agents/workflows.yaml` is the single canonical configuration at the consumer workspace root. Git is optional; the root may use Git, another version-control system, or be intentionally unversioned. New all-local configurations use schema 3. During the phase-1 implementation bridge, installed lifecycle verification also reads existing schema-2 consumers; the final cutover removes that compatibility.
 
 ## Schema 3
 
@@ -54,7 +54,7 @@ Schema-3 consumers generate:
 ## Installation inventory
 
 - `selected` records user intent, not the calculated dependency set. Names are unique and must exist in the installed distribution manifest.
-- `skills` maps every harness-discovered installed skill to its repository-relative directory.
+- `skills` maps every harness-discovered installed skill to its consumer-root-relative directory.
 - Skill paths are unique, remain inside the consumer root, and end with the corresponding skill name.
 - The mapped skill set includes `configure-workflows` and the complete transitive closure of `selected`.
 - Additional manifest-known skills may remain installed without silently becoming selected.
@@ -75,7 +75,7 @@ python3 PATH/TO/configure-workflows/references/lifecycle.py verify-consumer \
 
 Use repeated `--skill-dir` arguments when discovery spans several parent directories. Read-only operations support canonical JSON through `--json` where relevant.
 
-Verification checks configuration shape, identity, inventory, closure, distributed file hashes, internal links, repository containment, generated guidance, and exact backend assets. Schema 3 rejects missing and unknown routes, fields, backend instances, unsupported backend contracts, malformed destinations, escaping paths, stale helpers, and obsolete issue guidance.
+Verification checks configuration shape, identity, inventory, closure, distributed file hashes, internal links, consumer-root containment, generated guidance, and exact backend assets. Schema 3 rejects missing and unknown routes, fields, backend instances, unsupported backend contracts, malformed destinations, escaping paths, stale helpers, and obsolete issue guidance.
 
 ## Temporary schema-2 bridge
 

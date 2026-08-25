@@ -72,6 +72,7 @@ class InstalledLifecycleTests(unittest.TestCase):
             root, skill_dirs = self.set_up_consumer(
                 Path(directory), split_locations=True, schema_version=3
             )
+            self.assertFalse((root / ".git").exists())
             result = self.verify(root, skill_dirs)
             self.assertEqual([], result.errors)
             data = consumer.parse_config((root / ".agents/workflows.yaml").read_text())

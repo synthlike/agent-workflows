@@ -15,9 +15,10 @@ Release identity, complete skill inventory, dependencies, and file integrity are
 
 ## Explore
 
-From the repository root, inspect:
+From the consumer workspace root, inspect:
 
-- Git remotes, whether the project uses GitHub Issues, authenticated `github.com` accounts, and the currently active account;
+- whether the workspace uses Git, another version-control system, or no version control, and the discovered workspace boundary;
+- Git remotes when present, whether the project uses GitHub Issues, authenticated `github.com` accounts, and the currently active account;
 - the workflows explicitly selected by the user and the exact skill directories discovered by the harness;
 - the installed distribution source and exact release version or immutable commit SHA;
 - `AGENTS.md`, `CLAUDE.md`, or equivalent agent guidance;
@@ -33,7 +34,7 @@ From the repository root, inspect:
 Prefer existing conventions. For a new project, recommend:
 
 - GitHub tracking when a GitHub Cloud remote and active issue workflow exist, `gh` authentication and repository write access pass preflight, and native sub-issues and dependencies are acceptable;
-- otherwise committed local Markdown under `.project/`;
+- otherwise local Markdown under `.project/`, committed when the workspace uses a commit-based version-control system;
 - domain docs under `docs/domain/`;
 - ARPs under `docs/decisions/`;
 - RFCs under `docs/rfcs/`;
@@ -46,6 +47,8 @@ Prefer existing conventions. For a new project, recommend:
 - retained prototypes disabled, with `docs/prototypes/` reserved if enabled;
 - durable handoffs disabled, with `.agents/handoffs/` reserved if enabled; and
 - a plain-language documentation style unless the project already defines one: use active voice, short sentences, explicit references, established domain terms, and one action per procedural step; avoid idioms, unnecessary synonyms, and ambiguous pronouns.
+
+Git is not required. Do not ask whether Git exists when inspection already answers that question. When no version-control system is detected, ask whether the workspace is intentionally unversioned or whether the user intends to initialize or identify a version-controlled root. Explain that unversioned workspaces have no commit checkpoint or version-control history, but never initialize, change, or configure version control without approval. When another version-control system is present, preserve its conventions and use its landing terminology rather than assuming Git.
 
 Ask what kind of project this is and how people and agents will collaborate on it. A profile question may offer all-local persistence as a shortcut, but expand that answer into explicit routes for `issues`, `domain`, `arps`, `rfcs`, `specs`, `meetings`, `research`, `questionnaires`, `technical_baselines`, `problem_framing`, `prototypes`, and `handoffs`. Show and confirm the enabled state, named backend, and complete destination for every route, including disabled routes. Combine the answer with repository evidence to recommend each capability individually and explain the reason. An `enabled: false` route prohibits repository writes without approval but does not prohibit temporary or external output. Do not ask for facts available in the repository. If distribution identity cannot be established from installation metadata or the repository, ask for it rather than proposing a mutable value such as a branch name, `latest`, or `unreleased`.
 
@@ -66,15 +69,17 @@ Show a dry run containing:
 5. backend preflight results and every generated file under `docs/agents/backends/`;
 6. `docs/agents/records.md`, including all routes, portable operations, opaque references and revisions, disabled-route behavior, and approval boundaries;
 7. `docs/agents/workflows.md`, including the authority table, pointer to record guidance, and preserved project writing policy or default plain-language style;
-8. the concise agent-instructions block pointing to workflow and record guidance; and
-9. every other directory or file that would be created or changed.
+8. detected version-control state, the chosen consumer root, and whether completed issue work will have a commit or equivalent landing checkpoint;
+9. the concise agent-instructions block pointing to workflow and record guidance; and
+10. every other directory or file that would be created or changed.
 
 Wait for explicit approval.
 
 ## Write
 
 - Never write project configuration while the complete distribution is absent or fails integrity inspection.
-- Ask the harness to rediscover skills after external installation changes. Continue only after it confirms every distributed skill at its repository-contained path.
+- Do not require or initialize Git. Use the approved consumer workspace root whether it is Git-controlled, controlled by another system, or intentionally unversioned.
+- Ask the harness to rediscover skills after external installation changes. Continue only after it confirms every distributed skill at its consumer-root-contained path.
 - Write `.agents/workflows.yaml` as canonical schema 3 with every backend and all twelve routes explicit. Never write a placeholder or mutable distribution version.
 - For the all-local profile, copy bundled [local Markdown guidance](references/backends/record-store/local-markdown.md), [helper](references/backends/record-store/local-markdown.py), and [portable contract module](references/backends/record-store/contract.py) to `docs/agents/backends/`. Do not create a record destination directory until its first approved write.
 - Remove obsolete `docs/agents/issue-tracker.md` only as an explicitly reviewed schema-3 generated-asset change. Do not move or rewrite existing issues or records.
@@ -83,4 +88,4 @@ Wait for explicit approval.
 - Add or update a short `## Engineering workflows` section in the existing agent-guidance file. Use [the seed block](references/agents-section.md). Do not replace surrounding instructions.
 - Create `docs/agents/`, but create optional artifact and local-issue directories only when their first artifact is needed.
 
-Run installed lifecycle verification against the exact rediscovered directories. Finish only when it passes, then list created skill directories, written configuration and guidance, selected workflows, and calculated closure.
+Run installed lifecycle verification against the exact rediscovered directories. Finish only when it passes, then list detected version-control state, created skill directories, written configuration and guidance, selected workflows, and calculated closure.

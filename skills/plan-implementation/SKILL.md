@@ -45,3 +45,5 @@ Present a numbered draft with title, blockers, delivered behavior, and acceptanc
 Create issues through the configured backend in dependency order, then add parent and blocking relationships. Use [the issue template](references/issue-template.md).
 
 Do not add brittle file-by-file instructions or speculative implementation detail. Link the source specification. Do not close or rewrite the parent artifact.
+
+Treat each completed implementation issue as a landing boundary. After the issue is implemented, verified, and updated with its honest resolution, stop before starting another issue. When the project uses commits, ask the user whether to commit the completed issue; do not commit automatically. If approved, commit only the reviewed issue scope unless the user explicitly requests a broader commit.

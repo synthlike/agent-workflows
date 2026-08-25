@@ -83,7 +83,7 @@ See [Choosing a workflow](docs/choosing-a-workflow.md) for more situations and c
 
 ## Get started
 
-Install the complete workflow set into your repository. For example, with an Agent Skills-compatible installer:
+Install the complete workflow set into your consumer workspace. Git is optional. For example, with an Agent Skills-compatible installer:
 
 ```bash
 npx skills@latest add synthlike/agent-workflows \
@@ -91,9 +91,9 @@ npx skills@latest add synthlike/agent-workflows \
   --copy
 ```
 
-Then, from your repository root, ask your agent to configure the kit:
+Then, from your intended workspace root, ask your agent to configure the kit:
 
-> Use `configure-workflows` to configure this repository. Show me the complete dry run and ask before writing anything.
+> Use `configure-workflows` to configure this workspace. Detect its version-control state, show me the complete dry run, and ask before writing anything.
 
 Once configured, ask for a workflow by name. For example:
 
