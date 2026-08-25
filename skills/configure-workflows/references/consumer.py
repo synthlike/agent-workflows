@@ -1,4 +1,4 @@
-"""Schema-2 bridge and schema-3 consumer verification for the lifecycle command."""
+"""Schema-3 consumer verification for the lifecycle command."""
 
 from __future__ import annotations
 
@@ -351,9 +351,12 @@ def _validate_schema3_assets(root: Path, data: dict[str, Any], errors: list[str]
         path = root / guidance
         if not path.is_file() or not path.read_text().strip():
             errors.append(f"missing required guidance: {guidance}")
-    obsolete = root / "docs/agents/issue-tracker.md"
-    if obsolete.exists():
-        errors.append("schema 3 must not retain docs/agents/issue-tracker.md")
+    for obsolete in (
+        Path("docs/agents/issue-tracker.md"),
+        Path("docs/agents/github-issues.py"),
+    ):
+        if (root / obsolete).exists():
+            errors.append(f"schema 3 must not retain {obsolete}")
 
     backend_dir = root / "docs/agents/backends"
     actual = {
@@ -494,69 +497,6 @@ def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: li
     _validate_schema3_assets(root, data, errors)
 
 
-def _validate_common_configuration(root: Path, data: dict[str, Any], errors: list[str]) -> None:
-    tracker = data.get("issue_tracker")
-    backend: str | None = None
-    if not isinstance(tracker, dict) or not isinstance(tracker.get("backend"), str):
-        errors.append("issue_tracker.backend is required")
-    else:
-        backend = tracker["backend"]
-        if backend not in {"github", "local-markdown"}:
-            errors.append(f"unsupported issue_tracker.backend: {backend}")
-        elif backend == "local-markdown":
-            _contained_path(root, tracker.get("root"), "issue_tracker.root", errors)
-        elif not isinstance(tracker.get("login"), str) or not tracker["login"].strip():
-            errors.append("issue_tracker.login is required for the GitHub backend")
-    artifacts = data.get("artifacts")
-    if not isinstance(artifacts, dict) or not artifacts:
-        errors.append("artifacts must define configured capabilities")
-    else:
-        for name, settings in artifacts.items():
-            label = f"artifacts.{name}"
-            if not isinstance(settings, dict):
-                errors.append(f"{label} must be a mapping")
-                continue
-            if not isinstance(settings.get("enabled"), bool):
-                errors.append(f"{label}.enabled must be true or false")
-            _contained_path(root, settings.get("path"), f"{label}.path", errors)
-            if name in {"arps", "rfcs"} and settings.get("enabled") is True:
-                if not isinstance(settings.get("prefix"), str) or not settings["prefix"]:
-                    errors.append(f"{label}.prefix is required when enabled")
-    for guidance in (Path("docs/agents/workflows.md"), Path("docs/agents/issue-tracker.md")):
-        path = root / guidance
-        if not path.is_file() or not path.read_text().strip():
-            errors.append(f"missing required guidance: {guidance}")
-    issue_guidance = root / "docs/agents/issue-tracker.md"
-    if issue_guidance.is_file() and backend in {"github", "local-markdown"}:
-        expected_headings = (
-            ("# Issue tracker: GitHub", "# Record store: GitHub")
-            if backend == "github"
-            else ("# Issue tracker: Local Markdown",)
-        )
-        if not any(heading in issue_guidance.read_text() for heading in expected_headings):
-            errors.append("issue-backend guidance does not match issue_tracker.backend")
-    if backend == "github":
-        helper = root / "docs/agents/github-issues.py"
-        if not helper.is_file() or not helper.read_text().strip():
-            errors.append("missing required GitHub backend helper: docs/agents/github-issues.py")
-        else:
-            installation = data.get("installation")
-            skills = installation.get("skills") if isinstance(installation, dict) else None
-            workflows_path = skills.get("configure-workflows") if isinstance(skills, dict) else None
-            if isinstance(workflows_path, str):
-                bundled = root / workflows_path / "references/github-issues.py"
-                if bundled.is_file() and helper.read_bytes() != bundled.read_bytes():
-                    errors.append("GitHub backend helper does not match the installed helper")
-    guidance_files = [root / name for name in ("AGENTS.md", "CLAUDE.md") if (root / name).is_file()]
-    if not any(
-        ".agents/workflows.yaml" in path.read_text()
-        and "docs/agents/workflows.md" in path.read_text()
-        and "docs/agents/issue-tracker.md" in path.read_text()
-        for path in guidance_files
-    ):
-        errors.append("root agent guidance must point to workflow and issue-backend guidance")
-
-
 def verify_consumer(
     consumer_root: Path, skill_dirs: list[Path], manifest: dict[str, Any]
 ) -> Verification:
@@ -580,8 +520,8 @@ def verify_consumer(
             errors.append(f"invalid .agents/workflows.yaml: {error}")
     if data:
         schema_version = data.get("schema_version")
-        if schema_version not in {2, 3}:
-            errors.append("schema_version must be 2 or 3 during the implementation bridge")
+        if schema_version != 3:
+            errors.append("schema_version must be 3")
         distribution = data.get("distribution")
         expected_distribution = manifest["distribution"]
         if not isinstance(distribution, dict):
@@ -597,9 +537,7 @@ def verify_consumer(
                 errors.append("distribution.version must be immutable")
             if source != expected_distribution["source"] or version != expected_distribution["version"]:
                 errors.append("configured distribution identity does not match installed manifest")
-        if schema_version == 2:
-            _validate_common_configuration(root, data, errors)
-        elif schema_version == 3:
+        if schema_version == 3:
             _validate_schema3_configuration(root, data, errors)
 
     inspection = inspect_skills(root, skill_dirs, manifest)

@@ -13,7 +13,7 @@ class WorkflowConfigIdentityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "workflows.yaml"
             path.write_text(
-                "schema_version: 2\n"
+                "schema_version: 3\n"
                 "distribution:\n"
                 f"  source: {source}\n"
                 f"  version: {version}\n"
@@ -38,9 +38,31 @@ class WorkflowConfigIdentityTests(unittest.TestCase):
     def test_rejects_missing_distribution_values(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "workflows.yaml"
-            path.write_text("schema_version: 2\ndistribution:\n")
+            path.write_text("schema_version: 3\ndistribution:\n")
             self.assertEqual(
                 ["missing distribution.source", "missing distribution.version"],
+                validate(path),
+            )
+
+    def test_rejects_schema_2_and_obsolete_top_level_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "workflows.yaml"
+            path.write_text(
+                "schema_version: 2\n"
+                "distribution:\n"
+                "  source: github.com/acme/workflows\n"
+                "  version: v1.2.3\n"
+                "issue_tracker:\n"
+                "artifacts:\n"
+                "specifications:\n"
+            )
+            self.assertEqual(
+                [
+                    "schema_version must be 3",
+                    "obsolete schema field: issue_tracker",
+                    "obsolete schema field: artifacts",
+                    "obsolete schema field: specifications",
+                ],
                 validate(path),
             )
 

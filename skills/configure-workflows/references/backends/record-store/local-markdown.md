@@ -85,4 +85,4 @@ The adapter reads the established local issue frontmatter, appends chronological
 
 All destinations must remain inside the consumer root. Directories are created only with the first write. Exact persisted bytes produce opaque revisions. Updates write a temporary file and replace the target only after repeated revision checks. Malformed records, duplicate identities, stale revisions, broken relationship targets, and unsupported destination fields fail without an approved record mutation.
 
-Schema 2 and current workflow behavior remain active until later phase-1 issues complete schema 3 and route skills through generated adapters.
+Schema 3 routes are authoritative. The adapter does not read schema-2 configuration or migrate existing records.

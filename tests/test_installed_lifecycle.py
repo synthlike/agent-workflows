@@ -15,10 +15,6 @@ import lifecycle  # noqa: E402
 sys.path.insert(0, str(ROOT / "tests"))
 from consumer_fixture import (  # noqa: E402
     copy_skills,
-    write_guidance,
-    write_schema2_config,
-    write_schema3_all_local_config,
-    write_schema3_guidance,
     write_schema3_routed_config,
     write_schema3_routed_guidance,
 )
@@ -35,7 +31,7 @@ class InstalledLifecycleTests(unittest.TestCase):
         names: tuple[str, ...] | None = None,
         split_locations: bool = False,
         selected: tuple[str, ...] = ("clarify-intent",),
-        schema_version: int = 2,
+        schema_version: int = 3,
         schema3_profile_name: str | None = None,
     ) -> tuple[Path, list[Path]]:
         root = base / "consumer"
@@ -50,29 +46,23 @@ class InstalledLifecycleTests(unittest.TestCase):
         inventory = {
             path.name: path.relative_to(root).as_posix() for path in skill_dirs
         }
-        if schema_version == 3:
-            configure_dir = next(path for path in skill_dirs if path.name == "configure-workflows")
-            if schema3_profile_name:
-                assignments = write_schema3_routed_config(
-                    root,
-                    MANIFEST["distribution"],
-                    selected,
-                    inventory,
-                    schema3_profile_name,
-                )
-                write_schema3_routed_guidance(root, configure_dir, assignments)
-            else:
-                write_schema3_all_local_config(root, MANIFEST["distribution"], selected, inventory)
-                write_schema3_guidance(root, configure_dir)
-        else:
-            write_schema2_config(root, MANIFEST["distribution"], selected, inventory)
-            write_guidance(root)
+        if schema_version != 3:
+            raise ValueError("test fixtures support only schema 3")
+        configure_dir = next(path for path in skill_dirs if path.name == "configure-workflows")
+        assignments = write_schema3_routed_config(
+            root,
+            MANIFEST["distribution"],
+            selected,
+            inventory,
+            schema3_profile_name or "all-local",
+        )
+        write_schema3_routed_guidance(root, configure_dir, assignments)
         return root, skill_dirs
 
     def verify(self, root: Path, skill_dirs: list[Path]) -> consumer.Verification:
         return consumer.verify_consumer(root, skill_dirs, lifecycle.installed_manifest())
 
-    def test_verifies_schema_2_across_several_discovered_locations(self) -> None:
+    def test_verifies_schema_3_across_several_discovered_locations(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(Path(directory), split_locations=True)
             result = self.verify(root, skill_dirs)
@@ -209,6 +199,17 @@ class InstalledLifecycleTests(unittest.TestCase):
                 config.write_text(mutate(config.read_text()))
                 self.assertTrue(self.verify(root, skill_dirs).errors)
 
+    def test_schema_3_verification_does_not_migrate_existing_records(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(Path(directory))
+            legacy = root / "docs/specifications/existing-behavior.md"
+            legacy.parent.mkdir(parents=True)
+            legacy.write_text("# Existing behavior\n\nDo not move or rewrite.\n")
+            before = legacy.read_bytes()
+            self.assertEqual([], self.verify(root, skill_dirs).errors)
+            self.assertEqual(before, legacy.read_bytes())
+            self.assertFalse((root / "docs/specs").exists())
+
     def test_schema_3_rejects_missing_extra_malformed_and_unsupported_fields(self) -> None:
         mutations = {
             "missing route": lambda text: text.replace(
@@ -233,6 +234,21 @@ class InstalledLifecycleTests(unittest.TestCase):
                 config = root / ".agents/workflows.yaml"
                 config.write_text(mutate(config.read_text()))
                 self.assertTrue(self.verify(root, skill_dirs).errors)
+
+    def test_schema_3_rejects_obsolete_generated_issue_assets(self) -> None:
+        for relative in (
+            "docs/agents/issue-tracker.md",
+            "docs/agents/github-issues.py",
+        ):
+            with self.subTest(relative=relative), tempfile.TemporaryDirectory() as directory:
+                root, skill_dirs = self.set_up_consumer(Path(directory))
+                obsolete = root / relative
+                obsolete.parent.mkdir(parents=True, exist_ok=True)
+                obsolete.write_text("obsolete\n")
+                self.assertIn(
+                    f"schema 3 must not retain {relative}",
+                    self.verify(root, skill_dirs).errors,
+                )
 
     def test_schema_3_rejects_missing_modified_and_unexpected_backend_assets(self) -> None:
         for case in ("missing", "modified", "unexpected"):
@@ -459,60 +475,10 @@ class InstalledLifecycleTests(unittest.TestCase):
             root, skill_dirs = self.set_up_consumer(Path(directory))
             target = next(path for path in skill_dirs if path.name == "clarify-intent") / "SKILL.md"
             target.write_text(target.read_text() + "\n[Missing](references/nope.md)\n")
-            (root / "docs/agents/issue-tracker.md").unlink()
+            (root / "docs/agents/records.md").unlink()
             errors = self.verify(root, skill_dirs).errors
             self.assertTrue(any("broken relative reference" in error for error in errors))
-            self.assertIn("missing required guidance: docs/agents/issue-tracker.md", errors)
-
-    def test_verifies_github_backend_assets_and_rejects_unknown_backends(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root, skill_dirs = self.set_up_consumer(Path(directory))
-            config = root / ".agents/workflows.yaml"
-            config.write_text(
-                config.read_text().replace(
-                    "backend: local-markdown",
-                    "backend: github\n  login: octocat",
-                )
-            )
-            (root / "docs/agents/issue-tracker.md").write_text(
-                (REFERENCES / "issue-tracker-github.md").read_text()
-            )
-            (root / "docs/agents/github-issues.py").write_text(
-                (REFERENCES / "github-issues.py").read_text()
-            )
-            self.assertEqual([], self.verify(root, skill_dirs).errors)
-            config.write_text(config.read_text().replace("  login: octocat\n", ""))
-            self.assertIn(
-                "issue_tracker.login is required for the GitHub backend",
-                self.verify(root, skill_dirs).errors,
-            )
-            config.write_text(
-                config.read_text().replace(
-                    "backend: github\n", "backend: github\n  login: octocat\n"
-                )
-            )
-            helper = root / "docs/agents/github-issues.py"
-            helper.write_text(helper.read_text() + "\n# local change\n")
-            self.assertIn(
-                "GitHub backend helper does not match the installed helper",
-                self.verify(root, skill_dirs).errors,
-            )
-            helper.unlink()
-            self.assertIn(
-                "missing required GitHub backend helper: docs/agents/github-issues.py",
-                self.verify(root, skill_dirs).errors,
-            )
-
-        with tempfile.TemporaryDirectory() as directory:
-            root, skill_dirs = self.set_up_consumer(Path(directory))
-            config = root / ".agents/workflows.yaml"
-            config.write_text(
-                config.read_text().replace("backend: local-markdown", "backend: bear")
-            )
-            self.assertIn(
-                "unsupported issue_tracker.backend: bear",
-                self.verify(root, skill_dirs).errors,
-            )
+            self.assertIn("missing required guidance: docs/agents/records.md", errors)
 
     def test_rejects_duplicate_selected_values_and_unsupported_schema(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -532,11 +498,21 @@ class InstalledLifecycleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(Path(directory))
             config = root / ".agents/workflows.yaml"
-            config.write_text(config.read_text().replace("schema_version: 2", "schema_version: 999"))
-            self.assertIn(
-                "schema_version must be 2 or 3 during the implementation bridge",
-                self.verify(root, skill_dirs).errors,
+            prefix = config.read_text().split("\nbackends:", 1)[0]
+            config.write_text(
+                prefix.replace("schema_version: 3", "schema_version: 2")
+                + "\nissue_tracker:\n  backend: local-markdown\n  root: .project\n"
+                + "artifacts:\n  specifications: {enabled: true, path: docs/specifications}\n"
             )
+            before = config.read_bytes()
+            self.assertIn("schema_version must be 3", self.verify(root, skill_dirs).errors)
+            self.assertEqual(before, config.read_bytes())
+
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(Path(directory))
+            config = root / ".agents/workflows.yaml"
+            config.write_text(config.read_text().replace("schema_version: 3", "schema_version: 999"))
+            self.assertIn("schema_version must be 3", self.verify(root, skill_dirs).errors)
 
 
 if __name__ == "__main__":

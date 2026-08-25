@@ -44,6 +44,6 @@ The opt-in smoke test exercises the Git-backed setup path with the real `skills@
 scripts/smoke-fresh-install.sh
 ```
 
-It installs all skills, confirms Pi discovery through its SDK resource loader, writes the currently supported smoke-test setup with one explicitly selected workflow, verifies from copied lifecycle assets with no source checkout, checks lazy directories, and removes the temporary repository.
+It installs all skills, confirms Pi discovery through its SDK resource loader, writes a schema-3 all-local setup with one explicitly selected workflow, verifies from copied lifecycle assets with no source checkout, checks lazy directories, and removes the temporary repository.
 
 The regular unit and fixture suite covers complete inventory, several discovered roots, missing and modified skills, configuration validation, and existing-project preservation without requiring network access.

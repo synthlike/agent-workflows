@@ -1,0 +1,38 @@
+# Record routing
+
+Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows.yaml). Resolve persistence by semantic record key, then follow the generated guidance for that route's backend.
+
+## Routes
+
+| Record key | State | Backend | Destination |
+| --- | --- | --- | --- |
+| `issues` | Enabled | `local` | root `.project` |
+| `domain` | Enabled | `local` | path `docs/domain` |
+| `arps` | Enabled | `local` | path `docs/decisions`, prefix `ARP` |
+| `rfcs` | Enabled | `local` | path `docs/rfcs`, prefix `RFC` |
+| `specs` | Enabled | `local` | path `docs/specs` |
+| `meetings` | Disabled | `local` | path `docs/meetings` |
+| `research` | Enabled | `local` | path `docs/research` |
+| `questionnaires` | Enabled | `local` | path `docs/questionnaires` |
+| `technical_baselines` | Enabled | `local` | path `docs/engineering` |
+| `problem_framing` | Enabled | `local` | path `docs/product` |
+| `prototypes` | Disabled | `local` | path `docs/prototypes` |
+| `handoffs` | Disabled | `local` | path `.agents/handoffs` |
+
+## Operations
+
+All record routes support create, read, list/search, revision-gated update, retained archive, and structured-reference rendering. The `issues` route additionally supports comment, claim, resolve, cancel, parent, block, and frontier.
+
+Treat returned references and revisions as opaque. Pass complete references to the destination adapter for rendering. Read the current record and pass its latest revision to every mutation. Do not construct paths, provider identifiers, labels, tags, URLs, or links in workflows.
+
+Every mutation remains approval-gated. A disabled route prohibits persistence without new approval but may use an approved temporary or external output where the workflow permits it. Backend destinations are created lazily on the first approved write. Route changes do not move, copy, rename, or rewrite existing records.
+
+## Generated backend assets
+
+The configured routes use local Markdown:
+
+- [Local Markdown guidance](backends/local-markdown.md)
+- `docs/agents/backends/local-markdown.py`
+- `docs/agents/backends/contract.py`
+
+Pass the configured consumer root, backend instance, and complete route destination explicitly to helper operations.

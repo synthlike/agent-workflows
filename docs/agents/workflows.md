@@ -1,12 +1,12 @@
 # Engineering workflows
 
-Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows.yaml). Issue operations follow the [local-Markdown backend](issue-tracker.md).
+Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows.yaml). Record operations follow [the configured semantic routes](records.md) in `docs/agents/records.md`.
 
 ## Distribution
 
 - Source: `github.com/synthlike/agent-workflows`
 - Version: `v0.5.0`
-- Configuration schema: `2`
+- Configuration schema: `3`
 
 ## Installation inventory
 
@@ -20,26 +20,14 @@ All 19 current workflows are explicitly selected. The complete 20-skill closure,
 | Unresolved technical or design discussion | RFC |
 | Accepted consequential technical decision | ARP |
 | Agreed product or system behavior | Specification |
-| Executable work | Issue tracker |
+| Executable work | Issue |
 | What happened in a meeting | Meeting notes |
 | Current system behavior | Code and tests |
 
-Supporting research, prototypes, questionnaires, meetings, and planning maps are evidence rather than authoritative requirements or decisions.
+Supporting research, prototypes, questionnaires, meetings, and planning maps are evidence rather than authoritative requirements or decisions. Authority derives from semantic record type, not storage backend.
 
-## Configured paths
+## Documentation style
 
-| Capability | State | Path |
-| --- | --- | --- |
-| Domain documentation | Enabled | `docs/domain/` |
-| ARPs | Enabled | `docs/decisions/` (`ARP` prefix) |
-| RFCs | Enabled | `docs/rfcs/` (`RFC` prefix) |
-| Specifications | Enabled | `docs/specifications/` |
-| Meeting notes | Disabled | `docs/meetings/` when enabled |
-| Research | Enabled | `docs/research/` |
-| Questionnaires | Enabled | `docs/questionnaires/` |
-| Technical baselines | Enabled | `docs/engineering/` |
-| Retained prototypes | Disabled | `docs/prototypes/` when enabled |
-| Durable handoffs | Disabled | `.agents/handoffs/` when enabled |
-| Local issues | Enabled | `.project/` |
+Write clear, direct documentation. Prefer active voice, short sentences, explicit references, and established domain terms. Avoid idioms, unnecessary synonyms, and ambiguous pronouns. Use one action per procedural step.
 
-Create optional artifact and local-issue directories only when writing their first artifact. A disabled capability prohibits repository writes without approval but may still use an approved temporary or external location. Ask before enabling or writing a disabled capability. Do not migrate existing artifacts as a side effect of configuration or installation.
+Create local destinations only on their first approved record write. Ask before persisting through a disabled route. Do not migrate existing records as a side effect of configuration, installation, or route changes.

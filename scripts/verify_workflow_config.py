@@ -47,8 +47,15 @@ def distribution_identity(text: str) -> tuple[str | None, str | None]:
 
 
 def validate(path: Path) -> list[str]:
-    source, version = distribution_identity(path.read_text())
+    text = path.read_text()
+    source, version = distribution_identity(text)
     errors: list[str] = []
+    schema = re.search(r"(?m)^schema_version:\s*([0-9]+)\s*$", text)
+    if not schema or schema.group(1) != "3":
+        errors.append("schema_version must be 3")
+    for obsolete in ("issue_tracker", "artifacts", "specifications"):
+        if re.search(rf"(?m)^{obsolete}:\s*$", text):
+            errors.append(f"obsolete schema field: {obsolete}")
     if not source:
         errors.append("missing distribution.source")
     elif PLACEHOLDER.search(source):

@@ -113,7 +113,7 @@ For more help, read:
 
 ## Reference
 
-For operational details, see the [artifact model](docs/artifact-model.md), [workflow dependencies](docs/workflow-dependencies.md), and [issue-tracker options](docs/issue-tracker-backends.md). Installation details are covered by the [distribution manifest](docs/distribution-manifest.md), [configuration format](docs/workflow-configuration.md), and [installation verification guide](docs/verifying-installation.md).
+For operational details, see the [artifact model](docs/artifact-model.md), [workflow dependencies](docs/workflow-dependencies.md), and [record backend options](docs/record-backends.md). Installation details are covered by the [distribution manifest](docs/distribution-manifest.md), [configuration format](docs/workflow-configuration.md), and [installation verification guide](docs/verifying-installation.md).
 
 ## Status
 

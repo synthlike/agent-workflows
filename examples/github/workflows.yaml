@@ -1,24 +1,68 @@
 # Incomplete example: configure-workflows must replace every REQUIRED value.
-schema_version: 2
+schema_version: 3
+
 distribution:
   source: REQUIRED_DISTRIBUTION_SOURCE
   version: REQUIRED_EXACT_VERSION_OR_COMMIT_SHA
+
 installation:
   selected: [REQUIRED_SELECTED_SKILL]
   skills:
     configure-workflows: REQUIRED_CONFIGURE_WORKFLOWS_PATH
     REQUIRED_SELECTED_SKILL: REQUIRED_SELECTED_SKILL_PATH
-issue_tracker:
-  backend: github
-  login: REQUIRED_GITHUB_LOGIN
-artifacts:
-  domain: {enabled: true, path: docs/domain}
-  arps: {enabled: true, path: docs/decisions, prefix: ARP}
-  rfcs: {enabled: true, path: docs/rfcs, prefix: RFC}
-  meetings: {enabled: true, path: docs/meetings}
-  research: {enabled: true, path: docs/research}
-  questionnaires: {enabled: true, path: docs/questionnaires}
-  technical_baselines: {enabled: true, path: docs/engineering}
-  prototypes: {enabled: false, path: docs/prototypes}
-  handoffs: {enabled: false, path: .agents/handoffs}
-  specifications: {enabled: true, path: docs/specifications}
+
+backends:
+  github:
+    type: github
+    repository: REQUIRED_GITHUB_OWNER/REQUIRED_GITHUB_REPOSITORY
+    login: REQUIRED_GITHUB_LOGIN
+
+records:
+  issues:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:issues}
+  domain:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:domain}
+  arps:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:arps}
+  rfcs:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:rfcs}
+  specs:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:specs}
+  meetings:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:meetings}
+  research:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:research}
+  questionnaires:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:questionnaires}
+  technical_baselines:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:technical_baselines}
+  problem_framing:
+    enabled: true
+    backend: github
+    destination: {label: workflow:record:problem_framing}
+  prototypes:
+    enabled: false
+    backend: github
+    destination: {label: workflow:record:prototypes}
+  handoffs:
+    enabled: false
+    backend: github
+    destination: {label: workflow:record:handoffs}

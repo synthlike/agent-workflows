@@ -44,28 +44,7 @@ for forbidden in ("Monerium", "EMS", "CRUSH_", "docs/content/docs"):
         if path.is_file() and forbidden in path.read_text(errors="ignore"):
             errors.append(f"{path.relative_to(root)}: contains project-specific term {forbidden!r}")
 
-contract = (root / "backends/issue-tracker/contract.md").read_text()
-operations = re.findall(r"\d+\. \*\*([^:*]+)", contract)
-for adapter in sorted((root / "backends/issue-tracker").glob("*.md")):
-    if adapter.name == "contract.md":
-        continue
-    text = adapter.read_text().lower()
-    for operation in operations:
-        if operation.lower() not in text:
-            errors.append(f"{adapter.relative_to(root)}: does not mention contract operation {operation}")
-
-bundled = root / "skills/configure-workflows/references"
-for source_name, bundled_name in (
-    ("contract.md", "issue-tracker-contract.md"),
-    ("github.md", "issue-tracker-github.md"),
-    ("github.py", "github-issues.py"),
-    ("local-markdown.md", "issue-tracker-local-markdown.md"),
-):
-    source = root / "backends/issue-tracker" / source_name
-    copy = bundled / bundled_name
-    if not copy.exists() or source.read_text() != copy.read_text():
-        errors.append(f"{copy.relative_to(root)}: bundled backend copy is missing or stale")
-
+record_source = root / "backends/record-store"
 record_bundle = root / "skills/configure-workflows/references/backends/record-store"
 for name in ("contract.py", "github.md", "github.py", "local-markdown.md", "local-markdown.py"):
     source = root / "backends/record-store" / name
@@ -73,11 +52,16 @@ for name in ("contract.py", "github.md", "github.py", "local-markdown.md", "loca
     if not bundled_copy.exists() or source.read_bytes() != bundled_copy.read_bytes():
         errors.append(f"{bundled_copy.relative_to(root)}: bundled record adapter is missing or stale")
 
-for name in ("github.md", "github.py"):
-    issue_bridge = root / "backends/issue-tracker" / name
-    record_source = root / "backends/record-store" / name
-    if issue_bridge.read_bytes() != record_source.read_bytes():
-        errors.append(f"{issue_bridge.relative_to(root)}: temporary GitHub bridge differs from record adapter")
+for obsolete in (
+    root / "backends/issue-tracker",
+    root / "docs/agents/issue-tracker.md",
+    root / "skills/configure-workflows/references/github-issues.py",
+    root / "skills/configure-workflows/references/issue-tracker-contract.md",
+    root / "skills/configure-workflows/references/issue-tracker-github.md",
+    root / "skills/configure-workflows/references/issue-tracker-local-markdown.md",
+):
+    if obsolete.exists():
+        errors.append(f"obsolete schema-2 asset remains: {obsolete.relative_to(root)}")
 
 github_adapter = (root / "backends/record-store/github.md").read_text()
 for label in (
@@ -90,8 +74,6 @@ for legacy in ("wayfinder:", "initiative:map", "initiative:task", "workflow:bug"
     if legacy in github_adapter:
         errors.append(f"backends/record-store/github.md: contains legacy label {legacy}")
 for helper in (
-    root / "backends/issue-tracker/github.py",
-    root / "skills/configure-workflows/references/github-issues.py",
     root / "backends/record-store/contract.py",
     root / "backends/record-store/github.py",
     root / "backends/record-store/local-markdown.py",
@@ -111,7 +93,7 @@ config_examples = [
 ]
 for path in config_examples:
     text = path.read_text()
-    expected_schema = "schema_version: 3" if path.name == "workflow-config.example.yaml" else "schema_version: 2"
+    expected_schema = "schema_version: 3"
     for field in (
         expected_schema,
         "distribution:",
@@ -130,10 +112,9 @@ for path in config_examples:
             errors.append(f"{path.relative_to(root)}: missing {field.rstrip(':')}")
     if "REQUIRED_" in text and "Incomplete" not in text:
         errors.append(f"{path.relative_to(root)}: placeholders are not marked as incomplete")
-    if path.name == "workflow-config.example.yaml":
-        for field in ("backends:", "records:", "issues:", "domain:", "arps:", "rfcs:", "specs:", "meetings:", "problem_framing:"):
-            if field not in text:
-                errors.append(f"{path.relative_to(root)}: missing schema-3 field {field.rstrip(':')}")
+    for field in ("backends:", "records:", "issues:", "domain:", "arps:", "rfcs:", "specs:", "meetings:", "problem_framing:"):
+        if field not in text:
+            errors.append(f"{path.relative_to(root)}: missing schema-3 field {field.rstrip(':')}")
     if "backend: github" in text and "login:" not in text:
         errors.append(f"{path.relative_to(root)}: GitHub backend is missing login")
 
@@ -154,7 +135,7 @@ for required in (
     "docs/distribution-manifest.md",
     "docs/workflow-configuration.md",
     "docs/verifying-installation.md",
-    "docs/issue-tracker-backends.md",
+    "docs/record-backends.md",
     "docs/starting-a-new-project.md",
     "docs/fresh-project-configuration.md",
     "docs/adopting-in-existing-project.md",
@@ -177,7 +158,7 @@ if errors:
     for error in errors:
         print(f"- {error}", file=sys.stderr)
     raise SystemExit(1)
-print(f"Verified {len(skills)} skills, {len(list((root / 'backends/issue-tracker').glob('*.md'))) - 1} backends, {len(config_examples)} configuration examples, and {len(documentation)} documentation files.")
+print(f"Verified {len(skills)} skills, {len(list(record_source.glob('*.md'))) - 1} backends, {len(config_examples)} configuration examples, and {len(documentation)} documentation files.")
 PY
 python3 -B "$root/scripts/verify_workflow_config.py" "$root/.agents/workflows.yaml"
 python3 -B "$root/scripts/verify_workflow_dependencies.py"

@@ -281,5 +281,5 @@ Accepted Option A on 2026-08-25. [ARP-0009](../decisions/ARP-0009-route-semantic
 - [Bear MCP scoping and record storage](../research/2026-08-25-bear-mcp-scoping.md)
 - [Artifact model](../artifact-model.md)
 - [Workflow configuration schema 2](../workflow-configuration.md)
-- [Issue backend contract](../../backends/issue-tracker/contract.md)
+- [Issue backend contract](../../backends/record-store/contract.md)
 - [Use native GitHub issue relationships](../decisions/ARP-0008-use-native-github-issue-relationships.md)

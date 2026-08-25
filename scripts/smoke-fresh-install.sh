@@ -54,7 +54,7 @@ skills = "\n".join(f"    {name}: {path}" for name, path in sorted(discovered.ite
 distribution = manifest["distribution"]
 (root / ".agents").mkdir(exist_ok=True)
 (root / ".agents/workflows.yaml").write_text(
-    f"""schema_version: 2
+    f"""schema_version: 3
 
 distribution:
   source: {distribution['source']}
@@ -66,37 +66,89 @@ installation:
   skills:
 {skills}
 
-issue_tracker:
-  backend: local-markdown
-  root: .project
+backends:
+  local:
+    type: local-markdown
 
-artifacts:
-  domain: {{enabled: true, path: docs/domain}}
-  arps: {{enabled: true, path: docs/decisions, prefix: ARP}}
-  rfcs: {{enabled: true, path: docs/rfcs, prefix: RFC}}
-  meetings: {{enabled: false, path: docs/meetings}}
-  specifications: {{enabled: true, path: docs/specifications}}
+records:
+  issues:
+    enabled: true
+    backend: local
+    destination: {{root: .project}}
+  domain:
+    enabled: true
+    backend: local
+    destination: {{path: docs/domain}}
+  arps:
+    enabled: true
+    backend: local
+    destination: {{path: docs/decisions, prefix: ARP}}
+  rfcs:
+    enabled: true
+    backend: local
+    destination: {{path: docs/rfcs, prefix: RFC}}
+  specs:
+    enabled: true
+    backend: local
+    destination: {{path: docs/specs}}
+  meetings:
+    enabled: false
+    backend: local
+    destination: {{path: docs/meetings}}
+  research:
+    enabled: true
+    backend: local
+    destination: {{path: docs/research}}
+  questionnaires:
+    enabled: true
+    backend: local
+    destination: {{path: docs/questionnaires}}
+  technical_baselines:
+    enabled: true
+    backend: local
+    destination: {{path: docs/engineering}}
+  problem_framing:
+    enabled: true
+    backend: local
+    destination: {{path: docs/product}}
+  prototypes:
+    enabled: false
+    backend: local
+    destination: {{path: docs/prototypes}}
+  handoffs:
+    enabled: false
+    backend: local
+    destination: {{path: .agents/handoffs}}
 """
 )
 PY
 
-mkdir -p "$consumer/docs/agents"
+mkdir -p "$consumer/docs/agents/backends"
 cp \
-  "$consumer/.pi/skills/configure-workflows/references/issue-tracker-local-markdown.md" \
-  "$consumer/docs/agents/issue-tracker.md"
+  "$consumer/.pi/skills/configure-workflows/references/backends/record-store/contract.py" \
+  "$consumer/.pi/skills/configure-workflows/references/backends/record-store/local-markdown.md" \
+  "$consumer/.pi/skills/configure-workflows/references/backends/record-store/local-markdown.py" \
+  "$consumer/docs/agents/backends/"
 cat > "$consumer/docs/agents/workflows.md" <<'MD'
 # Engineering workflows
 
-Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows.yaml). Issue operations follow [the configured backend](issue-tracker.md).
+Canonical configuration is in [`.agents/workflows.yaml`](../../.agents/workflows.yaml). Record operations follow [the configured routes](records.md) in `docs/agents/records.md`.
 
 ## Documentation style
 
 Write clear, direct documentation. Prefer active voice, short sentences, explicit references, and established domain terms. Avoid idioms, unnecessary synonyms, and ambiguous pronouns. Use one action per procedural step.
 MD
+cat > "$consumer/docs/agents/records.md" <<'MD'
+# Record routing
+
+Read `.agents/workflows.yaml`. Routes are `issues`, `domain`, `arps`, `rfcs`, `specs`, `meetings`, `research`, `questionnaires`, `technical_baselines`, `problem_framing`, `prototypes`, and `handoffs`.
+
+Use `docs/agents/backends/local-markdown.py` for configured operations. Treat references and revisions as opaque. Mutations require approval; disabled routes prohibit persistence without new approval.
+MD
 cat > "$consumer/AGENTS.md" <<'MD'
 # Agent guidance
 
-Workflow configuration is in `.agents/workflows.yaml`. Read `docs/agents/workflows.md` and `docs/agents/issue-tracker.md` before workflow operations.
+Workflow configuration is in `.agents/workflows.yaml`. Read `docs/agents/workflows.md` and `docs/agents/records.md` before workflow operations.
 MD
 
 (
@@ -113,7 +165,13 @@ for optional in \
   docs/decisions \
   docs/rfcs \
   docs/meetings \
-  docs/specifications
+  docs/specs \
+  docs/research \
+  docs/questionnaires \
+  docs/engineering \
+  docs/product \
+  docs/prototypes \
+  .agents/handoffs
 do
   if [[ -e "$consumer/$optional" ]]; then
     printf 'Optional path was created eagerly: %s\n' "$optional" >&2

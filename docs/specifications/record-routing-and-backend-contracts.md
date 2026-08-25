@@ -246,7 +246,7 @@ records:
 - [ARP-0008: Use native GitHub issue relationships](../decisions/ARP-0008-use-native-github-issue-relationships.md)
 - [Bear MCP scoping and record storage](../research/2026-08-25-bear-mcp-scoping.md)
 - [Artifact model](../artifact-model.md)
-- [Issue backend contract](../../backends/issue-tracker/contract.md)
+- [Issue backend contract](../../backends/record-store/contract.md)
 
 ### Phase-1 implementation
 

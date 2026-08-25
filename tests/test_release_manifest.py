@@ -15,6 +15,10 @@ class ReleaseManifestTests(unittest.TestCase):
     def test_committed_manifest_is_canonical_and_complete(self) -> None:
         self.assertEqual([], lifecycle.check_manifest(ROOT))
         manifest = lifecycle.generate_manifest(ROOT)
+        self.assertEqual(
+            {"current_schema": 3, "readable_schemas": [3]},
+            manifest["configuration"],
+        )
         manifest_path = lifecycle.manifest_path(ROOT)
         self.assertNotIn(
             "references/distribution-manifest.json",

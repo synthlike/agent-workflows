@@ -2,9 +2,9 @@
 id: ISSUE-0041
 title: Cut over atomically to schema 3
 kind: task
-status: open
+status: resolved
 created: 2026-08-25
-assignee:
+assignee: pi
 parent: ../../docs/specifications/record-routing-and-backend-contracts.md
 blocked_by:
   - ISSUE-0038-route-existing-workflows-through-record-adapters.md
@@ -34,3 +34,5 @@ Move the repository and distribution to schema 3 and remove the temporary schema
 ## Comments
 
 ## Resolution
+
+Cut the repository and distribution over atomically to schema 3. The root configuration, release metadata, generated manifest, all examples, fresh-install smoke setup, active documentation, root guidance, and generated consumer assets now use twelve explicit semantic routes and canonical `specs` / `docs/specs`. Installed and lightweight verification accept only schema 3 and reject old `issue_tracker`, `artifacts`, and `specifications` shapes. Removed the schema-2 reader, issue-tracker backend bridge, legacy bundled helpers/guidance, and generated `docs/agents/issue-tracker.md`; canonical backend sources and bundles now live only under `record-store`. Added `docs/agents/records.md` and exact local backend assets for this repository. Existing files under `docs/specifications` and all backend records/labels were left untouched; verification tests that existing records are not moved or rewritten. `scripts/verify.sh` passes with 100 tests.

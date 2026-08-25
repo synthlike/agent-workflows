@@ -1,6 +1,6 @@
 # Workflow configuration
 
-`.agents/workflows.yaml` is the single canonical configuration at the consumer workspace root. Git is optional; the root may use Git, another version-control system, or be intentionally unversioned. New all-local, all-GitHub, and mixed configurations use schema 3. During the phase-1 implementation bridge, installed lifecycle verification also reads existing schema-2 consumers; the final cutover removes that compatibility.
+`.agents/workflows.yaml` is the single canonical configuration at the consumer workspace root. Git is optional; the root may use Git, another version-control system, or be intentionally unversioned. All configurations use schema 3. Schema 2 is unsupported.
 
 ## Schema 3
 
@@ -68,7 +68,7 @@ Schema-3 consumers generate:
 - `docs/agents/backends/local-markdown.md` and `local-markdown.py` only when a route uses local Markdown; and
 - `docs/agents/backends/github.md` and `github.py` only when a route uses GitHub.
 
-`docs/agents/issue-tracker.md` is obsolete in schema 3. Generated backend assets must exactly match the installed `configure-workflows` copies. Record directories remain lazy and are created only on the first approved write.
+Schema 3 does not generate provider-specific issue-tracker guidance outside `docs/agents/backends/`. Generated backend assets must exactly match the installed `configure-workflows` copies. Record directories remain lazy and are created only on the first approved write.
 
 ## Installation inventory
 
@@ -96,6 +96,4 @@ Use repeated `--skill-dir` arguments when discovery spans several parent directo
 
 Verification checks configuration shape, identity, inventory, closure, distributed file hashes, internal links, consumer-root containment, generated guidance, and exact backend assets. Schema 3 rejects missing and unknown routes, fields, backend instances, unsupported backend contracts, malformed destinations, escaping paths, stale helpers, and obsolete issue guidance.
 
-## Temporary schema-2 bridge
-
-Existing schema-2 configurations remain readable only while phase 1 is incomplete. Their `issue_tracker` and `artifacts` sections retain their previous meaning. Do not convert, migrate, or rewrite existing records as a side effect of verification. The atomic cutover issue will remove schema-2 support after all-local, GitHub, mixed, and routed workflow behavior are complete.
+Schema-2 keys such as `issue_tracker`, `artifacts`, and `specifications` have no compatibility aliases. Configuration changes do not move, copy, relabel, or rewrite existing records. Existing content remains where it was until separately approved record work handles it.

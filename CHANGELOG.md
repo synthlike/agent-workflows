@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Replace schema 2 with explicit schema-3 routing for all twelve semantic record types across local Markdown and GitHub backends.
 - Rename the mandatory workflow bootstrap from `configure-project` to `configure-workflows` before external adoption.
 - Complete the GitHub Cloud issue backend with explicit multi-account identity selection, native relationships, reviewed label provisioning, deterministic frontier calculation, and an executable `gh` helper.
 - Configure repository retention and paths for research, questionnaires, technical baselines, prototypes, and handoffs according to project needs.

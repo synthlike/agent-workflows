@@ -20,8 +20,8 @@ Verification fails when:
 - a skill directory lacks `SKILL.md`, its frontmatter name differs from its directory, or an internal relative reference is broken or escapes the skill directory;
 - an installed skill differs from the corresponding unmodified distribution skill, surfacing locally added, missing, or modified files before an update;
 - root `.agents/workflows.yaml` is missing or another nested configuration exists;
-- configuration schema, immutable distribution identity, supported issue backend, explicit GitHub login, matching backend guidance, required GitHub helper, record routes, consumer-root-contained paths, or required guidance are invalid; or
-- root agent guidance does not point to workflow and issue-backend guidance.
+- configuration schema, immutable distribution identity, named record backends, explicit GitHub repository and login, matching generated backend assets, complete record routes, consumer-root-contained paths, or required guidance are invalid; or
+- root agent guidance does not point to workflow and record-routing guidance.
 
 The verifier compares every installed file and dependency with the manifest embedded in the installed `configure-workflows` directory. It does not require a distribution source checkout.
 

@@ -12,8 +12,8 @@ The manifest has this shape:
     "version": "vMAJOR.MINOR.PATCH"
   },
   "configuration": {
-    "current_schema": 2,
-    "readable_schemas": [2]
+    "current_schema": 3,
+    "readable_schemas": [3]
   },
   "skills": {
     "configure-workflows": {

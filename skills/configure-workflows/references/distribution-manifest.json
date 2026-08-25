@@ -1,8 +1,8 @@
 {
   "configuration": {
-    "current_schema": 2,
+    "current_schema": 3,
     "readable_schemas": [
-      2
+      3
     ]
   },
   "distribution": {
@@ -62,18 +62,14 @@
     "configure-workflows": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "3fcf820af1e00e3a68a827e32f3aee46a5a4818c9dc1ce7f72ec642bda470eef",
-        "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
+        "SKILL.md": "d40ddec9f952e8037b90a50206f674aa98b16259013115f795cbab652d4e2010",
+        "references/agents-section.md": "6a5f9f0ccd71186a3f11439d553a44c1a6c83605b477c5b3044b3880df4de594",
         "references/backends/record-store/contract.py": "b0e1611d61418982331c6dc49a7a79e73b43204d6bd9d9e157927e38231d5347",
         "references/backends/record-store/github.md": "6fd9d8f2ecaa6f3b6a0c4bdadb22a714710eb1bf3b8b35f978844c23b35642e1",
         "references/backends/record-store/github.py": "f4a7d51607de16ce5ace277067366a68a9db41e9a46fffead1a41577cda9643a",
-        "references/backends/record-store/local-markdown.md": "e8356bd039dbfcf5c7606a1f22d70f035bc0a3fcf6ad8e2bad07931fabddd0bf",
+        "references/backends/record-store/local-markdown.md": "d75f874173844c18b54ace53d449320831134601c5c0ac0fae317d8c17b65370",
         "references/backends/record-store/local-markdown.py": "cd173aff05f238137d7e7cde284b97f0f03550633af8a06905ec09b1fe49aeec",
-        "references/consumer.py": "5d34a1b74b1011142d8f6d7842df73a70b598669152d4866b4f6de19cebdb94d",
-        "references/github-issues.py": "f4a7d51607de16ce5ace277067366a68a9db41e9a46fffead1a41577cda9643a",
-        "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
-        "references/issue-tracker-github.md": "6fd9d8f2ecaa6f3b6a0c4bdadb22a714710eb1bf3b8b35f978844c23b35642e1",
-        "references/issue-tracker-local-markdown.md": "3f2816d77e76e33552552172db98d3117621be2ead357745d25b9100094be427",
+        "references/consumer.py": "c3d36421c0d0d359acc0c7a01b1c4315ddc48f75fe4102c165fc36a08ebb510e",
         "references/lifecycle.py": "8bd872f5dbd65403ad4acb865129fcba5189aa356557476e360586784fd211f2",
         "references/workflow-config.example.yaml": "2ca10cf6381a51f976fc12a2a4b3e21c54e0186c45a0e189acbcb8ebb09a1dc7"
       }

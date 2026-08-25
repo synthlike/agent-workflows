@@ -20,6 +20,24 @@ EXPECTED_CAPABILITIES = {
 
 
 class ArtifactRetentionTests(unittest.TestCase):
+    def test_all_configuration_examples_use_complete_schema_3_routes(self) -> None:
+        paths = (
+            REFERENCES / "workflow-config.example.yaml",
+            ROOT / "examples/local-markdown/workflows.yaml",
+            ROOT / "examples/github/workflows.yaml",
+        )
+        expected = {
+            "issues", "domain", "arps", "rfcs", "specs", "meetings", "research",
+            "questionnaires", "technical_baselines", "problem_framing", "prototypes", "handoffs",
+        }
+        for path in paths:
+            with self.subTest(path=path):
+                config = parse_config(path.read_text())
+                self.assertEqual(3, config["schema_version"])
+                self.assertEqual(expected, set(config["records"]))
+                for route in config["records"].values():
+                    self.assertEqual({"enabled", "backend", "destination"}, set(route))
+
     def test_configuration_template_has_supporting_artifact_defaults(self) -> None:
         config = parse_config((REFERENCES / "workflow-config.example.yaml").read_text())
         records = config["records"]
@@ -40,7 +58,7 @@ class ArtifactRetentionTests(unittest.TestCase):
         self.assertIn("actual API identity", text)
         self.assertIn("complete record contract", text)
         self.assertIn("complete issue contract", text)
-        self.assertIn("label-plan schema 2", text)
+        self.assertIn("label-plan format 2", text)
         self.assertIn("apply only the exact reviewed plan after approval", text)
         self.assertIn("exactly the guidance/helper pair for each backend type used", text)
 

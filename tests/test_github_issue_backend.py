@@ -6,7 +6,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-MODULE_PATH = ROOT / "backends/issue-tracker/github.py"
+MODULE_PATH = ROOT / "backends/record-store/github.py"
 SPEC = importlib.util.spec_from_file_location("github_issue_backend", MODULE_PATH)
 assert SPEC and SPEC.loader
 backend_module = importlib.util.module_from_spec(SPEC)
