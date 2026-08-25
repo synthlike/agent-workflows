@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate manifests and verify complete Agent Workflows installations."""
+"""Generate manifests, inspect installations, and plan or verify consumers."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ import sys
 from typing import Any
 
 from consumer import dependency_closure, inspect_skills, verify_consumer
+from planning import PlanError, build_consumer_plan
 
 
 MANIFEST_FORMAT = 2
@@ -400,6 +401,9 @@ def main() -> int:
     _add_consumer_arguments(inspect_parser)
     verify_parser = subparsers.add_parser("verify-consumer")
     _add_consumer_arguments(verify_parser)
+    plan_parser = subparsers.add_parser("plan-consumer")
+    _add_consumer_arguments(plan_parser)
+    plan_parser.add_argument("--answers", required=True, type=Path)
     args = parser.parse_args()
     try:
         if args.command == "generate-release":
@@ -449,7 +453,7 @@ def main() -> int:
             _print_result(result, args.json, "Installed skills match the distribution manifest.")
             if inspection.errors:
                 return 1
-        else:
+        elif args.command == "verify-consumer":
             manifest = installed_manifest()
             skill_dirs = _consumer_skill_dirs(args)
             verification = verify_consumer(args.consumer_root, skill_dirs, manifest)
@@ -460,7 +464,16 @@ def main() -> int:
             )
             if verification.errors:
                 return 1
-    except LifecycleError as error:
+        else:
+            manifest = installed_manifest()
+            skill_dirs = _consumer_skill_dirs(args)
+            try:
+                answer = parse_json(args.answers.read_bytes(), f"answers {args.answers}")
+            except OSError as error:
+                raise LifecycleError(f"cannot read answers {args.answers}: {error}") from error
+            plan = build_consumer_plan(args.consumer_root, skill_dirs, manifest, answer)
+            sys.stdout.buffer.write(canonical_json(plan))
+    except (LifecycleError, PlanError) as error:
         print(f"Lifecycle error: {error}", file=sys.stderr)
         return 1
     return 0

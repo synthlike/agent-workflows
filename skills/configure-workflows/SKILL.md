@@ -92,6 +92,8 @@ Show a dry run containing:
 9. the concise agent-instructions block pointing to workflow and record guidance; and
 10. every other directory or file that would be created or changed.
 
+When producing a machine-reviewable local-file plan, normalize confirmed interview answers against the strict [answer schema](references/consumer-answers.schema.json) and run installed `lifecycle.py plan-consumer`. The command emits one canonical plan to stdout and performs no writes; plan generation is not approval to apply it. Provider preflight evidence and external provisioning remain outside local file generation.
+
 Wait for explicit approval.
 
 ## Write

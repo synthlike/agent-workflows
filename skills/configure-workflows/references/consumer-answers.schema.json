@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/synthlike/agent-workflows/schema/consumer-answers-v1.json",
+  "title": "Agent Workflows consumer planning answers",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "answer_version",
+    "selection",
+    "project",
+    "profile",
+    "backends",
+    "route_overrides",
+    "consumer_state"
+  ],
+  "properties": {
+    "answer_version": {"const": 1},
+    "selection": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode"],
+          "properties": {"mode": {"const": "all"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "skills"],
+          "properties": {
+            "mode": {"const": "explicit"},
+            "skills": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+            }
+          }
+        }
+      ]
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "documentation_style"],
+      "properties": {
+        "summary": {"type": "string", "minLength": 1},
+        "documentation_style": {"type": "string", "minLength": 1}
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "local_backend"],
+      "properties": {
+        "name": {"const": "local-default"},
+        "local_backend": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}
+      }
+    },
+    "backends": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_-]*$"},
+      "additionalProperties": {"$ref": "#/$defs/backend"}
+    },
+    "route_overrides": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "issues": {"$ref": "#/$defs/routeOverride"},
+        "domain": {"$ref": "#/$defs/routeOverride"},
+        "arps": {"$ref": "#/$defs/routeOverride"},
+        "rfcs": {"$ref": "#/$defs/routeOverride"},
+        "specs": {"$ref": "#/$defs/routeOverride"},
+        "meetings": {"$ref": "#/$defs/routeOverride"},
+        "research": {"$ref": "#/$defs/routeOverride"},
+        "questionnaires": {"$ref": "#/$defs/routeOverride"},
+        "technical_baselines": {"$ref": "#/$defs/routeOverride"},
+        "problem_framing": {"$ref": "#/$defs/routeOverride"},
+        "prototypes": {"$ref": "#/$defs/routeOverride"},
+        "handoffs": {"$ref": "#/$defs/routeOverride"}
+      }
+    },
+    "consumer_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["root_guidance_path", "expected_prior"],
+      "properties": {
+        "root_guidance_path": {
+          "type": "string",
+          "pattern": "^(?!\\.{1,2}$)[^/]+$"
+        },
+        "expected_prior": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//).+$"
+          },
+          "additionalProperties": {
+            "oneOf": [
+              {"type": "null"},
+              {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "backend": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type"],
+          "properties": {"type": {"const": "local-markdown"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "repository", "login"],
+          "properties": {
+            "type": {"const": "github"},
+            "repository": {"type": "string", "minLength": 1},
+            "login": {"type": "string", "minLength": 1}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "command", "workspace"],
+          "properties": {
+            "type": {"const": "bear"},
+            "command": {"type": "string", "minLength": 1},
+            "workspace": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    },
+    "routeOverride": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "backend": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+        "destination": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": false,
+          "properties": {
+            "root": {"type": "string", "minLength": 1},
+            "path": {"type": "string", "minLength": 1},
+            "prefix": {"type": "string", "minLength": 1},
+            "label": {"type": "string", "minLength": 1},
+            "tag": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,9 +2,9 @@
 id: ISSUE-0054
 title: "Generate deterministic consumer configuration plans"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0050-streamline-deterministic-consumer-configuration.md"
 blocked_by:
   - "ISSUE-0051-correct-discovery-semantics-and-inspect-backends-conditionally.md"
@@ -41,6 +41,6 @@ Corrected discovery semantics and canonical templates.
 Plan application, schema migration, provider provisioning, and skill installation or replacement.
 
 ## Comments
-
-
 ## Resolution
+
+Added source-checkout-free `lifecycle.py plan-consumer` and a strict version-1 JSON answer schema. Answers support `all` or explicit workflow selection, project summary and documentation style, named local/GitHub/Bear instances, the `local-default` profile, partial explicit route overrides, a selected root-guidance file, and expected prior hashes or absence for every managed target. Planning integrity-checks the complete installation, validates routes through the same adapter capability and destination rules as consumer verification, renders only through canonical bundled templates/assets, incorporates existing root guidance, and rejects malformed, incomplete, unsupported, escaping, colliding, ambiguous, or stale state without writes. Canonical plans contain immutable distribution identity and manifest hash; normalized selections, closure, invocation policy, and complete installed paths; exact UTF-8 generated content; copied-asset source paths and source/destination hashes; expected prior state for every target; managed directories to create; lazy local record directories deliberately left absent; and a `sha256` digest over canonical JSON excluding only the digest. Added byte-determinism, digest, local and mixed route, exact asset, stale/error, preservation, source-checkout-free CLI, no-write, and failing-`gh`/`bearcli` sentinel regressions. Updated the authoritative routing specification, lifecycle/configuration guidance, skill guidance, templates, and changelog. `scripts/verify.sh` passes with 149 tests.

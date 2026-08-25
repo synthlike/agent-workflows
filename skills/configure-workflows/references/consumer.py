@@ -532,12 +532,20 @@ def _validate_schema3_assets(root: Path, data: dict[str, Any], errors: list[str]
         errors.append("root agent guidance must point to workflow and record guidance")
 
 
-def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: list[str]) -> None:
-    _exact_fields(data, SCHEMA3_TOP_LEVEL, "configuration", errors)
-    distribution = data.get("distribution")
-    _exact_fields(distribution, {"source", "version"}, "distribution", errors)
-    installation = data.get("installation")
-    _exact_fields(installation, {"selected", "skills"}, "installation", errors)
+def _validate_schema3_configuration(
+    root: Path,
+    data: dict[str, Any],
+    errors: list[str],
+    *,
+    validate_document: bool = True,
+    validate_assets: bool = True,
+) -> None:
+    if validate_document:
+        _exact_fields(data, SCHEMA3_TOP_LEVEL, "configuration", errors)
+        distribution = data.get("distribution")
+        _exact_fields(distribution, {"source", "version"}, "distribution", errors)
+        installation = data.get("installation")
+        _exact_fields(installation, {"selected", "skills"}, "installation", errors)
 
     backends = data.get("backends")
     if not isinstance(backends, dict) or not backends:
@@ -643,7 +651,25 @@ def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: li
                     else None
                 ),
             )
-    _validate_schema3_assets(root, data, errors)
+    if validate_assets:
+        _validate_schema3_assets(root, data, errors)
+
+
+def validate_backend_routes(
+    root: Path,
+    backends: dict[str, Any],
+    records: dict[str, Any],
+) -> list[str]:
+    """Validate normalized backend and route intent without inspecting generated assets."""
+    errors: list[str] = []
+    _validate_schema3_configuration(
+        root.resolve(),
+        {"backends": backends, "records": records},
+        errors,
+        validate_document=False,
+        validate_assets=False,
+    )
+    return errors
 
 
 def verify_consumer(

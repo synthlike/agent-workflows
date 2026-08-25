@@ -112,9 +112,16 @@ python3 PATH/TO/configure-workflows/references/lifecycle.py inspect \
   --consumer-root . --skills-root .claude/skills
 python3 PATH/TO/configure-workflows/references/lifecycle.py verify-consumer \
   --consumer-root . --skills-root .claude/skills
+python3 PATH/TO/configure-workflows/references/lifecycle.py plan-consumer \
+  --consumer-root . --skills-root .agents/skills \
+  --answers /tmp/consumer-answers.json > /tmp/consumer-plan.json
 ```
 
 Use repeated `--skill-dir` arguments when discovery spans several parent directories. Read-only operations support canonical JSON through `--json` where relevant.
+
+`plan-consumer` accepts the strict versioned `references/consumer-answers.schema.json` contract. Answers select explicit workflows or `all`, describe the project and documentation style, name backend instances, select the `local-default` profile, provide per-route overrides, choose the root guidance file, and bind the expected prior state of every managed target. The command writes nothing and emits one canonical JSON plan to stdout.
+
+The plan contains immutable distribution identity and manifest hash, normalized selected workflows and closure, complete installed inventory, exact UTF-8 text, copied-asset source and destination hashes, every target's expected prior state, directories needed for managed files, and lazy record destinations deliberately left absent. Its `digest` is `sha256` over canonical plan JSON excluding only `digest`. Identical state and answers produce identical bytes. A stale prior hash, malformed answer, unsupported route/backend combination, escaping path, collision, incomplete installation, or altered bundled asset stops planning without a consumer write. Provider preflight evidence is gathered conditionally by the workflow; local file planning never invokes provider tools.
 
 Verification checks configuration shape, identity, inventory, closure, distributed file hashes, internal links, consumer-root containment, generated guidance, and exact backend assets. Schema 3 rejects missing and unknown routes, fields, backend instances, unsupported backend contracts, malformed destinations, escaping paths, stale helpers, and obsolete issue guidance. A routed backend must declare the record type and its complete operation set before any backend write: common record operations for non-issue routes or every issue-extension operation for `issues`. Capability declarations belong to distributed adapters; project configuration cannot override them.
 

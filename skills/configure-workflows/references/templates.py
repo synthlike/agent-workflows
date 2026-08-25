@@ -105,6 +105,7 @@ def render_consumer_files(
     skills: dict[str, str],
     backends: dict[str, dict[str, Any]],
     records: dict[str, dict[str, Any]],
+    project_summary: str = "Project collaboration and persistence intent is recorded in the approved configuration plan.",
     existing_root_guidance: bytes = b"",
     root_guidance_path: str = "AGENTS.md",
     documentation_policy: str = DEFAULT_DOCUMENTATION_POLICY,
@@ -212,6 +213,7 @@ def render_consumer_files(
             "distribution_source_text": source,
             "distribution_version_text": version,
             "selected_workflows": selected_guidance,
+            "project_summary": _string(project_summary, "project_summary"),
             "documentation_policy": _string(documentation_policy, "documentation_policy"),
         }),
         "docs/agents/records.md": _fill("records.md.tmpl", {
