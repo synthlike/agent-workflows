@@ -2,9 +2,9 @@
 id: ISSUE-0056
 title: "Route configure-workflows through plan and apply"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0050-streamline-deterministic-consumer-configuration.md"
 blocked_by:
   - "ISSUE-0055-apply-approved-consumer-configuration-plans-transactionally.md"
@@ -40,6 +40,6 @@ Transactional consumer plan application.
 Provider mutations inside apply, skill installation or updates, and configuration-schema migration.
 
 ## Comments
-
-
 ## Resolution
+
+Routed `configure-workflows` through the installed deterministic lifecycle. It now performs provider-neutral initial inspection, uses one project/profile sequence to gather only unresolved intent, conditionally obtains GitHub or read-only Bear evidence, normalizes strict answers, invokes `plan-consumer` instead of composing files, presents one complete digest-bound plan, and requests one approval for all local files before invoking `apply-consumer`. It forbids hand-authored repair, stops and replans on changed intent/state or any apply error, reports apply/verification results, and keeps GitHub label application separately planned and approved while Bear preflight remains read-only. Updated the authoritative configuration requirements and active README, fresh-project, existing-adoption, starting, and workflow-configuration guidance with the streamlined interaction and limitations. Replaced the fresh-install smoke's hand-authored YAML/Markdown/copy steps with source-checkout-free plan/apply, dynamic prior-state binding, manual-invocation Pi discovery checks, digest extraction, installed verification, and lazy destination assertions. Added regressions for the workflow sequence and smoke contract; prior lifecycle tests collectively cover deterministic plans, stale rejection, root preservation, verification, lazy destinations, local-only zero-provider invocation, source-checkout-free operation, rollback, and no-op replanning. `scripts/verify.sh` passes with 158 tests, and the live opt-in `scripts/smoke-fresh-install.sh` passes with `skills@latest` and Pi.

@@ -11,7 +11,7 @@ Inspect first, propose second, and write only after confirmation. Installation m
 
 ## Lifecycle assets
 
-Release identity, complete skill inventory, dependencies, and file integrity are defined by the embedded [distribution manifest](references/distribution-manifest.json). Use the deterministic [lifecycle command](references/lifecycle.py) for manifest inspection, closure, and installed verification; keep human intent, dry-run review, write approval, and harness discovery confirmation in this skill.
+Release identity, complete skill inventory, dependencies, and file integrity are defined by the embedded [distribution manifest](references/distribution-manifest.json). Use the deterministic [lifecycle command](references/lifecycle.py) for manifest inspection, closure, plan generation, transactional apply, and installed verification; keep human intent, plan review, one local-file approval, provider-specific approvals, and harness discovery confirmation in this skill.
 
 ## Explore
 
@@ -32,7 +32,7 @@ From the consumer workspace root, inspect only:
 - existing domain glossaries, context maps, artifact directories, local issue conventions, and other record-location conventions; and
 - project structure, including monorepo signals relevant to record layout.
 
-Then ask what kind of project this is and how people and agents will collaborate on it. Use the answer to identify a local, GitHub, mixed, or Bear-backed profile before any provider-specific inspection.
+Then begin one project/profile question sequence: ask what kind of project this is and how people and agents will collaborate on it, and gather only intent that remains unresolved after inspection. Use the answers to identify a local, GitHub, mixed, or Bear-backed profile before any provider-specific inspection. Do not repeat questions for facts or choices already resolved.
 
 ### Backend inspection
 
@@ -79,35 +79,33 @@ Use the lifecycle command to calculate the selected closure and inspect the inte
 
 ## Confirm
 
-Show a dry run containing:
+Normalize the confirmed question sequence against the strict [answer schema](references/consumer-answers.schema.json), including expected prior state for every managed target. Invoke installed `lifecycle.py plan-consumer`; do not compose YAML, Markdown, root guidance, or backend assets manually.
 
-1. exact distribution identity;
-2. user-selected workflows, calculated closure, and the complete discovered skill inventory;
-3. any missing, unexpected, duplicate, incomplete, or modified skill and every blocking conflict;
-4. `.agents/workflows.yaml`, rendered from the canonical [configuration template](references/templates/workflows.yaml.tmpl), with schema 3, exact distribution identity, named backend instances, all twelve explicit routes, selected workflows, and complete discovered skill-path inventory;
-5. backend preflight and actual-identity results, reviewed GitHub label plans, and exactly the used distribution-managed backend files returned by the pure [template renderer](references/templates.py);
-6. `docs/agents/records.md`, rendered from its [canonical template](references/templates/records.md.tmpl), including all routes, portable operations, opaque references and revisions, disabled-route behavior, approval boundaries, and exact used backend assets;
-7. `docs/agents/workflows.md`, rendered from its [canonical template](references/templates/workflows.md.tmpl), including the literal instruction to read `docs/agents/records.md`, the authority table, and the project writing policy or default plain-language style;
-8. detected version-control state, the chosen consumer root, and whether completed issue work will have a commit or equivalent landing checkpoint;
-9. the concise agent-instructions block pointing to workflow and record guidance; and
-10. every other directory or file that would be created or changed.
+Present the one complete canonical plan with:
 
-When producing a machine-reviewable local-file plan, normalize confirmed interview answers against the strict [answer schema](references/consumer-answers.schema.json) and run installed `lifecycle.py plan-consumer`. The command emits one canonical plan to stdout and performs no writes; plan generation is not approval to apply it. Provider preflight evidence and external provisioning remain outside local file generation.
+1. its exact `sha256` digest and consumer root;
+2. immutable distribution identity, user-selected workflows, calculated closure, invocation policy, and complete discovered inventory;
+3. every generated text byte and copied backend source/destination hash;
+4. expected prior hash or absence for every target;
+5. all twelve explicit routes, including disabled routes, and exactly the backend assets used;
+6. managed parent directories to create and lazy record destinations deliberately left absent;
+7. detected version-control state and landing-checkpoint behavior; and
+8. applicable read-only provider preflight evidence and external provisioning plans.
 
-Wait for explicit approval.
+For local consumer files, ask once whether to apply this exact digest. Do not request separate approval per file or directory. If intent, installation, target state, provider evidence, or plan bytes change, discard the plan, regenerate it, and request approval for the new digest. Plan generation performs no consumer or provider mutation.
+
+GitHub label provisioning is not included in this approval. When GitHub is considered, present its exact label plan separately and request a separate approval immediately before stale-safe label application. Bear preflight remains read-only and has no provisioning step.
 
 ## Write
 
-- Never write project configuration while the complete distribution is absent or fails integrity inspection.
-- Do not require or initialize Git. Use the approved consumer workspace root whether it is Git-controlled, controlled by another system, or intentionally unversioned.
-- After external installation changes, ask the harness to restart or rediscover skills only when files were added after startup or a manual skill command is unavailable. Continue after the integrity-checked discovery evidence matches every distributed skill at its consumer-root-contained path.
-- Render canonical consumer files through `references/templates.py`; identical normalized inputs must produce identical bytes. Write `.agents/workflows.yaml` as canonical schema 3 with every backend and all twelve routes explicit. Never write a placeholder or mutable distribution version.
-- Copy the bundled [portable contract module](references/backends/record-store/contract.py) and exactly the guidance/helper pair for each backend type used by a route: [local Markdown guidance](references/backends/record-store/local-markdown.md) and [helper](references/backends/record-store/local-markdown.py), [GitHub guidance](references/backends/record-store/github.md) and [helper](references/backends/record-store/github.py), and/or [Bear guidance](references/backends/record-store/bear.md) and [helper](references/backends/record-store/bear.py). Do not generate assets for configured but unused backend instances. Do not create a local record destination directory until its first approved write.
-- Apply only the exact approved GitHub label plan after configuration approval and a fresh stale-state check. Pass the configured repository, login, backend instance, and route destination explicitly to every helper operation.
-- Do not generate legacy issue-tracker guidance or helpers outside `docs/agents/backends/`. Do not move or rewrite existing issues or records.
-- Write `docs/agents/records.md` with all twelve configured routes, common operations, opaque references and revisions, destination-adapter reference rendering, generated backend assets, disabled-route behavior, and approval boundaries. Instruct workflows to use semantic keys and operations without constructing provider paths, identifiers, labels, tags, or links.
-- Write `docs/agents/workflows.md` with the artifact authority table, a pointer to record routing, and a `## Documentation style` section. Preserve an existing project policy. Otherwise write: "Write clear, direct documentation. Prefer active voice, short sentences, explicit references, and established domain terms. Avoid idioms, unnecessary synonyms, and ambiguous pronouns. Use one action per procedural step."
-- Add or update only the unambiguous `agent-workflows` managed section in the existing agent-guidance file, rendered from the [canonical root template](references/templates/agents-section.md.tmpl). Preserve every unrelated existing byte.
-- Create `docs/agents/`, but create optional artifact and local-issue directories only when their first artifact is needed.
+- Never write configuration while the complete distribution is absent or fails integrity inspection.
+- After approval, invoke installed `lifecycle.py apply-consumer` with the reviewed plan file and exact approved digest. Do not use general editing or copy tools to reproduce planned local files.
+- Let apply recheck canonical plan bytes, release and consumer identity, complete installed inventory, target and source hashes, destination containment, complete target set, and directory intent; stage every output; write only changed planned targets; run installed `verify-consumer`; and roll back caught failures.
+- Treat any stale-state, validation, write, rollback, or verification error as a stop. Reinspect and replan rather than repairing generated files by hand.
+- Never install, replace, remove, or modify skill directories. Request restart or rediscovery only after post-startup external installation or an unavailable manual command.
+- Do not require or initialize Git. Preserve the detected version-control system and approved consumer root.
+- Do not create local record destinations, move existing records, or mutate backend records as part of apply. Disabled and unused destinations remain lazy.
+- Do not generate legacy issue-tracker assets. The plan must contain only the shared contract and guidance/helper pairs for backend types used by routes.
+- After successful local apply, perform no external mutation implicitly. Apply an exact GitHub label plan only after its separate approval and fresh stale-state check. Bear inspection remains read-only.
 
-Run installed lifecycle verification against the exact rediscovered directories. Finish only when it passes, then list detected version-control state, created skill directories, written configuration and guidance, selected workflows, and calculated closure.
+Finish only after apply reports successful installed verification. Report the approved digest, changed and unchanged files, created managed directories, deliberately absent record destinations, selected workflows and closure, detected version-control state, landing checkpoint, and any separately completed provider operation.

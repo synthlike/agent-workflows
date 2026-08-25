@@ -67,7 +67,7 @@
     "configure-workflows": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "a9607b75b08ea9d3dfd77259031e2ccb3193fe27e450404830320ac36b659ae7",
+        "SKILL.md": "fcddc917d534f348fb5131341d432643b6f54daa68b000df138aef4c9a00f135",
         "references/application.py": "c1ccace730e4be5e35dd49211ef74cae7ab3a729c928472135b3dd9f02850acd",
         "references/backends/record-store/bear.capabilities.json": "b4ac3509abc45ff2591c3b8cba94c1fc1eff8a11e10522938cd960c2fcd1bc2d",
         "references/backends/record-store/bear.md": "7e1822bb443fd71327db86ed40e9e1ab2b42e2808d00ec20b09250b08268c6eb",

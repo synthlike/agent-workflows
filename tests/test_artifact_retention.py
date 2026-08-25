@@ -61,7 +61,20 @@ class ArtifactRetentionTests(unittest.TestCase):
         self.assertIn("complete issue contract", text)
         self.assertIn("label-plan format 2", text)
         self.assertIn("apply only the exact reviewed plan after approval", text)
-        self.assertIn("exactly the guidance/helper pair for each backend type used", text)
+        self.assertIn("guidance/helper pairs for backend types used by routes", text)
+
+    def test_configuration_routes_one_local_approval_through_plan_and_apply(self) -> None:
+        text = (ROOT / "skills/configure-workflows/SKILL.md").read_text()
+        self.assertIn("one project/profile question sequence", text)
+        self.assertIn("gather only intent that remains unresolved", text)
+        self.assertIn("Invoke installed `lifecycle.py plan-consumer`", text)
+        self.assertIn("do not compose YAML, Markdown, root guidance, or backend assets manually", text)
+        self.assertIn("ask once whether to apply this exact digest", text)
+        self.assertIn("invoke installed `lifecycle.py apply-consumer`", text)
+        self.assertIn("Do not request separate approval per file or directory", text)
+        self.assertIn("GitHub label provisioning is not included in this approval", text)
+        self.assertIn("Bear preflight remains read-only", text)
+        self.assertIn("replan rather than repairing generated files by hand", text)
 
     def test_affected_workflows_follow_repository_retention_policy(self) -> None:
         for name in (
@@ -89,6 +102,13 @@ class ArtifactRetentionTests(unittest.TestCase):
         self.assertNotIn("`bearcli`", initial)
         self.assertIn("only backends that the user is considering", backend)
         self.assertIn("do not invoke `gh`, `bearcli`", backend)
+
+    def test_fresh_smoke_uses_plan_and_apply_without_hand_authored_repair(self) -> None:
+        text = (ROOT / "scripts/smoke-fresh-install.sh").read_text()
+        self.assertIn('"$command" plan-consumer', text)
+        self.assertIn('"$command" apply-consumer', text)
+        self.assertNotIn('cat > "$consumer/docs/agents/', text)
+        self.assertNotIn('(root / ".agents/workflows.yaml").write_text', text)
 
     def test_configuration_uses_project_context_not_rigid_profiles(self) -> None:
         text = (ROOT / "skills/configure-workflows/SKILL.md").read_text()

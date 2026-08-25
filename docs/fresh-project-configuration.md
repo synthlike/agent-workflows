@@ -24,21 +24,15 @@ If inspection reports an absent, unexpected, duplicate, incomplete, or modified 
 
 Invoke `configure-workflows` from the intended consumer workspace root. Initial inspection covers only workspace/version-control state, existing workflow guidance and artifact conventions, distribution integrity, and project structure. Then describe the project and collaboration profile and select workflows. The workflow records selected intent separately from the complete installed inventory and verifies dependency closure.
 
-Canonical bundled templates and the pure renderer produce `.agents/workflows.yaml`, `docs/agents/workflows.md`, `docs/agents/records.md`, the managed root-guidance section, and exact used backend assets. Rendering identical normalized inputs produces identical bytes and preserves unrelated root-guidance bytes.
+Canonical bundled templates and the pure renderer produce `.agents/workflows.yaml`, `docs/agents/workflows.md`, `docs/agents/records.md`, the managed root-guidance section, and exact used backend assets. `configure-workflows` normalizes only unresolved answers, runs installed `plan-consumer`, and presents one complete digest-bound plan. Rendering identical normalized inputs produces identical bytes and preserves unrelated root-guidance bytes. Approve that exact digest once for all planned local files; do not approve individual files separately.
 
-Provider inspection is conditional. A local-only setup invokes neither `gh` nor `bearcli`. When GitHub is considered, select an authenticated account explicitly and review identity-aware capability preflight and a stale-safe label plan. When Bear is considered, review its explicit command/workspace and read-only scoped preflight. Review the proposed schema-3 `.agents/workflows.yaml`, record-backend guidance, workflow guidance, and concise agent pointer. Nothing is written before approval. Optional artifact and issue directories remain absent.
+Provider inspection is conditional. A local-only setup invokes neither `gh` nor `bearcli`. When GitHub is considered, select an authenticated account explicitly and review identity-aware capability preflight and a stale-safe label plan. GitHub label application requires a separate approval after local configuration approval. When Bear is considered, review its explicit command/workspace and read-only scoped preflight; Bear preflight does not mutate or provision. Nothing is written before approval. Optional artifact and issue directories remain absent.
 
 ## 3. Verify and land
 
-Run the installed verifier against the exact discovered directories. For a common single-root installation:
+After approval, run installed `apply-consumer` with the reviewed plan and exact digest. Apply rechecks all bound state, stages and writes only planned files, runs installed verification with the plan-bound inventory, preserves lazy record destinations, and rolls back caught failures. Do not repair generated output by hand; stale state requires a new plan and approval.
 
-```bash
-python3 PATH/TO/configure-workflows/references/lifecycle.py verify-consumer \
-  --consumer-root . \
-  --skills-root .claude/skills
-```
-
-Use repeated `--skill-dir` arguments instead when discovery spans several parent directories. When version control is present, commit or otherwise land the reviewed skill directories, configuration, and guidance before creating project artifacts. For an intentionally unversioned workspace, continue only after acknowledging that no version-control checkpoint exists.
+`verify-consumer` remains available for an independent later check. Use repeated `--skill-dir` arguments instead of a single discovery root when needed. When version control is present, commit or otherwise land the reviewed skill directories, configuration, and guidance before creating project artifacts. For an intentionally unversioned workspace, continue only after acknowledging that no version-control checkpoint exists.
 
 ## Maintainer smoke test
 
@@ -48,6 +42,6 @@ The opt-in smoke test exercises the Git-backed setup path with the real `skills@
 scripts/smoke-fresh-install.sh
 ```
 
-It installs all skills, confirms Pi discovery through its SDK resource loader, writes a schema-3 all-local setup with one explicitly selected workflow, verifies from copied lifecycle assets with no source checkout, checks lazy directories, and removes the temporary repository.
+It installs all skills, confirms Pi discovery (including manual-invocation skills) through its SDK resource loader, generates a schema-3 all-local plan with one explicitly selected workflow, applies the exact reviewed digest through copied lifecycle assets with no source checkout or hand-authored repair, verifies the result, checks lazy directories, and removes the temporary repository.
 
 The regular unit and fixture suite covers complete inventory, several discovered roots, missing and modified skills, configuration validation, and existing-project preservation without requiring network access.

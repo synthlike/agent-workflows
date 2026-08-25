@@ -93,7 +93,7 @@ npx skills@latest add synthlike/agent-workflows \
 
 Then, from your intended workspace root, ask your agent to configure the kit:
 
-> Use `configure-workflows` to configure this workspace. Detect its version-control state, show me the complete dry run, and ask before writing anything.
+> Use `configure-workflows` to configure this workspace. Inspect existing state first, ask only unresolved project/profile questions, show me one complete digest-bound plan, and ask once before applying its local files.
 
 Once configured, ask for a workflow by name. For example:
 
