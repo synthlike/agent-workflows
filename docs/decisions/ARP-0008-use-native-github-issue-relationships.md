@@ -4,7 +4,7 @@ title: Use native GitHub issue relationships
 status: accepted
 date: 2026-08-25
 supersedes: []
-superseded_by:
+superseded_by: ARP-0009
 related_rfcs: []
 ---
 

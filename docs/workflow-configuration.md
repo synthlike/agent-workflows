@@ -1,49 +1,55 @@
-# Workflow configuration schema 2
+# Workflow configuration
 
-`.agents/workflows.yaml` is the single canonical configuration at the consumer Git root. Schema 2 records installation intent and discovered paths while retaining distribution, issue-backend, and artifact settings.
+`.agents/workflows.yaml` is the single canonical configuration at the consumer Git root. New all-local configurations use schema 3. During the phase-1 implementation bridge, installed lifecycle verification also reads existing schema-2 consumers; the final cutover removes that compatibility.
+
+## Schema 3
+
+Schema 3 records named backend instances and exactly twelve explicit record routes. Every route retains `enabled`, `backend`, and a complete typed `destination`, including disabled routes.
 
 ```yaml
-schema_version: 2
+schema_version: 3
 
 distribution:
   source: github.com/synthlike/agent-workflows
   version: vMAJOR.MINOR.PATCH
 
 installation:
-  selected:
-    - clarify-intent
+  selected: [clarify-intent]
   skills:
     clarify-intent: .claude/skills/clarify-intent
     configure-workflows: .claude/skills/configure-workflows
 
-issue_tracker:
-  backend: local-markdown
-  root: .project
+backends:
+  local:
+    type: local-markdown
 
-artifacts:
-  domain: {enabled: true, path: docs/domain}
-  arps: {enabled: true, path: docs/decisions, prefix: ARP}
-  rfcs: {enabled: true, path: docs/rfcs, prefix: RFC}
-  meetings: {enabled: false, path: docs/meetings}
-  research: {enabled: true, path: docs/research}
-  questionnaires: {enabled: true, path: docs/questionnaires}
-  technical_baselines: {enabled: true, path: docs/engineering}
-  prototypes: {enabled: false, path: docs/prototypes}
-  handoffs: {enabled: false, path: .agents/handoffs}
-  specifications: {enabled: true, path: docs/specifications}
+records:
+  issues: {enabled: true, backend: local, destination: {root: .project}}
+  domain: {enabled: true, backend: local, destination: {path: docs/domain}}
+  arps: {enabled: true, backend: local, destination: {path: docs/decisions, prefix: ARP}}
+  rfcs: {enabled: true, backend: local, destination: {path: docs/rfcs, prefix: RFC}}
+  specs: {enabled: true, backend: local, destination: {path: docs/specs}}
+  meetings: {enabled: false, backend: local, destination: {path: docs/meetings}}
+  research: {enabled: true, backend: local, destination: {path: docs/research}}
+  questionnaires: {enabled: true, backend: local, destination: {path: docs/questionnaires}}
+  technical_baselines: {enabled: true, backend: local, destination: {path: docs/engineering}}
+  problem_framing: {enabled: true, backend: local, destination: {path: docs/product}}
+  prototypes: {enabled: false, backend: local, destination: {path: docs/prototypes}}
+  handoffs: {enabled: false, backend: local, destination: {path: .agents/handoffs}}
 ```
 
-Each artifact capability has an `enabled` retention policy and a repository-contained `path`. Disabled capabilities prohibit repository writes without approval but may still produce temporary or external output. Fresh projects enable research, questionnaires, and technical baselines; they disable retained prototypes, durable handoffs, and meeting notes by default. `configure-workflows` adjusts these recommendations to the project's nature, collaboration model, repository evidence, and existing conventions.
+The canonical key is `specs`; the semantic artifact and workflow remain “specification” and `author-specification`. Local paths must remain inside the consumer root. ARP and RFC routes require prefixes. Disabled routes prohibit persistence without approval but retain their destinations and may still permit approved temporary or external output.
 
-Supported `issue_tracker.backend` values are `local-markdown` and `github`. Local Markdown requires a repository-contained `root`. GitHub requires an explicit account identity, matching backend guidance, and the generated helper:
+A profile question may simplify the interview, but `configure-workflows` expands it into all twelve reviewed routes. It prefers existing conventions before these defaults and does not move, copy, rename, or rewrite existing records.
 
-```yaml
-issue_tracker:
-  backend: github
-  login: octocat
-```
+Schema-3 consumers generate:
 
-`configure-workflows` lists authenticated account names and asks which login to record. It never assumes that the currently active account is intended and never changes global `gh` authentication silently. Every helper invocation verifies that the configured login is authenticated and active before repository access. Runtime preflight also verifies GitHub Cloud, enabled Issues, and repository write access.
+- `docs/agents/records.md` with routes, operations, references, revisions, and approval boundaries;
+- `docs/agents/workflows.md` with authority and documentation policy;
+- `docs/agents/backends/local-markdown.md` and `local-markdown.py` for an all-local configuration; and
+- `docs/agents/backends/contract.py`, used by the local helper.
+
+`docs/agents/issue-tracker.md` is obsolete in schema 3. Generated backend assets must exactly match the installed `configure-workflows` copies. Record directories remain lazy and are created only on the first approved write.
 
 ## Installation inventory
 
@@ -58,36 +64,19 @@ issue_tracker:
 
 Run the command carried by the installed `configure-workflows` directory. The exact path depends on the harness-discovered skill location.
 
-Show release identity:
-
 ```bash
 python3 PATH/TO/configure-workflows/references/lifecycle.py show-manifest
-```
-
-Calculate closure:
-
-```bash
 python3 PATH/TO/configure-workflows/references/lifecycle.py closure clarify-intent
-```
-
-Inspect supplied skill directories without reading configuration:
-
-```bash
 python3 PATH/TO/configure-workflows/references/lifecycle.py inspect \
-  --consumer-root . \
-  --skills-root .claude/skills
-```
-
-Verify the complete schema-2 consumer:
-
-```bash
+  --consumer-root . --skills-root .claude/skills
 python3 PATH/TO/configure-workflows/references/lifecycle.py verify-consumer \
-  --consumer-root . \
-  --skills-root .claude/skills
+  --consumer-root . --skills-root .claude/skills
 ```
 
-Use repeated `--skill-dir` arguments when discovery spans several parent directories. Every read-only operation supports canonical JSON through `--json` where machine-readable output is relevant.
+Use repeated `--skill-dir` arguments when discovery spans several parent directories. Read-only operations support canonical JSON through `--json` where relevant.
 
-Verification checks configuration identity and inventory, closure, every distributed file hash, internal links, repository-contained paths, backend and agent guidance, and exact supplied harness discovery. It reports missing, extra, and modified files without changing them.
+Verification checks configuration shape, identity, inventory, closure, distributed file hashes, internal links, repository containment, generated guidance, and exact backend assets. Schema 3 rejects missing and unknown routes, fields, backend instances, unsupported backend contracts, malformed destinations, escaping paths, stale helpers, and obsolete issue guidance.
 
-Schema 2 is the only supported consumer configuration. Installed lifecycle verification rejects every other schema.
+## Temporary schema-2 bridge
+
+Existing schema-2 configurations remain readable only while phase 1 is incomplete. Their `issue_tracker` and `artifacts` sections retain their previous meaning. Do not convert, migrate, or rewrite existing records as a side effect of verification. The atomic cutover issue will remove schema-2 support after all-local, GitHub, mixed, and routed workflow behavior are complete.

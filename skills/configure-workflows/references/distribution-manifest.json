@@ -62,15 +62,18 @@
     "configure-workflows": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "88deccbd3b6f8e9b42bc2d884b1c77a645c03c0cfc72ac65fd380094514b0594",
+        "SKILL.md": "30501c017982787d32bc52477d8817c631cb75824fff54dd2825e06288dd8926",
         "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
-        "references/consumer.py": "bf5adc0f4875022884e78a7338a9afd3cfd2b36a103e5e23deacdd536162a969",
+        "references/backends/record-store/contract.py": "57408e6dd5f6070e40a408ebde7cf1cafd61581e1b464cb7a350a39df0279ee6",
+        "references/backends/record-store/local-markdown.md": "5c5c09434a5c8a6d1fb24d242a991f1f03019e8acf6512dc428884f91e2a0c04",
+        "references/backends/record-store/local-markdown.py": "9fa06f0a795b26e0a2a5b46bde1a8dc19a7246b42ac1f9ce602ecea70c85e608",
+        "references/consumer.py": "9b53dc5ae99bce186312f90e05f1fefe953a82981548a013a7d0b237f94c84a3",
         "references/github-issues.py": "8d3e1538bfba53528d38c5bcd976e9feeac83610b254ebb1c56a7afd482e678e",
         "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
         "references/issue-tracker-github.md": "544ee3347f5d0abbaf961e7650e46ac1cc6dcb88234c66c6287a2b24081292a6",
         "references/issue-tracker-local-markdown.md": "918cd42abc92a36a03083076d09f79f7aea24c9b05d4cd618ace72eeecb20e14",
-        "references/lifecycle.py": "c0eaf69ba9cc90362d3a9b9050f7132402717691d39f3516b631138cd32a0144",
-        "references/workflow-config.example.yaml": "f90e55c8b777c7e6177fd987ba1daf897aee5e4c1e3273d024e725a454b3de0e"
+        "references/lifecycle.py": "8bd872f5dbd65403ad4acb865129fcba5189aa356557476e360586784fd211f2",
+        "references/workflow-config.example.yaml": "2ca10cf6381a51f976fc12a2a4b3e21c54e0186c45a0e189acbcb8ebb09a1dc7"
       }
     },
     "develop-rfc": {

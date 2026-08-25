@@ -10,21 +10,22 @@ from consumer import parse_config  # noqa: E402
 
 
 EXPECTED_CAPABILITIES = {
-    "research": {"enabled": True, "path": "docs/research"},
-    "questionnaires": {"enabled": True, "path": "docs/questionnaires"},
-    "technical_baselines": {"enabled": True, "path": "docs/engineering"},
-    "prototypes": {"enabled": False, "path": "docs/prototypes"},
-    "handoffs": {"enabled": False, "path": ".agents/handoffs"},
+    "research": {"enabled": True, "backend": "local", "destination": {"path": "docs/research"}},
+    "questionnaires": {"enabled": True, "backend": "local", "destination": {"path": "docs/questionnaires"}},
+    "technical_baselines": {"enabled": True, "backend": "local", "destination": {"path": "docs/engineering"}},
+    "problem_framing": {"enabled": True, "backend": "local", "destination": {"path": "docs/product"}},
+    "prototypes": {"enabled": False, "backend": "local", "destination": {"path": "docs/prototypes"}},
+    "handoffs": {"enabled": False, "backend": "local", "destination": {"path": ".agents/handoffs"}},
 }
 
 
 class ArtifactRetentionTests(unittest.TestCase):
     def test_configuration_template_has_supporting_artifact_defaults(self) -> None:
         config = parse_config((REFERENCES / "workflow-config.example.yaml").read_text())
-        artifacts = config["artifacts"]
+        records = config["records"]
         for name, expected in EXPECTED_CAPABILITIES.items():
             with self.subTest(capability=name):
-                self.assertEqual(expected, artifacts[name])
+                self.assertEqual(expected, records[name])
 
     def test_affected_workflows_follow_repository_retention_policy(self) -> None:
         for name in (
@@ -45,8 +46,9 @@ class ArtifactRetentionTests(unittest.TestCase):
         self.assertIn("what kind of project this is", text)
         self.assertIn("how people and agents will collaborate", text)
         self.assertIn("recommend each capability individually", text)
-        self.assertIn("Do not use rigid project-type profiles", text)
-        self.assertIn("confirm one decision at a time", text)
+        self.assertIn("profile question may offer all-local persistence", text)
+        self.assertIn("expand that answer into explicit routes", text)
+        self.assertIn("complete destination for every route", text)
 
 
 if __name__ == "__main__":

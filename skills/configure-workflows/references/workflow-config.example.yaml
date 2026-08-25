@@ -1,5 +1,5 @@
-# Incomplete template: configure-workflows must replace both REQUIRED values.
-schema_version: 2
+# Incomplete template: configure-workflows must replace every REQUIRED value.
+schema_version: 3
 
 distribution:
   source: REQUIRED_DISTRIBUTION_SOURCE
@@ -12,40 +12,56 @@ installation:
     configure-workflows: REQUIRED_CONFIGURE_WORKFLOWS_PATH
     REQUIRED_SELECTED_SKILL: REQUIRED_SELECTED_SKILL_PATH
 
-issue_tracker:
-  backend: local-markdown
-  root: .project
+backends:
+  local:
+    type: local-markdown
 
-artifacts:
+records:
+  issues:
+    enabled: true
+    backend: local
+    destination: {root: .project}
   domain:
     enabled: true
-    path: docs/domain
+    backend: local
+    destination: {path: docs/domain}
   arps:
     enabled: true
-    path: docs/decisions
-    prefix: ARP
+    backend: local
+    destination: {path: docs/decisions, prefix: ARP}
   rfcs:
     enabled: true
-    path: docs/rfcs
-    prefix: RFC
+    backend: local
+    destination: {path: docs/rfcs, prefix: RFC}
+  specs:
+    enabled: true
+    backend: local
+    destination: {path: docs/specs}
   meetings:
     enabled: false
-    path: docs/meetings
+    backend: local
+    destination: {path: docs/meetings}
   research:
     enabled: true
-    path: docs/research
+    backend: local
+    destination: {path: docs/research}
   questionnaires:
     enabled: true
-    path: docs/questionnaires
+    backend: local
+    destination: {path: docs/questionnaires}
   technical_baselines:
     enabled: true
-    path: docs/engineering
+    backend: local
+    destination: {path: docs/engineering}
+  problem_framing:
+    enabled: true
+    backend: local
+    destination: {path: docs/product}
   prototypes:
     enabled: false
-    path: docs/prototypes
+    backend: local
+    destination: {path: docs/prototypes}
   handoffs:
     enabled: false
-    path: .agents/handoffs
-  specifications:
-    enabled: true
-    path: docs/specifications
+    backend: local
+    destination: {path: .agents/handoffs}

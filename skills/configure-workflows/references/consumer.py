@@ -1,4 +1,4 @@
-"""Schema-2 consumer inspection and verification for the lifecycle command."""
+"""Schema-2 bridge and schema-3 consumer verification for the lifecycle command."""
 
 from __future__ import annotations
 
@@ -21,6 +21,22 @@ SEMVER = re.compile(
     r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"
 )
 IGNORED_NAMES = {".DS_Store", "__pycache__"}
+RECORD_TYPES = {
+    "issues",
+    "domain",
+    "arps",
+    "rfcs",
+    "specs",
+    "meetings",
+    "research",
+    "questionnaires",
+    "technical_baselines",
+    "problem_framing",
+    "prototypes",
+    "handoffs",
+}
+SCHEMA3_TOP_LEVEL = {"schema_version", "distribution", "installation", "backends", "records"}
+LOCAL_BACKEND_ASSETS = {"contract.py", "local-markdown.md", "local-markdown.py"}
 
 
 @dataclass(frozen=True)
@@ -313,6 +329,135 @@ def _contained_path(root: Path, value: Any, label: str, errors: list[str]) -> Pa
     return resolved
 
 
+def _exact_fields(value: Any, expected: set[str], label: str, errors: list[str]) -> bool:
+    if not isinstance(value, dict):
+        errors.append(f"{label} must be a mapping")
+        return False
+    missing = expected - set(value)
+    unknown = set(value) - expected
+    if missing:
+        errors.append(f"{label} is missing fields: {', '.join(sorted(missing))}")
+    if unknown:
+        errors.append(f"{label} has unknown fields: {', '.join(sorted(unknown))}")
+    return not missing and not unknown
+
+
+def _validate_schema3_assets(root: Path, data: dict[str, Any], errors: list[str]) -> None:
+    for guidance in (Path("docs/agents/workflows.md"), Path("docs/agents/records.md")):
+        path = root / guidance
+        if not path.is_file() or not path.read_text().strip():
+            errors.append(f"missing required guidance: {guidance}")
+    obsolete = root / "docs/agents/issue-tracker.md"
+    if obsolete.exists():
+        errors.append("schema 3 must not retain docs/agents/issue-tracker.md")
+
+    backend_dir = root / "docs/agents/backends"
+    actual = {
+        path.name
+        for path in backend_dir.iterdir()
+        if path.is_file() and path.name not in IGNORED_NAMES
+    } if backend_dir.is_dir() else set()
+    expected = set(LOCAL_BACKEND_ASSETS)
+    missing = expected - actual
+    unexpected = actual - expected
+    if missing:
+        errors.append("missing generated backend assets: " + ", ".join(sorted(missing)))
+    if unexpected:
+        errors.append("unexpected generated backend assets: " + ", ".join(sorted(unexpected)))
+
+    installation = data.get("installation")
+    skills = installation.get("skills") if isinstance(installation, dict) else None
+    workflows_path = skills.get("configure-workflows") if isinstance(skills, dict) else None
+    if isinstance(workflows_path, str):
+        bundled_dir = root / workflows_path / "references/backends/record-store"
+        for name in sorted(expected & actual):
+            bundled = bundled_dir / name
+            generated = backend_dir / name
+            if not bundled.is_file():
+                errors.append(f"configure-workflows is missing bundled backend asset: {name}")
+            elif generated.read_bytes() != bundled.read_bytes():
+                errors.append(f"generated backend asset does not match installed asset: {name}")
+
+    workflow_guidance = root / "docs/agents/workflows.md"
+    if workflow_guidance.is_file() and "docs/agents/records.md" not in workflow_guidance.read_text():
+        errors.append("workflow guidance must point to docs/agents/records.md")
+    records_guidance = root / "docs/agents/records.md"
+    if records_guidance.is_file():
+        text = records_guidance.read_text()
+        for record_type in sorted(RECORD_TYPES):
+            if f"`{record_type}`" not in text:
+                errors.append(f"record guidance is missing configured route: {record_type}")
+    guidance_files = [root / name for name in ("AGENTS.md", "CLAUDE.md") if (root / name).is_file()]
+    if not any(
+        ".agents/workflows.yaml" in path.read_text()
+        and "docs/agents/workflows.md" in path.read_text()
+        and "docs/agents/records.md" in path.read_text()
+        for path in guidance_files
+    ):
+        errors.append("root agent guidance must point to workflow and record guidance")
+
+
+def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: list[str]) -> None:
+    _exact_fields(data, SCHEMA3_TOP_LEVEL, "configuration", errors)
+    distribution = data.get("distribution")
+    _exact_fields(distribution, {"source", "version"}, "distribution", errors)
+    installation = data.get("installation")
+    _exact_fields(installation, {"selected", "skills"}, "installation", errors)
+
+    backends = data.get("backends")
+    if not isinstance(backends, dict) or not backends:
+        errors.append("backends must be a non-empty mapping")
+        backends = {}
+    for name, settings in backends.items():
+        label = f"backends.{name}"
+        if not isinstance(name, str) or not name:
+            errors.append("backend instance names must be non-empty strings")
+            continue
+        if not _exact_fields(settings, {"type"}, label, errors):
+            continue
+        if settings.get("type") != "local-markdown":
+            errors.append(f"unsupported backend type for schema-3 bridge: {settings.get('type')}")
+
+    records = data.get("records")
+    if not isinstance(records, dict):
+        errors.append("records must be a mapping")
+        records = {}
+    missing_records = RECORD_TYPES - set(records)
+    extra_records = set(records) - RECORD_TYPES
+    if missing_records:
+        errors.append("records is missing routes: " + ", ".join(sorted(missing_records)))
+    if extra_records:
+        errors.append("records has unknown routes: " + ", ".join(sorted(extra_records)))
+    for record_type in sorted(RECORD_TYPES & set(records)):
+        route = records[record_type]
+        label = f"records.{record_type}"
+        if not _exact_fields(route, {"enabled", "backend", "destination"}, label, errors):
+            continue
+        if not isinstance(route.get("enabled"), bool):
+            errors.append(f"{label}.enabled must be true or false")
+        backend = route.get("backend")
+        if not isinstance(backend, str) or backend not in backends:
+            errors.append(f"{label}.backend must reference a configured backend")
+            continue
+        settings = backends.get(backend)
+        if not isinstance(settings, dict) or settings.get("type") != "local-markdown":
+            errors.append(f"{label} uses an unsupported backend contract")
+            continue
+        destination = route.get("destination")
+        expected_destination = {"root"} if record_type == "issues" else {"path"}
+        if record_type in {"arps", "rfcs"}:
+            expected_destination.add("prefix")
+        if not _exact_fields(destination, expected_destination, f"{label}.destination", errors):
+            continue
+        path_key = "root" if record_type == "issues" else "path"
+        _contained_path(root, destination.get(path_key), f"{label}.destination.{path_key}", errors)
+        if record_type in {"arps", "rfcs"} and (
+            not isinstance(destination.get("prefix"), str) or not destination["prefix"]
+        ):
+            errors.append(f"{label}.destination.prefix must be a non-empty string")
+    _validate_schema3_assets(root, data, errors)
+
+
 def _validate_common_configuration(root: Path, data: dict[str, Any], errors: list[str]) -> None:
     tracker = data.get("issue_tracker")
     backend: str | None = None
@@ -394,8 +539,9 @@ def verify_consumer(
         except (ValueError, UnicodeDecodeError) as error:
             errors.append(f"invalid .agents/workflows.yaml: {error}")
     if data:
-        if data.get("schema_version") != 2:
-            errors.append("schema_version must be 2")
+        schema_version = data.get("schema_version")
+        if schema_version not in {2, 3}:
+            errors.append("schema_version must be 2 or 3 during the implementation bridge")
         distribution = data.get("distribution")
         expected_distribution = manifest["distribution"]
         if not isinstance(distribution, dict):
@@ -411,7 +557,10 @@ def verify_consumer(
                 errors.append("distribution.version must be immutable")
             if source != expected_distribution["source"] or version != expected_distribution["version"]:
                 errors.append("configured distribution identity does not match installed manifest")
-        _validate_common_configuration(root, data, errors)
+        if schema_version == 2:
+            _validate_common_configuration(root, data, errors)
+        elif schema_version == 3:
+            _validate_schema3_configuration(root, data, errors)
 
     inspection = inspect_skills(root, skill_dirs, manifest)
     errors.extend(inspection.errors)

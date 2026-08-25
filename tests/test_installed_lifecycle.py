@@ -13,7 +13,13 @@ import consumer  # noqa: E402
 import lifecycle  # noqa: E402
 
 sys.path.insert(0, str(ROOT / "tests"))
-from consumer_fixture import copy_skills, write_guidance, write_schema2_config  # noqa: E402
+from consumer_fixture import (  # noqa: E402
+    copy_skills,
+    write_guidance,
+    write_schema2_config,
+    write_schema3_all_local_config,
+    write_schema3_guidance,
+)
 
 
 MANIFEST = lifecycle.installed_manifest()
@@ -27,6 +33,7 @@ class InstalledLifecycleTests(unittest.TestCase):
         names: tuple[str, ...] | None = None,
         split_locations: bool = False,
         selected: tuple[str, ...] = ("clarify-intent",),
+        schema_version: int = 2,
     ) -> tuple[Path, list[Path]]:
         root = base / "consumer"
         root.mkdir()
@@ -40,8 +47,13 @@ class InstalledLifecycleTests(unittest.TestCase):
         inventory = {
             path.name: path.relative_to(root).as_posix() for path in skill_dirs
         }
-        write_schema2_config(root, MANIFEST["distribution"], selected, inventory)
-        write_guidance(root)
+        if schema_version == 3:
+            write_schema3_all_local_config(root, MANIFEST["distribution"], selected, inventory)
+            configure_dir = next(path for path in skill_dirs if path.name == "configure-workflows")
+            write_schema3_guidance(root, configure_dir)
+        else:
+            write_schema2_config(root, MANIFEST["distribution"], selected, inventory)
+            write_guidance(root)
         return root, skill_dirs
 
     def verify(self, root: Path, skill_dirs: list[Path]) -> consumer.Verification:
@@ -55,9 +67,72 @@ class InstalledLifecycleTests(unittest.TestCase):
             self.assertEqual(["clarify-intent", "configure-workflows"], result.closure)
             self.assertEqual(sorted(MANIFEST["skills"]), result.installed)
 
+    def test_verifies_all_local_schema_3_with_twelve_explicit_routes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), split_locations=True, schema_version=3
+            )
+            result = self.verify(root, skill_dirs)
+            self.assertEqual([], result.errors)
+            data = consumer.parse_config((root / ".agents/workflows.yaml").read_text())
+            self.assertEqual(3, data["schema_version"])
+            self.assertEqual(consumer.RECORD_TYPES, set(data["records"]))
+            for route in data["records"].values():
+                self.assertEqual({"enabled", "backend", "destination"}, set(route))
+                self.assertTrue(route["destination"])
+            for name in ("meetings", "prototypes", "handoffs"):
+                self.assertFalse(data["records"][name]["enabled"])
+                self.assertTrue(data["records"][name]["destination"])
+            self.assertFalse((root / ".project").exists())
+            self.assertFalse((root / "docs/domain").exists())
+            self.assertFalse((root / "docs/specs").exists())
+
+    def test_schema_3_rejects_missing_extra_malformed_and_unsupported_fields(self) -> None:
+        mutations = {
+            "missing route": lambda text: text.replace(
+                "  handoffs:\n    enabled: false\n    backend: local\n    destination: {path: .agents/handoffs}\n",
+                "",
+            ),
+            "extra route": lambda text: text + "  unknown_record: {}\n",
+            "malformed enabled": lambda text: text.replace(
+                "  meetings:\n    enabled: false", "  meetings:\n    enabled: sometimes"
+            ),
+            "unsupported backend": lambda text: text.replace(
+                "type: local-markdown", "type: bear"
+            ),
+            "unknown destination": lambda text: text.replace(
+                "destination: {path: docs/specs}",
+                "destination: {path: docs/specs, tag: specs}",
+            ),
+        }
+        for name, mutate in mutations.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root, skill_dirs = self.set_up_consumer(Path(directory), schema_version=3)
+                config = root / ".agents/workflows.yaml"
+                config.write_text(mutate(config.read_text()))
+                self.assertTrue(self.verify(root, skill_dirs).errors)
+
+    def test_schema_3_rejects_missing_modified_and_unexpected_backend_assets(self) -> None:
+        for case in ("missing", "modified", "unexpected"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                root, skill_dirs = self.set_up_consumer(Path(directory), schema_version=3)
+                backend_dir = root / "docs/agents/backends"
+                if case == "missing":
+                    (backend_dir / "local-markdown.py").unlink()
+                elif case == "modified":
+                    path = backend_dir / "local-markdown.py"
+                    path.write_text(path.read_text() + "\n# changed\n")
+                else:
+                    (backend_dir / "stale.py").write_text("# stale\n")
+                self.assertTrue(
+                    any(case in error or "does not match" in error for error in self.verify(root, skill_dirs).errors)
+                )
+
     def test_copied_lifecycle_verifies_without_source_checkout(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root, skill_dirs = self.set_up_consumer(Path(directory), split_locations=True)
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), split_locations=True, schema_version=3
+            )
             command = next(path for path in skill_dirs if path.name == "configure-workflows") / "references/lifecycle.py"
             invocation = [
                 sys.executable,
@@ -82,6 +157,15 @@ class InstalledLifecycleTests(unittest.TestCase):
             self.assertTrue(output["ok"])
             self.assertEqual(DISTRIBUTION_VERSION, output["release"])
             self.assertEqual(["clarify-intent", "configure-workflows"], output["closure"])
+            helper = root / "docs/agents/backends/local-markdown.py"
+            helper_result = subprocess.run(
+                [sys.executable, "-B", str(helper), "--help"],
+                cwd=root,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(0, helper_result.returncode, helper_result.stderr)
 
     def test_manifest_closure_inspection_and_verification_have_json_output(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -327,7 +411,10 @@ class InstalledLifecycleTests(unittest.TestCase):
             root, skill_dirs = self.set_up_consumer(Path(directory))
             config = root / ".agents/workflows.yaml"
             config.write_text(config.read_text().replace("schema_version: 2", "schema_version: 999"))
-            self.assertIn("schema_version must be 2", self.verify(root, skill_dirs).errors)
+            self.assertIn(
+                "schema_version must be 2 or 3 during the implementation bridge",
+                self.verify(root, skill_dirs).errors,
+            )
 
 
 if __name__ == "__main__":

@@ -426,7 +426,7 @@ def main() -> int:
             _print_result(
                 verification.as_dict(),
                 args.json,
-                "Verified schema-2 consumer installation.",
+                "Verified consumer installation.",
             )
             if verification.errors:
                 return 1

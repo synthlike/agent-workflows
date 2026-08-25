@@ -66,6 +66,13 @@ for source_name, bundled_name in (
     if not copy.exists() or source.read_text() != copy.read_text():
         errors.append(f"{copy.relative_to(root)}: bundled backend copy is missing or stale")
 
+record_bundle = root / "skills/configure-workflows/references/backends/record-store"
+for name in ("contract.py", "local-markdown.md", "local-markdown.py"):
+    source = root / "backends/record-store" / name
+    bundled_copy = record_bundle / name
+    if not bundled_copy.exists() or source.read_bytes() != bundled_copy.read_bytes():
+        errors.append(f"{bundled_copy.relative_to(root)}: bundled record adapter is missing or stale")
+
 github_adapter = (root / "backends/issue-tracker/github.md").read_text()
 for label in (
     "workflow:initiative",
@@ -84,6 +91,10 @@ for legacy in ("wayfinder:", "initiative:map", "initiative:task"):
 for helper in (
     root / "backends/issue-tracker/github.py",
     root / "skills/configure-workflows/references/github-issues.py",
+    root / "backends/record-store/contract.py",
+    root / "backends/record-store/local-markdown.py",
+    record_bundle / "contract.py",
+    record_bundle / "local-markdown.py",
 ):
     try:
         compile(helper.read_text(), str(helper.relative_to(root)), "exec")
@@ -97,8 +108,9 @@ config_examples = [
 ]
 for path in config_examples:
     text = path.read_text()
+    expected_schema = "schema_version: 3" if path.name == "workflow-config.example.yaml" else "schema_version: 2"
     for field in (
-        "schema_version: 2",
+        expected_schema,
         "distribution:",
         "source:",
         "version:",
@@ -115,6 +127,10 @@ for path in config_examples:
             errors.append(f"{path.relative_to(root)}: missing {field.rstrip(':')}")
     if "REQUIRED_" in text and "Incomplete" not in text:
         errors.append(f"{path.relative_to(root)}: placeholders are not marked as incomplete")
+    if path.name == "workflow-config.example.yaml":
+        for field in ("backends:", "records:", "issues:", "domain:", "arps:", "rfcs:", "specs:", "meetings:", "problem_framing:"):
+            if field not in text:
+                errors.append(f"{path.relative_to(root)}: missing schema-3 field {field.rstrip(':')}")
     if "backend: github" in text and "login:" not in text:
         errors.append(f"{path.relative_to(root)}: GitHub backend is missing login")
 

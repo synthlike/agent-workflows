@@ -1,6 +1,6 @@
 ---
 name: configure-workflows
-description: Configure a repository to use these workflows by selecting issue tracking, artifact paths, and optional capabilities. Use once when adopting the workflow kit in a new or existing project.
+description: Configure a repository to use these workflows by selecting explicit record routes, backend instances, and optional capabilities. Use once when adopting the workflow kit in a new or existing project.
 disable-model-invocation: true
 license: MIT
 ---
@@ -21,7 +21,7 @@ From the repository root, inspect:
 - the workflows explicitly selected by the user and the exact skill directories discovered by the harness;
 - the installed distribution source and exact release version or immutable commit SHA;
 - `AGENTS.md`, `CLAUDE.md`, or equivalent agent guidance;
-- `.agents/workflows.yaml` and `docs/agents/`;
+- `.agents/workflows.yaml`, `docs/agents/records.md`, and generated assets under `docs/agents/backends/`;
 - existing domain glossaries or context maps;
 - directories containing ADRs, ARPs, RFCs, specifications, plans, meeting notes, research, questionnaires, technical baselines, prototypes, or handoffs;
 - local issue conventions such as `.project/` or `.scratch/`;
@@ -37,16 +37,17 @@ Prefer existing conventions. For a new project, recommend:
 - domain docs under `docs/domain/`;
 - ARPs under `docs/decisions/`;
 - RFCs under `docs/rfcs/`;
-- specifications under `docs/specifications/`;
+- specifications under `docs/specs/`;
 - meeting notes disabled unless requested;
 - research enabled under `docs/research/`;
 - questionnaires enabled under `docs/questionnaires/`;
 - technical baselines enabled under `docs/engineering/`;
+- product problem framing enabled under `docs/product/`;
 - retained prototypes disabled, with `docs/prototypes/` reserved if enabled;
 - durable handoffs disabled, with `.agents/handoffs/` reserved if enabled; and
 - a plain-language documentation style unless the project already defines one: use active voice, short sentences, explicit references, established domain terms, and one action per procedural step; avoid idioms, unnecessary synonyms, and ambiguous pronouns.
 
-Ask what kind of project this is and how people and agents will collaborate on it. Combine that answer with repository evidence to recommend each capability individually, explain the reason, and confirm one decision at a time. Do not use rigid project-type profiles. An `enabled: false` artifact capability prohibits repository writes without approval but does not prohibit temporary or external output. Do not ask for facts available in the repository. If distribution identity cannot be established from installation metadata or the repository, ask for it rather than proposing a mutable value such as a branch name, `latest`, or `unreleased`.
+Ask what kind of project this is and how people and agents will collaborate on it. A profile question may offer all-local persistence as a shortcut, but expand that answer into explicit routes for `issues`, `domain`, `arps`, `rfcs`, `specs`, `meetings`, `research`, `questionnaires`, `technical_baselines`, `problem_framing`, `prototypes`, and `handoffs`. Show and confirm the enabled state, named backend, and complete destination for every route, including disabled routes. Combine the answer with repository evidence to recommend each capability individually and explain the reason. An `enabled: false` route prohibits repository writes without approval but does not prohibit temporary or external output. Do not ask for facts available in the repository. If distribution identity cannot be established from installation metadata or the repository, ask for it rather than proposing a mutable value such as a branch name, `latest`, or `unreleased`.
 
 When GitHub is considered, list authenticated account names and identify the active account without exposing tokens. Ask which login should own backend operations, even when an account is already active, and record that login in `issue_tracker.login`. When several accounts exist, never infer the intended identity from the active account alone. If the selected account is not active, ask the user to run `gh auth switch --hostname github.com --user LOGIN`, wait for confirmation, and recheck; never change global authentication silently.
 
@@ -61,11 +62,12 @@ Show a dry run containing:
 1. exact distribution identity;
 2. user-selected workflows, calculated closure, and the complete discovered skill inventory;
 3. any missing, unexpected, duplicate, incomplete, or modified skill and every blocking conflict;
-4. `.agents/workflows.yaml`, based on [the example](references/workflow-config.example.yaml), with schema 2, exact distribution identity, selected workflows, and complete discovered skill-path inventory;
-5. the selected issue-backend instructions, plus the chosen GitHub login, helper destination, preflight result, and complete label plan when GitHub is selected;
-6. `docs/agents/workflows.md`, including the preserved project writing policy or the default plain-language documentation style;
-7. the concise agent-instructions block; and
-8. every other directory or file that would be created or changed.
+4. `.agents/workflows.yaml`, based on [the example](references/workflow-config.example.yaml), with schema 3, exact distribution identity, named backend instances, all twelve explicit routes, selected workflows, and complete discovered skill-path inventory;
+5. backend preflight results and every generated file under `docs/agents/backends/`;
+6. `docs/agents/records.md`, including all routes, portable operations, opaque references and revisions, disabled-route behavior, and approval boundaries;
+7. `docs/agents/workflows.md`, including the authority table, pointer to record guidance, and preserved project writing policy or default plain-language style;
+8. the concise agent-instructions block pointing to workflow and record guidance; and
+9. every other directory or file that would be created or changed.
 
 Wait for explicit approval.
 
@@ -73,10 +75,11 @@ Wait for explicit approval.
 
 - Never write project configuration while the complete distribution is absent or fails integrity inspection.
 - Ask the harness to rediscover skills after external installation changes. Continue only after it confirms every distributed skill at its repository-contained path.
-- Write `.agents/workflows.yaml` as the canonical schema-2 configuration. Never write a placeholder or mutable distribution version.
-- Copy the selected bundled adapter, [GitHub](references/issue-tracker-github.md) or [local Markdown](references/issue-tracker-local-markdown.md), to `docs/agents/issue-tracker.md`. Both implement the bundled [backend contract](references/issue-tracker-contract.md).
-- For GitHub, also copy the bundled `references/github-issues.py` helper to `docs/agents/github-issues.py`, then apply the exact approved label plan. Do not create or update labels before approval. For local Markdown, do not write the GitHub helper.
-- Write `docs/agents/workflows.md` with the artifact authority table, configured paths, optional features, a pointer to the issue backend, and a `## Documentation style` section. Preserve an existing project policy. Otherwise write: "Write clear, direct documentation. Prefer active voice, short sentences, explicit references, and established domain terms. Avoid idioms, unnecessary synonyms, and ambiguous pronouns. Use one action per procedural step."
+- Write `.agents/workflows.yaml` as canonical schema 3 with every backend and all twelve routes explicit. Never write a placeholder or mutable distribution version.
+- For the all-local profile, copy bundled [local Markdown guidance](references/backends/record-store/local-markdown.md), [helper](references/backends/record-store/local-markdown.py), and [portable contract module](references/backends/record-store/contract.py) to `docs/agents/backends/`. Do not create a record destination directory until its first approved write.
+- Remove obsolete `docs/agents/issue-tracker.md` only as an explicitly reviewed schema-3 generated-asset change. Do not move or rewrite existing issues or records.
+- Write `docs/agents/records.md` with all twelve configured routes, common operations, references, revisions, generated backend assets, disabled-route behavior, and approval boundaries.
+- Write `docs/agents/workflows.md` with the artifact authority table, a pointer to record routing, and a `## Documentation style` section. Preserve an existing project policy. Otherwise write: "Write clear, direct documentation. Prefer active voice, short sentences, explicit references, and established domain terms. Avoid idioms, unnecessary synonyms, and ambiguous pronouns. Use one action per procedural step."
 - Add or update a short `## Engineering workflows` section in the existing agent-guidance file. Use [the seed block](references/agents-section.md). Do not replace surrounding instructions.
 - Create `docs/agents/`, but create optional artifact and local-issue directories only when their first artifact is needed.
 
