@@ -14,11 +14,12 @@ class RecordAdapterContract:
     destination = {}
 
     def request(self, operation: str, **values):
+        destination = values.pop("destination", self.destination)
         return RecordRequest(
             operation=operation,
             backend=self.backend,
             record_type=self.record_type,
-            destination=self.destination,
+            destination=destination,
             **values,
         )
 

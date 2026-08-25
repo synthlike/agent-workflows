@@ -15,9 +15,9 @@ See the [backend contract](../backends/issue-tracker/contract.md) and concrete [
 
 GitHub configuration records the intended authenticated login. Configuration shows all authenticated account names and asks which one to use; it does not assume that the active account is intended or switch accounts silently. Every helper command fails before repository access unless that configured login is authenticated and active.
 
-GitHub initiatives are parent map issues with native sub-issues and dependencies. Managed issues have exactly one `workflow:*` semantic-kind label. Assignees represent claims, `completed` represents resolution, and `not planned` represents cancellation. `configure-workflows` runs a read-only preflight and shows a stale-safe label plan before any repository mutation.
+GitHub initiatives are parent map issues with native sub-issues and dependencies. Every managed object has exactly one `workflow:record:*` label; objects routed as `issues` additionally have exactly one `workflow:issue:*` kind label. Assignees represent claims, `completed` represents resolution, and `not planned` represents cancellation. `configure-workflows` runs a read-only preflight and shows a stale-safe label plan before any repository mutation.
 
-GitHub issues hold bounded work, planning history, investigation evidence, reviews, and closure summaries. Authoritative RFCs, ARPs, specifications, domain models, and technical baselines remain repository documents and are linked from issues.
+GitHub may store any semantic record type. Non-issue records close as `completed` immediately after publication while their canonical content and semantic lifecycle remain in managed metadata and body content. Issue-routed objects hold bounded work, planning history, investigation evidence, reviews, and closure summaries with native lifecycle and relationship semantics.
 
 ## Backend limitations
 

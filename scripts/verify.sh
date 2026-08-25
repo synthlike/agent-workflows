@@ -67,33 +67,36 @@ for source_name, bundled_name in (
         errors.append(f"{copy.relative_to(root)}: bundled backend copy is missing or stale")
 
 record_bundle = root / "skills/configure-workflows/references/backends/record-store"
-for name in ("contract.py", "local-markdown.md", "local-markdown.py"):
+for name in ("contract.py", "github.md", "github.py", "local-markdown.md", "local-markdown.py"):
     source = root / "backends/record-store" / name
     bundled_copy = record_bundle / name
     if not bundled_copy.exists() or source.read_bytes() != bundled_copy.read_bytes():
         errors.append(f"{bundled_copy.relative_to(root)}: bundled record adapter is missing or stale")
 
-github_adapter = (root / "backends/issue-tracker/github.md").read_text()
+for name in ("github.md", "github.py"):
+    issue_bridge = root / "backends/issue-tracker" / name
+    record_source = root / "backends/record-store" / name
+    if issue_bridge.read_bytes() != record_source.read_bytes():
+        errors.append(f"{issue_bridge.relative_to(root)}: temporary GitHub bridge differs from record adapter")
+
+github_adapter = (root / "backends/record-store/github.md").read_text()
 for label in (
-    "workflow:initiative",
-    "workflow:bug",
-    "workflow:implementation",
-    "workflow:clarification",
-    "workflow:research",
-    "workflow:prototype",
-    "workflow:prerequisite",
+    *(f"workflow:record:{name}" for name in ("issues", "domain", "arps", "rfcs", "specs", "meetings", "research", "questionnaires", "technical_baselines", "problem_framing", "prototypes", "handoffs")),
+    *(f"workflow:issue:{name}" for name in ("initiative", "bug", "implementation", "clarification", "research", "prototype", "prerequisite")),
 ):
-    if f"`{label}`" not in github_adapter:
-        errors.append(f"backends/issue-tracker/github.md: missing managed label {label}")
-for legacy in ("wayfinder:", "initiative:map", "initiative:task"):
+    if label not in github_adapter:
+        errors.append(f"backends/record-store/github.md: missing managed label {label}")
+for legacy in ("wayfinder:", "initiative:map", "initiative:task", "workflow:bug", "workflow:implementation"):
     if legacy in github_adapter:
-        errors.append(f"backends/issue-tracker/github.md: contains legacy label {legacy}")
+        errors.append(f"backends/record-store/github.md: contains legacy label {legacy}")
 for helper in (
     root / "backends/issue-tracker/github.py",
     root / "skills/configure-workflows/references/github-issues.py",
     root / "backends/record-store/contract.py",
+    root / "backends/record-store/github.py",
     root / "backends/record-store/local-markdown.py",
     record_bundle / "contract.py",
+    record_bundle / "github.py",
     record_bundle / "local-markdown.py",
 ):
     try:

@@ -73,4 +73,8 @@ The local reference adapter supports all twelve record routes. Eleven non-issue 
 
 Issues retain the established Markdown frontmatter, lifecycle states, comment and resolution sections, relative relationships, and stable filename ordering. Claims and allocation remain non-atomic across unsynchronized working trees.
 
+## GitHub reference scope
+
+The GitHub adapter supports all twelve routes with exactly one `workflow:record:*` label per managed object and one additional `workflow:issue:*` label for issue-routed objects. Non-issue records close as completed after publication, retain semantic lifecycle in canonical metadata and content, and remain revision-updatable. Searches include open and closed issues, exclude pull requests, and detect duplicate semantic IDs. Issue routes retain explicit identity verification, native relationships, close reasons, complete pagination, and claim-conflict behavior.
+
 Every later adapter must run the shared record conformance suite and, when issue-capable, the issue extension suite rather than redefining these semantic shapes.

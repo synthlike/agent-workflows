@@ -492,8 +492,12 @@ def _validate_common_configuration(root: Path, data: dict[str, Any], errors: lis
             errors.append(f"missing required guidance: {guidance}")
     issue_guidance = root / "docs/agents/issue-tracker.md"
     if issue_guidance.is_file() and backend in {"github", "local-markdown"}:
-        expected_heading = "# Issue tracker: GitHub" if backend == "github" else "# Issue tracker: Local Markdown"
-        if expected_heading not in issue_guidance.read_text():
+        expected_headings = (
+            ("# Issue tracker: GitHub", "# Record store: GitHub")
+            if backend == "github"
+            else ("# Issue tracker: Local Markdown",)
+        )
+        if not any(heading in issue_guidance.read_text() for heading in expected_headings):
             errors.append("issue-backend guidance does not match issue_tracker.backend")
     if backend == "github":
         helper = root / "docs/agents/github-issues.py"

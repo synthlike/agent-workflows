@@ -169,8 +169,16 @@ class GitHubIssueBackendTests(unittest.TestCase):
 
         backend = GitHubBackend(FakeClient(responder))
         plan = backend.label_plan()
+        self.assertEqual(2, plan["schema"])
         self.assertEqual(len(LABELS), len(plan["changes"]))
+        planned_names = {item["name"] for item in plan["changes"]}
+        self.assertIn("workflow:record:issues", planned_names)
+        self.assertIn("workflow:record:specs", planned_names)
+        self.assertIn("workflow:issue:bug", planned_names)
+        self.assertTrue(all(name.startswith(("workflow:record:", "workflow:issue:")) for name in planned_names))
         self.assertEqual({"create"}, {item["action"] for item in plan["changes"]})
+        with self.assertRaisesRegex(BackendError, "does not match"):
+            backend.apply_label_plan({**plan, "schema": 1})
         result = backend.apply_label_plan(plan)
         self.assertEqual(len(LABELS), len(result["applied"]))
 
@@ -180,15 +188,19 @@ class GitHubIssueBackendTests(unittest.TestCase):
 
     def test_create_requires_and_applies_one_semantic_kind(self):
         def responder(endpoint, method, payload, _paginate):
-            if endpoint.endswith("/labels/workflow%3Abug"):
-                return {"name": "workflow:bug"}
+            if endpoint.endswith("/labels/workflow%3Arecord%3Aissues"):
+                return {"name": "workflow:record:issues"}
+            if endpoint.endswith("/labels/workflow%3Aissue%3Abug"):
+                return {"name": "workflow:issue:bug"}
             if method == "POST" and endpoint.endswith("/issues"):
                 return {"number": 7, **payload}
             raise AssertionError((endpoint, method, payload))
 
         backend = GitHubBackend(FakeClient(responder))
         issue = backend.create("Broken result", "Expected X, observed Y", "bug")
-        self.assertEqual(["workflow:bug"], issue["labels"])
+        self.assertEqual(
+            ["workflow:record:issues", "workflow:issue:bug"], issue["labels"]
+        )
         self.assertEqual(7, issue["number"])
 
     def test_update_preserves_one_kind_and_supports_labels_and_reopen(self):
@@ -197,12 +209,13 @@ class GitHubIssueBackendTests(unittest.TestCase):
                 return {
                     "number": 7,
                     "labels": [
-                        {"name": "workflow:bug"},
+                        {"name": "workflow:record:issues"},
+                        {"name": "workflow:issue:bug"},
                         {"name": "needs-triage"},
                     ],
                 }
-            if endpoint.endswith("/labels/workflow%3Aimplementation"):
-                return {"name": "workflow:implementation"}
+            if endpoint.endswith("/labels/workflow%3Aissue%3Aimplementation"):
+                return {"name": "workflow:issue:implementation"}
             if endpoint.endswith("/labels/team%3Aplatform"):
                 return {"name": "team:platform"}
             if endpoint.endswith("/issues/7") and method == "PATCH":
@@ -217,7 +230,8 @@ class GitHubIssueBackendTests(unittest.TestCase):
             state="open",
         )
         self.assertEqual(
-            ["team:platform", "workflow:implementation"], result["labels"]
+            ["team:platform", "workflow:issue:implementation", "workflow:record:issues"],
+            result["labels"]
         )
         self.assertEqual("reopened", result["state_reason"])
 
