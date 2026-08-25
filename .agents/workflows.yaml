@@ -66,6 +66,21 @@ artifacts:
   meetings:
     enabled: false
     path: docs/meetings
+  research:
+    enabled: true
+    path: docs/research
+  questionnaires:
+    enabled: true
+    path: docs/questionnaires
+  technical_baselines:
+    enabled: true
+    path: docs/engineering
+  prototypes:
+    enabled: false
+    path: docs/prototypes
+  handoffs:
+    enabled: false
+    path: .agents/handoffs
   specifications:
     enabled: true
     path: docs/specifications

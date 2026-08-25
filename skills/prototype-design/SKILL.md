@@ -8,6 +8,8 @@ license: MIT
 
 A prototype exists to answer a named question, not to begin production implementation.
 
+Read `.agents/workflows.yaml` when present. Retain a prototype under the configured prototype path only when repository retention is enabled. When it is disabled, keep the prototype temporary or external and do not write it into the repository without approval.
+
 1. State the question and the evidence that would answer it.
 2. Choose the cheapest artifact with sufficient fidelity: diagram, schema, state machine, API stub, single HTML file, or throwaway code.
 3. Mark it clearly as disposable and avoid production integration unless explicitly requested.

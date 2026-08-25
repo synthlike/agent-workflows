@@ -62,14 +62,14 @@
     "configure-project": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "285532653c18028de454adec538ed85b13d5077767b1f482da51bb9433f8e4f8",
+        "SKILL.md": "464934b73ac6056d26c3ca21c8be43e350734be24815028a864722b2a165d574",
         "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
         "references/consumer.py": "ace42f19eb67ffc91ac40e20a9be2ba5de6bfc6f83de7521209813038f72bf41",
         "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
         "references/issue-tracker-github.md": "de9e3a59c869da263b05517a337aa22f86e9fa5bfd8406cdcaa91ed96fbf2c30",
         "references/issue-tracker-local-markdown.md": "918cd42abc92a36a03083076d09f79f7aea24c9b05d4cd618ace72eeecb20e14",
         "references/lifecycle.py": "5c8c2c94b5268c80d83d0ff973513b43a361d9bd4425f8402bd300d76affd210",
-        "references/workflow-config.example.yaml": "9bf87e4b69060cf4dcce0f4f56a75b112e66c3528183515d3af951655cd06ba6"
+        "references/workflow-config.example.yaml": "dc2fe70ebdbd5e2fa0b117d63fbf2dfd012a7c8219acdb7100d1b197bf700f67"
       }
     },
     "develop-rfc": {
@@ -92,7 +92,7 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "30bdbaa327ac7fbfdf6ea32a11bf52417eb4fad498d6559799dc954ccdf2673b",
+        "SKILL.md": "98dbb645b286aa3a98e0c802949f0621e2abe29e4f79df14f27c03b5c29bac4c",
         "references/technical-baseline-template.md": "533f55813ae86b5f812bf983f1a31ba8fe2a98b1b34796df0a17cca76e7158e2"
       }
     },
@@ -163,20 +163,20 @@
     "prepare-handoff": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "605c90bd958de271437cfe3a66e7e38f91eb7eed60b9f6ed4cf54073d2c66b7c"
+        "SKILL.md": "c2c3376f5ef20035a83cde64931e507c9e815ec1e0b60c27189980c3428d6aef"
       }
     },
     "prepare-questionnaire": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "47137525536c3ba7ae63ecfa48f233d6b63c65620989f3dfbe2555c28c5991d2",
+        "SKILL.md": "4cf8c53281a787c68cb775ff3f47b79535eeeeb19ab0e4f26dee913b5eb14290",
         "references/questionnaire-template.md": "743f8a80e3c5df32c662c3a3cf586e0ec4e08f8accb316d6d461f14ca7369054"
       }
     },
     "prototype-design": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "7e0ed03b2737c3a38734afb7d9e1d41446d410d230e5af4f01d6ed6ee8119cb9"
+        "SKILL.md": "1b0e190c5f3e95199742251afe5852db974b456b8b070e999013a0a644edb344"
       }
     },
     "record-arp": {
@@ -191,7 +191,7 @@
     "research-question": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "223c966020f1e7d607a1de27151b1fe050e844dfc618022274d254adb0d39a38"
+        "SKILL.md": "86215410eec6bbe8bf088aee31ea66c357d6d78b2c06f0a3742e1c1e4a11db5d"
       }
     },
     "review-implementation": {

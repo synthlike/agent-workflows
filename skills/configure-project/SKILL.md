@@ -23,9 +23,10 @@ From the repository root, inspect:
 - `AGENTS.md`, `CLAUDE.md`, or equivalent agent guidance;
 - `.agents/workflows.yaml` and `docs/agents/`;
 - existing domain glossaries or context maps;
-- directories containing ADRs, ARPs, RFCs, specifications, plans, or meeting notes;
-- local issue conventions such as `.project/` or `.scratch/`; and
-- monorepo signals relevant to domain-document layout.
+- directories containing ADRs, ARPs, RFCs, specifications, plans, meeting notes, research, questionnaires, technical baselines, prototypes, or handoffs;
+- local issue conventions such as `.project/` or `.scratch/`;
+- monorepo signals relevant to domain-document layout; and
+- the nature of the project and how people and agents will collaborate on it.
 
 ## Recommend
 
@@ -36,11 +37,16 @@ Prefer existing conventions. For a new project, recommend:
 - domain docs under `docs/domain/`;
 - ARPs under `docs/decisions/`;
 - RFCs under `docs/rfcs/`;
-- specifications under `docs/specifications/`; and
-- meeting notes disabled unless requested; and
+- specifications under `docs/specifications/`;
+- meeting notes disabled unless requested;
+- research enabled under `docs/research/`;
+- questionnaires enabled under `docs/questionnaires/`;
+- technical baselines enabled under `docs/engineering/`;
+- retained prototypes disabled, with `docs/prototypes/` reserved if enabled;
+- durable handoffs disabled, with `.agents/handoffs/` reserved if enabled; and
 - a plain-language documentation style unless the project already defines one: use active voice, short sentences, explicit references, established domain terms, and one action per procedural step; avoid idioms, unnecessary synonyms, and ambiguous pronouns.
 
-Ask one decision at a time. Do not ask for facts available in the repository. If distribution identity cannot be established from installation metadata or the repository, ask for it rather than proposing a mutable value such as a branch name, `latest`, or `unreleased`.
+Ask what kind of project this is and how people and agents will collaborate on it. Combine that answer with repository evidence to recommend each capability individually, explain the reason, and confirm one decision at a time. Do not use rigid project-type profiles. An `enabled: false` artifact capability prohibits repository writes without approval but does not prohibit temporary or external output. Do not ask for facts available in the repository. If distribution identity cannot be established from installation metadata or the repository, ask for it rather than proposing a mutable value such as a branch name, `latest`, or `unreleased`.
 
 Use the lifecycle command to calculate the selected closure and inspect the exact harness-discovered directories. Require the complete distribution, even when the user explicitly selects only a subset of workflows. If any skill is absent, stop and list every missing skill. Ask the user to complete installation through their external installer or an intact manual copy, then confirm harness discovery and inspect again. Never create, replace, or remove a skill directory.
 

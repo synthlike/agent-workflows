@@ -93,6 +93,11 @@ for path in config_examples:
         "installation:",
         "selected:",
         "skills:",
+        "research:",
+        "questionnaires:",
+        "technical_baselines:",
+        "prototypes:",
+        "handoffs:",
     ):
         if field not in text:
             errors.append(f"{path.relative_to(root)}: missing {field.rstrip(':')}")

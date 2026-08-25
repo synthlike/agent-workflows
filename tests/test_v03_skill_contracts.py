@@ -13,7 +13,7 @@ SKILL_EXPECTATIONS = {
         "every changed file", "do not claim that a baseline is established", "Verified fact",
         "Approved convention", "Recommendation", "Accepted decision", "Open decision",
         "Deferred product question", "supporting index", "link the ARP instead of copying",
-        "Prefer an existing project-approved", "If none exists, propose",
+        "Prefer an existing project-approved", "configured technical-baseline path",
         "Preserve existing documentation and conventions",
     ),
     "investigate-failure": (

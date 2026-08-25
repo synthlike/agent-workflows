@@ -25,8 +25,15 @@ artifacts:
   arps: {enabled: true, path: docs/decisions, prefix: ARP}
   rfcs: {enabled: true, path: docs/rfcs, prefix: RFC}
   meetings: {enabled: false, path: docs/meetings}
+  research: {enabled: true, path: docs/research}
+  questionnaires: {enabled: true, path: docs/questionnaires}
+  technical_baselines: {enabled: true, path: docs/engineering}
+  prototypes: {enabled: false, path: docs/prototypes}
+  handoffs: {enabled: false, path: .agents/handoffs}
   specifications: {enabled: true, path: docs/specifications}
 ```
+
+Each artifact capability has an `enabled` retention policy and a repository-contained `path`. Disabled capabilities prohibit repository writes without approval but may still produce temporary or external output. Fresh projects enable research, questionnaires, and technical baselines; they disable retained prototypes, durable handoffs, and meeting notes by default. `configure-project` adjusts these recommendations to the project's nature, collaboration model, repository evidence, and existing conventions.
 
 ## Installation inventory
 

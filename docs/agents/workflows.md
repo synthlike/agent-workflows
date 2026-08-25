@@ -35,6 +35,11 @@ Supporting research, prototypes, questionnaires, meetings, and planning maps are
 | RFCs | Enabled | `docs/rfcs/` (`RFC` prefix) |
 | Specifications | Enabled | `docs/specifications/` |
 | Meeting notes | Disabled | `docs/meetings/` when enabled |
+| Research | Enabled | `docs/research/` |
+| Questionnaires | Enabled | `docs/questionnaires/` |
+| Technical baselines | Enabled | `docs/engineering/` |
+| Retained prototypes | Disabled | `docs/prototypes/` when enabled |
+| Durable handoffs | Disabled | `.agents/handoffs/` when enabled |
 | Local issues | Enabled | `.project/` |
 
-Create optional artifact and local-issue directories only when writing their first artifact. Ask before enabling a disabled capability. Do not migrate existing artifacts as a side effect of configuration or installation.
+Create optional artifact and local-issue directories only when writing their first artifact. A disabled capability prohibits repository writes without approval but may still use an approved temporary or external location. Ask before enabling or writing a disabled capability. Do not migrate existing artifacts as a side effect of configuration or installation.

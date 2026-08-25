@@ -14,7 +14,7 @@ Each kind of information has one canonical home.
 
 ## Authority
 
-Supporting artifacts are evidence, not authority. Research establishes facts. Prototypes make choices concrete. Questionnaires and meetings collect stakeholder input. Initiative maps organize unresolved decisions. Problem-framing briefs organize founder hypotheses, customer evidence, risky assumptions, and validation plans without declaring agreed behavior. Technical baselines index verified stack constraints, approved routine conventions, and links to decisions at a project-owned location. Failure findings, regression evidence, implementation reviews, and initiative closure summaries explain what was observed and verified. Promote their outcomes instead of treating them as permanent specifications.
+Supporting artifacts are evidence, not authority. Their configured capability controls repository retention, not whether temporary or external work may occur. Research establishes facts. Prototypes make choices concrete. Questionnaires and meetings collect stakeholder input. Initiative maps organize unresolved decisions. Problem-framing briefs organize founder hypotheses, customer evidence, risky assumptions, and validation plans without declaring agreed behavior. Technical baselines index verified stack constraints, approved routine conventions, and links to decisions at a project-owned location. Failure findings, regression evidence, implementation reviews, and initiative closure summaries explain what was observed and verified. Promote their outcomes instead of treating them as permanent specifications.
 
 - New ambiguity becomes an RFC.
 - A consequential accepted technical decision becomes an ARP.

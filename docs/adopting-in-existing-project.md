@@ -10,7 +10,9 @@ Prefer adoption over migration:
 - Reuse existing RFC, specification, and issue conventions.
 - Preserve a root `CONTEXT.md` or existing context map.
 - Add a concise pointer to the existing `AGENTS.md` or equivalent; never replace it.
-- Keep meeting notes disabled unless the project wants them.
+- Ask what kind of project this is and how people and agents collaborate, then review each supporting-artifact retention recommendation.
+- Keep meeting notes, retained prototypes, and durable handoffs disabled unless the project wants them.
+- Enable research, questionnaires, and technical baselines by default, while preserving existing locations and retention policies.
 - Record the exact installed distribution source and release version or immutable commit SHA.
 - Record explicitly selected workflows separately from transitive dependencies and map every harness-discovered skill path.
 - Confirm harness discovery of the complete closure before final configuration.

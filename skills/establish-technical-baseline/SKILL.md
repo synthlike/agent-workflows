@@ -10,7 +10,7 @@ Turn fixed technology choices into reviewed engineering guardrails. Do not selec
 
 ## Establish the boundary
 
-Read project guidance, existing engineering or architecture documentation, accepted ARPs, open RFCs, specifications, dependency manifests, build and test entrypoints, deployment configuration, and repository status.
+Read `.agents/workflows.yaml` when present, plus project guidance, existing engineering or architecture documentation, accepted ARPs, open RFCs, specifications, dependency manifests, build and test entrypoints, deployment configuration, and repository status. If technical-baseline retention is disabled, do not write a baseline into the repository without approval.
 
 Confirm only information the repository does not establish:
 
@@ -54,7 +54,7 @@ Routine reversible conventions may remain in the baseline. Use `develop-rfc` for
 
 ## Choose a location
 
-Prefer an existing project-approved engineering or architecture documentation location. If none exists, propose a repository-contained location and ask the user to approve it. Do not assume a fixed directory or create optional directories before their first approved document.
+Prefer an existing project-approved engineering or architecture documentation location. Otherwise use the configured technical-baseline path when retention is enabled. If retention is disabled, ask before any repository write and use an approved external location when appropriate. Do not create optional directories before their first approved document.
 
 Use [the baseline template](references/technical-baseline-template.md). The baseline is a supporting index and project guidance, not a new authority for decisions or behavior.
 
