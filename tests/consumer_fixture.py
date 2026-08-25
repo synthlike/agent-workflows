@@ -72,7 +72,7 @@ artifacts:
 def write_guidance(root: Path, preserve_agents: bool = False) -> None:
     (root / "docs/agents").mkdir(parents=True, exist_ok=True)
     (root / "docs/agents/workflows.md").write_text("# Workflows\n")
-    (root / "docs/agents/issue-tracker.md").write_text("# Local Markdown\n")
+    (root / "docs/agents/issue-tracker.md").write_text("# Issue tracker: Local Markdown\n")
     agents = root / "AGENTS.md"
     if preserve_agents and agents.exists():
         original = agents.read_text().rstrip()

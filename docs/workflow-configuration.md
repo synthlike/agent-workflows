@@ -35,6 +35,16 @@ artifacts:
 
 Each artifact capability has an `enabled` retention policy and a repository-contained `path`. Disabled capabilities prohibit repository writes without approval but may still produce temporary or external output. Fresh projects enable research, questionnaires, and technical baselines; they disable retained prototypes, durable handoffs, and meeting notes by default. `configure-project` adjusts these recommendations to the project's nature, collaboration model, repository evidence, and existing conventions.
 
+Supported `issue_tracker.backend` values are `local-markdown` and `github`. Local Markdown requires a repository-contained `root`. GitHub requires an explicit account identity, matching backend guidance, and the generated helper:
+
+```yaml
+issue_tracker:
+  backend: github
+  login: octocat
+```
+
+`configure-project` lists authenticated account names and asks which login to record. It never assumes that the currently active account is intended and never changes global `gh` authentication silently. Every helper invocation verifies that the configured login is authenticated and active before repository access. Runtime preflight also verifies GitHub Cloud, enabled Issues, and repository write access.
+
 ## Installation inventory
 
 - `selected` records user intent, not the calculated dependency set. Names are unique and must exist in the installed distribution manifest.

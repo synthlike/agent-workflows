@@ -6,7 +6,7 @@ Agent Workflows supports one configured consumer root per Git repository.
 2. Invoke `configure-project` from the Git repository root before using another workflow.
 3. Choose the workflows you intend to use. The schema records this explicit selection separately from the complete installed inventory.
 4. Let the installed lifecycle command inspect the harness-discovered directories, require the complete distribution, and calculate the [dependency closure](workflow-dependencies.md).
-5. Accept or change the recommended issue backend and artifact capabilities.
+5. Accept or change the recommended issue backend and artifact capabilities. When selecting GitHub, choose an authenticated account explicitly, then review its capability preflight and complete managed-label plan.
 6. Review the complete proposed schema-2 `.agents/workflows.yaml`, `AGENTS.md`, and `docs/agents/` dry run. Nothing is written before approval.
 7. [Verify the consumer installation](verifying-installation.md).
 8. Commit the installed skill directories, configuration, and guidance before creating project artifacts.

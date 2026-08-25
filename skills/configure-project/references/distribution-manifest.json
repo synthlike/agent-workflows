@@ -62,11 +62,12 @@
     "configure-project": {
       "dependencies": [],
       "files": {
-        "SKILL.md": "464934b73ac6056d26c3ca21c8be43e350734be24815028a864722b2a165d574",
+        "SKILL.md": "1ded34815ca03ca27694fbf82d6f5d3ff7149ab9cbbafda2c5efbf535f174682",
         "references/agents-section.md": "d082e26d76c33de7be0e837dffbf75f0ed27e6d1da3d9ac1627174e1becc6b4c",
-        "references/consumer.py": "ace42f19eb67ffc91ac40e20a9be2ba5de6bfc6f83de7521209813038f72bf41",
+        "references/consumer.py": "321b589f89bf1cd0ebf1efa4d7bc148b8a3ef9bf3f863dfd2b30cbf1801f6fa5",
+        "references/github-issues.py": "8d3e1538bfba53528d38c5bcd976e9feeac83610b254ebb1c56a7afd482e678e",
         "references/issue-tracker-contract.md": "b8d9e49d92016fdddefc8f6a90571bd30137ebcf6a384f58b52918258e088573",
-        "references/issue-tracker-github.md": "de9e3a59c869da263b05517a337aa22f86e9fa5bfd8406cdcaa91ed96fbf2c30",
+        "references/issue-tracker-github.md": "544ee3347f5d0abbaf961e7650e46ac1cc6dcb88234c66c6287a2b24081292a6",
         "references/issue-tracker-local-markdown.md": "918cd42abc92a36a03083076d09f79f7aea24c9b05d4cd618ace72eeecb20e14",
         "references/lifecycle.py": "5c8c2c94b5268c80d83d0ff973513b43a361d9bd4425f8402bd300d76affd210",
         "references/workflow-config.example.yaml": "dc2fe70ebdbd5e2fa0b117d63fbf2dfd012a7c8219acdb7100d1b197bf700f67"
@@ -156,7 +157,7 @@
         "research-question"
       ],
       "files": {
-        "SKILL.md": "cd53539b45db1958fb065f8a2b7dc64eddac496a610e638d4e2708ccacd1d2fa",
+        "SKILL.md": "746bbc6b4256657d6d06c6e4feb9be5107abffefd880f30eedbeae939d67f6b6",
         "references/map-template.md": "970ff9e3b2f5956964d67f1b5bcbcecd39a5aff8baf7a47b461c1102e353988b"
       }
     },

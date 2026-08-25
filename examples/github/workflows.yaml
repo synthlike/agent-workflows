@@ -1,4 +1,4 @@
-# Incomplete example: configure-project must replace both REQUIRED values.
+# Incomplete example: configure-project must replace every REQUIRED value.
 schema_version: 2
 distribution:
   source: REQUIRED_DISTRIBUTION_SOURCE
@@ -10,6 +10,7 @@ installation:
     REQUIRED_SELECTED_SKILL: REQUIRED_SELECTED_SKILL_PATH
 issue_tracker:
   backend: github
+  login: REQUIRED_GITHUB_LOGIN
 artifacts:
   domain: {enabled: true, path: docs/domain}
   arps: {enabled: true, path: docs/decisions, prefix: ARP}

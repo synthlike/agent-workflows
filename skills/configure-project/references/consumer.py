@@ -315,10 +315,17 @@ def _contained_path(root: Path, value: Any, label: str, errors: list[str]) -> Pa
 
 def _validate_common_configuration(root: Path, data: dict[str, Any], errors: list[str]) -> None:
     tracker = data.get("issue_tracker")
+    backend: str | None = None
     if not isinstance(tracker, dict) or not isinstance(tracker.get("backend"), str):
         errors.append("issue_tracker.backend is required")
-    elif tracker["backend"] == "local-markdown":
-        _contained_path(root, tracker.get("root"), "issue_tracker.root", errors)
+    else:
+        backend = tracker["backend"]
+        if backend not in {"github", "local-markdown"}:
+            errors.append(f"unsupported issue_tracker.backend: {backend}")
+        elif backend == "local-markdown":
+            _contained_path(root, tracker.get("root"), "issue_tracker.root", errors)
+        elif not isinstance(tracker.get("login"), str) or not tracker["login"].strip():
+            errors.append("issue_tracker.login is required for the GitHub backend")
     artifacts = data.get("artifacts")
     if not isinstance(artifacts, dict) or not artifacts:
         errors.append("artifacts must define configured capabilities")
@@ -338,6 +345,23 @@ def _validate_common_configuration(root: Path, data: dict[str, Any], errors: lis
         path = root / guidance
         if not path.is_file() or not path.read_text().strip():
             errors.append(f"missing required guidance: {guidance}")
+    issue_guidance = root / "docs/agents/issue-tracker.md"
+    if issue_guidance.is_file() and backend in {"github", "local-markdown"}:
+        expected_heading = "# Issue tracker: GitHub" if backend == "github" else "# Issue tracker: Local Markdown"
+        if expected_heading not in issue_guidance.read_text():
+            errors.append("issue-backend guidance does not match issue_tracker.backend")
+    if backend == "github":
+        helper = root / "docs/agents/github-issues.py"
+        if not helper.is_file() or not helper.read_text().strip():
+            errors.append("missing required GitHub backend helper: docs/agents/github-issues.py")
+        else:
+            installation = data.get("installation")
+            skills = installation.get("skills") if isinstance(installation, dict) else None
+            configure_path = skills.get("configure-project") if isinstance(skills, dict) else None
+            if isinstance(configure_path, str):
+                bundled = root / configure_path / "references/github-issues.py"
+                if bundled.is_file() and helper.read_bytes() != bundled.read_bytes():
+                    errors.append("GitHub backend helper does not match the installed helper")
     guidance_files = [root / name for name in ("AGENTS.md", "CLAUDE.md") if (root / name).is_file()]
     if not any(
         ".agents/workflows.yaml" in path.read_text()

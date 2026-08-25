@@ -58,6 +58,7 @@ bundled = root / "skills/configure-project/references"
 for source_name, bundled_name in (
     ("contract.md", "issue-tracker-contract.md"),
     ("github.md", "issue-tracker-github.md"),
+    ("github.py", "github-issues.py"),
     ("local-markdown.md", "issue-tracker-local-markdown.md"),
 ):
     source = root / "backends/issue-tracker" / source_name
@@ -67,16 +68,27 @@ for source_name, bundled_name in (
 
 github_adapter = (root / "backends/issue-tracker/github.md").read_text()
 for label in (
-    "initiative:map",
-    "initiative:research",
-    "initiative:prototype",
-    "initiative:clarification",
-    "initiative:task",
+    "workflow:initiative",
+    "workflow:bug",
+    "workflow:implementation",
+    "workflow:clarification",
+    "workflow:research",
+    "workflow:prototype",
+    "workflow:prerequisite",
 ):
     if f"`{label}`" not in github_adapter:
-        errors.append(f"backends/issue-tracker/github.md: missing initiative label {label}")
-if "wayfinder:" in github_adapter:
-    errors.append("backends/issue-tracker/github.md: contains legacy wayfinder label namespace")
+        errors.append(f"backends/issue-tracker/github.md: missing managed label {label}")
+for legacy in ("wayfinder:", "initiative:map", "initiative:task"):
+    if legacy in github_adapter:
+        errors.append(f"backends/issue-tracker/github.md: contains legacy label {legacy}")
+for helper in (
+    root / "backends/issue-tracker/github.py",
+    root / "skills/configure-project/references/github-issues.py",
+):
+    try:
+        compile(helper.read_text(), str(helper.relative_to(root)), "exec")
+    except SyntaxError as error:
+        errors.append(f"{helper.relative_to(root)}: invalid Python: {error}")
 
 config_examples = [
     root / "skills/configure-project/references/workflow-config.example.yaml",
@@ -103,6 +115,8 @@ for path in config_examples:
             errors.append(f"{path.relative_to(root)}: missing {field.rstrip(':')}")
     if "REQUIRED_" in text and "Incomplete" not in text:
         errors.append(f"{path.relative_to(root)}: placeholders are not marked as incomplete")
+    if "backend: github" in text and "login:" not in text:
+        errors.append(f"{path.relative_to(root)}: GitHub backend is missing login")
 
 documentation = [root / "README.md", *(root / "docs").rglob("*.md"), *(root / ".project/issues").glob("*.md")]
 for path in documentation:

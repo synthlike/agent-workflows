@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Complete the GitHub Cloud issue backend with explicit multi-account identity selection, native relationships, reviewed label provisioning, deterministic frontier calculation, and an executable `gh` helper.
 - Configure repository retention and paths for research, questionnaires, technical baselines, prototypes, and handoffs according to project needs.
 - Restructure the README around user outcomes, scenario-based workflow selection, a short setup path, and a copyable founder-discovery prompt.
 - Require complete skill installation and remove the custom archive distribution and missing-skill application mechanism.

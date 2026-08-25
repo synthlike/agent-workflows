@@ -26,7 +26,7 @@ The map indexes answers; the detailed answer lives in exactly one resolved ticke
 - **Clarification:** human decision resolved with `clarify-intent`; human-in-the-loop.
 - **Research:** external fact established with `research-question`; may run independently.
 - **Prototype:** concrete artifact created with `prototype-design`, then evaluated by a human.
-- **Task:** prerequisite action that enables a later decision but is not implementation of the destination.
+- **Prerequisite:** action required before a later decision that is not implementation of the destination.
 
 Never let the agent stand in for a human on a human-in-the-loop ticket.
 

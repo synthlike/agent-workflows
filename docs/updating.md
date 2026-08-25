@@ -23,6 +23,7 @@ Changing recorded distribution identity after accepting an update is an explicit
 5. Resolve any local skill changes explicitly instead of allowing silent overwrite.
 6. Recalculate selected-workflow closure against the target release and review any dependency additions or removals.
 7. After accepting the installed source, update `distribution.source`, `distribution.version`, and schema-2 skill inventory through a reviewed consumer change.
-8. Run installed verification from the new `configure-project` and commit the reviewed update.
+8. For a GitHub backend, compare the newly bundled helper with `docs/agents/github-issues.py`. If it changed, review and approve that consumer-owned helper update separately; confirm the configured login, rerun preflight, and review any new label plan before external writes.
+9. Run installed verification from the new `configure-project` and commit the reviewed update.
 
 Do not proceed when an installer cannot surface conflicts or preserve consumer-owned files. `configure-project` verifies installations but never installs or replaces skill directories. Migration, when required, remains separate explicit work. General update transactions and recovery remain future work and may be reprioritized when adoption or demonstrated update pain warrants it.

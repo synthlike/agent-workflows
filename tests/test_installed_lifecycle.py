@@ -258,6 +258,56 @@ class InstalledLifecycleTests(unittest.TestCase):
             self.assertTrue(any("broken relative reference" in error for error in errors))
             self.assertIn("missing required guidance: docs/agents/issue-tracker.md", errors)
 
+    def test_verifies_github_backend_assets_and_rejects_unknown_backends(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(Path(directory))
+            config = root / ".agents/workflows.yaml"
+            config.write_text(
+                config.read_text().replace(
+                    "backend: local-markdown",
+                    "backend: github\n  login: octocat",
+                )
+            )
+            (root / "docs/agents/issue-tracker.md").write_text(
+                (REFERENCES / "issue-tracker-github.md").read_text()
+            )
+            (root / "docs/agents/github-issues.py").write_text(
+                (REFERENCES / "github-issues.py").read_text()
+            )
+            self.assertEqual([], self.verify(root, skill_dirs).errors)
+            config.write_text(config.read_text().replace("  login: octocat\n", ""))
+            self.assertIn(
+                "issue_tracker.login is required for the GitHub backend",
+                self.verify(root, skill_dirs).errors,
+            )
+            config.write_text(
+                config.read_text().replace(
+                    "backend: github\n", "backend: github\n  login: octocat\n"
+                )
+            )
+            helper = root / "docs/agents/github-issues.py"
+            helper.write_text(helper.read_text() + "\n# local change\n")
+            self.assertIn(
+                "GitHub backend helper does not match the installed helper",
+                self.verify(root, skill_dirs).errors,
+            )
+            helper.unlink()
+            self.assertIn(
+                "missing required GitHub backend helper: docs/agents/github-issues.py",
+                self.verify(root, skill_dirs).errors,
+            )
+
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(Path(directory))
+            config = root / ".agents/workflows.yaml"
+            config.write_text(
+                config.read_text().replace("backend: local-markdown", "backend: bear")
+            )
+            self.assertIn(
+                "unsupported issue_tracker.backend: bear",
+                self.verify(root, skill_dirs).errors,
+            )
+
     def test_rejects_duplicate_selected_values_and_unsupported_schema(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root, skill_dirs = self.set_up_consumer(Path(directory))
