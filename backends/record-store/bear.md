@@ -14,15 +14,29 @@ backends:
     workspace: agent-workflows/project-key
 ```
 
-Each routed non-issue record uses one workspace-relative nested tag:
+Each routed non-issue record uses one workspace-relative nested tag. `issues` must use a complete local Markdown or GitHub issue backend:
 
 ```yaml
+backends:
+  local:
+    type: local-markdown
+  notes:
+    type: bear
+    command: /Applications/Bear.app/Contents/MacOS/bearcli
+    workspace: agent-workflows/project-key
+
 records:
+  issues:
+    enabled: true
+    backend: local
+    destination: {root: .project}
   specs:
     enabled: true
     backend: notes
     destination: {tag: specs}
 ```
+
+The actual configuration must still contain all twelve explicit routes. See the distribution's complete `examples/bear-local/workflows.yaml` example. Bear never supports `issues`; route verification rejects that assignment before any provider operation.
 
 The adapter composes `agent-workflows/project-key/specs`. Tags must be trimmed relative names without a leading `#` or `/`, empty or dot segments, commas, backslashes, or repetition of the workspace.
 
@@ -64,10 +78,50 @@ python3 docs/agents/backends/bear.py --command /Applications/Bear.app/Contents/M
   --content-file revised.md
 ```
 
-Managed notes retain semantic ID, type, and archive state in the canonical metadata envelope. Provider-owned framing preserves a first-level title and both workspace hashtags through whole-note overwrite. The adapter paginates every note under the nested route tag, parses managed metadata, rechecks semantic IDs immediately before create, and re-reads after every mutation to obtain the next Bear hash. Archive changes managed metadata rather than moving the note into Bear's native Archive.
+Managed notes retain semantic ID, type, and archive state in this canonical framing (values shown illustratively):
+
+```markdown
+<!-- agent-workflows-record:{"archived":false,"id":"finding","record_type":"research"} -->
+# Finding
+
+Canonical workflow content.
+
+<!-- agent-workflows-tags -->
+#agent-workflows/project-key #agent-workflows/project-key/research
+```
+
+Provider-owned framing preserves the compact sorted metadata envelope, first-level title, tag marker, and both workspace hashtags through whole-note overwrite. The adapter paginates every note under the nested route tag, parses managed metadata, rechecks semantic IDs immediately before create, and re-reads after every mutation to obtain the next Bear hash. Archive changes managed metadata rather than moving the note into Bear's native Archive.
 
 Returned references retain the native note ID and use Bear's documented `bear://x-callback-url/open-note?id=...` deep link. `render-reference` accepts complete structured references from any backend without launching MCP.
 
+## Failure and recovery behavior
+
+Read, list/search, update, and archive fail closed on malformed managed metadata, missing scope tags, unavailable encrypted content, MCP/provider errors, or unexpected response shape. Update and archive compare the caller's opaque revision with a fresh whole-note hash before sending `overwrite_note`; Bear then enforces the same hash as `baseHash`. A stale operation performs no adapter write. Managed records with attachments reject overwrite and archive rather than risk undeclared attachment removal.
+
+After every successful mutation, the adapter re-reads the note and returns its current revision. If a process or transport failure makes a result ambiguous, do not invent a revision or blindly repeat the mutation: read/search the semantic ID in the same scoped route and reconcile the returned content first. Create checks all archived and active managed IDs twice before calling Bear, so a retry after an ambiguous create should first search that ID. Allocation is still not atomic across simultaneous clients; one disposable duplicate may require manual review if two clients pass both checks concurrently.
+
+Metadata archive sets `"archived": true` through a hash-gated overwrite. The note remains in the scoped Bear database and is available by direct read, but normal list/search excludes it. Archive is therefore retained cleanup, not deletion. The adapter cannot roll back an already accepted provider mutation after an uncatchable process or machine failure.
+
+## Optional live verification
+
+The read-only smoke preflight calls no Bear tools. It skips successfully when Bear is unavailable, or can require Bear explicitly:
+
+```bash
+scripts/smoke-bear-preflight.sh
+BEARCLI_REQUIRED=1 BEAR_WORKSPACE=agent-workflows/preflight \
+  scripts/smoke-bear-preflight.sh
+```
+
+Live CRUD is never part of normal verification. Review a unique disposable workspace, then provide both the exact approval sentinel and workspace:
+
+```bash
+BEAR_CRUD_APPROVED=YES \
+BEAR_SMOKE_WORKSPACE=agent-workflows-smoke/UNIQUE-ID \
+  scripts/smoke-bear-crud.sh
+```
+
+The CRUD smoke verifies create, read, query search, revision-gated update, stale-write rejection, metadata archive, and exclusion from active search. Its final JSON reports the cleanup state and retained native note. It deliberately does not delete the note or workspace tag.
+
 ## Safety and limitations
 
-Configuration and every mutation remain approval-gated. The helper does not add a harness MCP registration and does not discover a command from `PATH`. Bear is optional and normal repository verification does not launch it. Encrypted note content is unavailable through Bear MCP. Managed records with attachments reject whole-note update or archive to prevent undeclared attachment removal. Stale `baseHash` writes and malformed provider content fail without an adapter write. Semantic-ID allocation rechecks before create but remains non-atomic across simultaneous clients.
+Configuration and every mutation remain approval-gated. The helper does not add a harness MCP registration and does not discover a command from `PATH`. Bear is optional. Normal repository verification uses mocked MCP responses, neither launches Bear nor mutates a Bear database, and does not run either live smoke script. Encrypted note content is unavailable through Bear MCP. Semantic-ID allocation rechecks before create but remains non-atomic across simultaneous clients.

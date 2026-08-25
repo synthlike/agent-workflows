@@ -72,7 +72,7 @@ records:
     destination: {tag: specs}
 ```
 
-Before approval, `configure-workflows` launches `COMMAND mcp-server --only-tags WORKSPACE` for read-only identity, scope, and required-tool preflight. It never creates an MCP registration, note, or tag during preflight. Installed verification accepts a Bear route only after provider preflight succeeds and the immutable adapter declaration contains its non-issue record type and every common operation. Bear never supports `issues`. See the [complete Bear-plus-local example](../examples/bear-local/workflows.yaml).
+Before approval, `configure-workflows` launches `COMMAND mcp-server --only-tags WORKSPACE` for read-only identity, scope, and required-tool preflight. It never creates an MCP registration, note, or tag during preflight. Installed verification accepts a Bear route only after provider preflight succeeds and the immutable adapter declaration contains its non-issue record type and every common operation. Bear never supports `issues`. See the [complete Bear-plus-local example](../examples/bear-local/workflows.yaml) and [Bear operations, recovery, and optional smoke guidance](../backends/record-store/bear.md).
 
 The canonical key is `specs`; the semantic artifact and workflow remain “specification” and `author-specification`. Local paths must remain inside the consumer root. ARP and RFC routes require prefixes. Disabled routes prohibit persistence without approval but retain their destinations and may still permit approved temporary or external output.
 

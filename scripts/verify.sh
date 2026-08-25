@@ -184,4 +184,6 @@ python3 -B "$root/skills/configure-workflows/references/lifecycle.py" \
   --skills-root "$root/skills"
 python3 -B -m unittest discover -s "$root/tests" -p 'test_*.py'
 bash -n "$root/scripts/smoke-fresh-install.sh"
+bash -n "$root/scripts/smoke-bear-preflight.sh"
+bash -n "$root/scripts/smoke-bear-crud.sh"
 node --check "$root/scripts/pi-discover-skills.mjs"

@@ -70,7 +70,7 @@
         "SKILL.md": "fcddc917d534f348fb5131341d432643b6f54daa68b000df138aef4c9a00f135",
         "references/application.py": "c1ccace730e4be5e35dd49211ef74cae7ab3a729c928472135b3dd9f02850acd",
         "references/backends/record-store/bear.capabilities.json": "b4ac3509abc45ff2591c3b8cba94c1fc1eff8a11e10522938cd960c2fcd1bc2d",
-        "references/backends/record-store/bear.md": "7e1822bb443fd71327db86ed40e9e1ab2b42e2808d00ec20b09250b08268c6eb",
+        "references/backends/record-store/bear.md": "7f4e37f22136ebc6bca3cecde8da958e5c2798485586cd88e32d56898226071d",
         "references/backends/record-store/bear.py": "193262dde236f5c8b05dcb7258c6b45999a33eadf1a648e920e19ef327e5e57c",
         "references/backends/record-store/contract.py": "b0e1611d61418982331c6dc49a7a79e73b43204d6bd9d9e157927e38231d5347",
         "references/backends/record-store/github.capabilities.json": "64bd7b2d08e498a9d3cc13b343b02d4db042c02df9e7a5a01832a26b78849235",
