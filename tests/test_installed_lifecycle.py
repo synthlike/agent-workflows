@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -84,12 +85,22 @@ class InstalledLifecycleTests(unittest.TestCase):
             for route in data["records"].values():
                 self.assertEqual({"enabled", "backend", "destination"}, set(route))
                 self.assertTrue(route["destination"])
-            for name in ("meetings", "prototypes", "handoffs"):
+            disabled = {"meetings", "prototypes", "handoffs"}
+            for name in disabled:
                 self.assertFalse(data["records"][name]["enabled"])
                 self.assertTrue(data["records"][name]["destination"])
-            self.assertFalse((root / ".project").exists())
-            self.assertFalse((root / "docs/domain").exists())
-            self.assertFalse((root / "docs/specs").exists())
+            for destination in (
+                ".project", "docs/domain", "docs/specs", "docs/meetings",
+                "docs/prototypes", ".agents/handoffs",
+            ):
+                self.assertFalse((root / destination).exists())
+            capture_meeting = next(
+                path for path in skill_dirs if path.name == "capture-meeting"
+            ) / "SKILL.md"
+            self.assertIn(
+                "If the route is disabled, ask before persistence",
+                capture_meeting.read_text(),
+            )
 
     def test_verifies_all_github_and_mixed_schema_3_assets(self) -> None:
         cases = {
@@ -176,6 +187,42 @@ class InstalledLifecycleTests(unittest.TestCase):
                         f"[{reference['title']}](<{reference['href']}>)",
                         json.loads(completed.stdout)["rendered"],
                     )
+                    reference_file.write_text(json.dumps({"backend": "other", "id": "42"}))
+                    malformed = subprocess.run(
+                        [sys.executable, "-B", str(helper), *common, "render-reference", "--reference-file", str(reference_file)],
+                        cwd=root,
+                        text=True,
+                        capture_output=True,
+                        check=False,
+                    )
+                    self.assertEqual(1, malformed.returncode)
+                    self.assertEqual(
+                        "malformed_reference",
+                        json.loads(malformed.stdout or malformed.stderr)["error"]["code"],
+                    )
+
+    def test_schema_3_rejects_an_incomplete_issue_contract_before_writes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root, skill_dirs = self.set_up_consumer(
+                Path(directory), schema3_profile_name="all-local"
+            )
+            incomplete = {
+                "record_types": set(consumer.RECORD_TYPES),
+                "record_operations": set(consumer.RECORD_OPERATIONS),
+                "issue_operations": set(consumer.ISSUE_OPERATIONS) - {"claim"},
+            }
+            config_before = (root / ".agents/workflows.yaml").read_bytes()
+            with patch.dict(
+                consumer.BACKEND_CAPABILITIES,
+                {"local-markdown": incomplete},
+            ):
+                errors = self.verify(root, skill_dirs).errors
+            self.assertIn(
+                "records.issues backend contract is missing issue operations: claim",
+                errors,
+            )
+            self.assertEqual(config_before, (root / ".agents/workflows.yaml").read_bytes())
+            self.assertFalse((root / ".project").exists())
 
     def test_schema_3_rejects_incomplete_github_identity_and_wrong_labels(self) -> None:
         mutations = {

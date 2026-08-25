@@ -94,6 +94,6 @@ python3 PATH/TO/configure-workflows/references/lifecycle.py verify-consumer \
 
 Use repeated `--skill-dir` arguments when discovery spans several parent directories. Read-only operations support canonical JSON through `--json` where relevant.
 
-Verification checks configuration shape, identity, inventory, closure, distributed file hashes, internal links, consumer-root containment, generated guidance, and exact backend assets. Schema 3 rejects missing and unknown routes, fields, backend instances, unsupported backend contracts, malformed destinations, escaping paths, stale helpers, and obsolete issue guidance.
+Verification checks configuration shape, identity, inventory, closure, distributed file hashes, internal links, consumer-root containment, generated guidance, and exact backend assets. Schema 3 rejects missing and unknown routes, fields, backend instances, unsupported backend contracts, malformed destinations, escaping paths, stale helpers, and obsolete issue guidance. A routed backend must declare the record type and every common operation; the `issues` route additionally requires every issue-extension operation before any backend write.
 
 Schema-2 keys such as `issue_tracker`, `artifacts`, and `specifications` have no compatibility aliases. Configuration changes do not move, copy, relabel, or rewrite existing records. Existing content remains where it was until separately approved record work handles it.

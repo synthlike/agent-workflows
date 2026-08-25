@@ -69,7 +69,7 @@
         "references/backends/record-store/github.py": "f4a7d51607de16ce5ace277067366a68a9db41e9a46fffead1a41577cda9643a",
         "references/backends/record-store/local-markdown.md": "d75f874173844c18b54ace53d449320831134601c5c0ac0fae317d8c17b65370",
         "references/backends/record-store/local-markdown.py": "cd173aff05f238137d7e7cde284b97f0f03550633af8a06905ec09b1fe49aeec",
-        "references/consumer.py": "c3d36421c0d0d359acc0c7a01b1c4315ddc48f75fe4102c165fc36a08ebb510e",
+        "references/consumer.py": "31d337d6ad4c61f81d7779c8be59d94c172f6ef2ab391b9540c98e2b5c963990",
         "references/lifecycle.py": "8bd872f5dbd65403ad4acb865129fcba5189aa356557476e360586784fd211f2",
         "references/workflow-config.example.yaml": "2ca10cf6381a51f976fc12a2a4b3e21c54e0186c45a0e189acbcb8ebb09a1dc7"
       }

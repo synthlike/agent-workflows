@@ -40,6 +40,19 @@ BACKEND_ASSETS = {
     "local-markdown": {"local-markdown.md", "local-markdown.py"},
     "github": {"github.md", "github.py"},
 }
+RECORD_OPERATIONS = {"archive", "create", "list", "read", "update"}
+ISSUE_OPERATIONS = {
+    "block", "cancel", "claim", "comment", "create", "frontier", "list",
+    "parent", "read", "resolve", "update",
+}
+BACKEND_CAPABILITIES = {
+    backend_type: {
+        "record_types": set(RECORD_TYPES),
+        "record_operations": set(RECORD_OPERATIONS),
+        "issue_operations": set(ISSUE_OPERATIONS),
+    }
+    for backend_type in BACKEND_ASSETS
+}
 GITHUB_REPOSITORY = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 
 
@@ -448,7 +461,7 @@ def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: li
             if not isinstance(login, str) or not login.strip():
                 errors.append(f"{label}.login must be a non-empty string")
         else:
-            errors.append(f"unsupported backend type for schema-3 bridge: {backend_type}")
+            errors.append(f"unsupported backend type for schema 3: {backend_type}")
 
     records = data.get("records")
     if not isinstance(records, dict):
@@ -475,8 +488,25 @@ def _validate_schema3_configuration(root: Path, data: dict[str, Any], errors: li
         if not isinstance(settings, dict) or settings.get("type") not in BACKEND_ASSETS:
             errors.append(f"{label} uses an unsupported backend contract")
             continue
+        backend_type = settings["type"]
+        capabilities = BACKEND_CAPABILITIES.get(backend_type, {})
+        missing_record_operations = RECORD_OPERATIONS - capabilities.get("record_operations", set())
+        if record_type not in capabilities.get("record_types", set()):
+            errors.append(f"{label} is unsupported by the {backend_type} record contract")
+        if missing_record_operations:
+            errors.append(
+                f"{label} backend contract is missing record operations: "
+                + ", ".join(sorted(missing_record_operations))
+            )
+        if record_type == "issues":
+            missing_issue_operations = ISSUE_OPERATIONS - capabilities.get("issue_operations", set())
+            if missing_issue_operations:
+                errors.append(
+                    f"{label} backend contract is missing issue operations: "
+                    + ", ".join(sorted(missing_issue_operations))
+                )
         destination = route.get("destination")
-        if settings["type"] == "local-markdown":
+        if backend_type == "local-markdown":
             expected_destination = {"root"} if record_type == "issues" else {"path"}
             if record_type in {"arps", "rfcs"}:
                 expected_destination.add("prefix")
