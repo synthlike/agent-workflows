@@ -64,9 +64,9 @@
       "files": {
         "SKILL.md": "0624c91a42b0bedf9f6d5d460e5fbd411f5539f4ad0b09c56567e5d329ffad49",
         "references/agents-section.md": "6a5f9f0ccd71186a3f11439d553a44c1a6c83605b477c5b3044b3880df4de594",
-        "references/backends/record-store/bear.capabilities.json": "9c3169c2ad470ae4c7621970033708105bf9951c03224c68a137b81d69106b79",
-        "references/backends/record-store/bear.md": "338bc587df60adb58d18f946d2087fcb742f9e57a96e98f017cc1a010997acc3",
-        "references/backends/record-store/bear.py": "75499c31eeaab267a454ede86ef42d5b222fa1e2a8555693551eda13fb01a3c5",
+        "references/backends/record-store/bear.capabilities.json": "b4ac3509abc45ff2591c3b8cba94c1fc1eff8a11e10522938cd960c2fcd1bc2d",
+        "references/backends/record-store/bear.md": "7e1822bb443fd71327db86ed40e9e1ab2b42e2808d00ec20b09250b08268c6eb",
+        "references/backends/record-store/bear.py": "193262dde236f5c8b05dcb7258c6b45999a33eadf1a648e920e19ef327e5e57c",
         "references/backends/record-store/contract.py": "b0e1611d61418982331c6dc49a7a79e73b43204d6bd9d9e157927e38231d5347",
         "references/backends/record-store/github.capabilities.json": "64bd7b2d08e498a9d3cc13b343b02d4db042c02df9e7a5a01832a26b78849235",
         "references/backends/record-store/github.md": "6fd9d8f2ecaa6f3b6a0c4bdadb22a714710eb1bf3b8b35f978844c23b35642e1",
@@ -74,7 +74,7 @@
         "references/backends/record-store/local-markdown.capabilities.json": "add6a704c838c8f5b1161212819277dac95c70ee1cba194f60a9b470ae431966",
         "references/backends/record-store/local-markdown.md": "d75f874173844c18b54ace53d449320831134601c5c0ac0fae317d8c17b65370",
         "references/backends/record-store/local-markdown.py": "cd173aff05f238137d7e7cde284b97f0f03550633af8a06905ec09b1fe49aeec",
-        "references/consumer.py": "7acc14dd4ddb55550e68b30c8e0eadc819d294c499a0894147be0b435736f193",
+        "references/consumer.py": "997bd15b982eb8d3d105abd9f9a23e2dd33024ce9013fa945bad40e8f5f42fa3",
         "references/lifecycle.py": "8bd872f5dbd65403ad4acb865129fcba5189aa356557476e360586784fd211f2",
         "references/workflow-config.example.yaml": "2ca10cf6381a51f976fc12a2a4b3e21c54e0186c45a0e189acbcb8ebb09a1dc7"
       }

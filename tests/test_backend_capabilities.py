@@ -52,7 +52,7 @@ class BackendCapabilityTests(unittest.TestCase):
             json.loads((RECORD_STORE / "bear.capabilities.json").read_text()), "bear"
         )
         self.assertEqual(set(non_issue), set(declared_bear["record_types"]))
-        self.assertEqual(frozenset(), declared_bear["record_operations"])
+        self.assertEqual(frozenset(OPERATIONS), declared_bear["record_operations"])
         self.assertEqual(declared_bear, consumer.BACKEND_CAPABILITIES["bear"])
 
         bear = consumer.parse_backend_capabilities(

@@ -415,8 +415,8 @@ def _validate_bear_tag(
     if not isinstance(value, str) or not value or value != value.strip():
         errors.append(f"{label} must be a non-empty trimmed Bear tag")
         return False
-    if value.startswith(("#", "/")) or value.endswith(("#", "/")):
-        errors.append(f"{label} must not start or end with # or /")
+    if "#" in value or value.startswith("/") or value.endswith("/"):
+        errors.append(f"{label} must not contain # or start or end with /")
         return False
     if "," in value or "\\" in value or any(ord(character) < 32 for character in value):
         errors.append(f"{label} contains unsupported characters")

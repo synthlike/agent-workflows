@@ -79,6 +79,10 @@ The local reference adapter supports all twelve record routes. Eleven non-issue 
 
 Issues retain the established Markdown frontmatter, lifecycle states, comment and resolution sections, relative relationships, and stable filename ordering. Claims and allocation remain non-atomic across unsynchronized working trees.
 
+## Bear reference scope
+
+The Bear adapter supports the eleven non-issue routes through one MCP process scoped to the backend workspace and one nested route tag. Managed notes use the canonical metadata envelope plus provider-owned title/tag framing. Whole-note hashes become opaque revisions, archive remains managed metadata, list/search paginates complete scoped results, and references retain native note IDs with documented Bear deep links. Bear does not implement the issue extension. Identifier allocation and writes use immediate collision and `baseHash` rechecks but remain non-atomic across simultaneous clients.
+
 ## GitHub reference scope
 
 The GitHub adapter supports all twelve routes with exactly one `workflow:record:*` label per managed object and one additional `workflow:issue:*` label for issue-routed objects. Non-issue records close as completed after publication, retain semantic lifecycle in canonical metadata and content, and remain revision-updatable. Searches include open and closed issues, exclude pull requests, and detect duplicate semantic IDs. Issue routes retain explicit identity verification, native relationships, close reasons, complete pagination, and claim-conflict behavior.

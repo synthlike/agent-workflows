@@ -186,12 +186,9 @@ class BearConfigurationTests(unittest.TestCase):
             consumer._validate_schema3_configuration(Path(directory), data, errors)
             return errors
 
-    def test_valid_bear_shape_reaches_adapter_capability_gate(self) -> None:
+    def test_valid_non_issue_bear_route_passes_shape_and_capability_validation(self) -> None:
         errors = self.errors(self.configuration())
-        self.assertIn(
-            "records.specs backend contract is missing record operations: archive, create, list, read, update",
-            errors,
-        )
+        self.assertFalse(any("records.specs backend contract" in error for error in errors))
         self.assertFalse(any("records.specs.destination" in error for error in errors))
         self.assertFalse(any("backends.notes" in error for error in errors))
 

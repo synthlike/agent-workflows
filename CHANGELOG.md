@@ -4,7 +4,7 @@
 
 - Replace schema 2 with explicit schema-3 routing for all twelve semantic record types across local Markdown and GitHub backends.
 - Validate routes against immutable adapter-owned capability declarations so future note-only and issue-only backends cannot claim unsupported behavior.
-- Add explicit scoped Bear configuration and read-only MCP provider preflight without yet advertising Bear record operations.
+- Add scoped Bear configuration, read-only MCP provider preflight, and complete non-issue record operations while keeping `issues` on another backend.
 - Rename the mandatory workflow bootstrap from `configure-project` to `configure-workflows` before external adoption.
 - Complete the GitHub Cloud issue backend with explicit multi-account identity selection, native relationships, reviewed label provisioning, deterministic frontier calculation, and an executable `gh` helper.
 - Configure repository retention and paths for research, questionnaires, technical baselines, prototypes, and handoffs according to project needs.

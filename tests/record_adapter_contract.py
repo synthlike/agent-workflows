@@ -38,7 +38,8 @@ class RecordAdapterContract:
         self.assertTrue(created.reference.id)
         self.assertEqual(created.title, created.reference.title)
         self.assertTrue(created.reference.href)
-        self.assertTrue(created.revision.startswith("sha256:"))
+        self.assertIsInstance(created.revision, str)
+        self.assertTrue(created.revision)
 
     def test_contract_renders_opaque_cross_backend_references(self):
         rendered = self.adapter.render_reference(

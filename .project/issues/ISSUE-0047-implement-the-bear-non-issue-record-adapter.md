@@ -2,9 +2,9 @@
 id: ISSUE-0047
 title: "Implement the Bear non-issue record adapter"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0043-add-bear-for-non-issue-record-routing.md"
 blocked_by:
   - "ISSUE-0046-configure-and-preflight-scoped-bear-backends.md"
@@ -40,6 +40,6 @@ Scoped Bear configuration and preflight.
 Bear issue semantics, atomic allocation across simultaneous clients, migration, synchronization, and live-test requirements.
 
 ## Comments
-
-
 ## Resolution
+
+Implemented the complete Bear non-issue record adapter for all eleven supported semantic types. Managed Bear notes now preserve canonical semantic metadata, a provider-owned title heading, deterministic workspace and nested-route hashtags, metadata-only archive state, native note-ID references, and opaque `bear-base-hash` revisions. Create allocates and immediately rechecks semantic IDs across active and metadata-archived notes; read and paginated list/search parse complete managed records; update and archive require the latest whole-note hash and rely on MCP `baseHash` to close the final race. Every mutation re-reads for the next revision. The adapter rejects Bear `issues`, malformed notes/destinations/references, duplicate owners, stale writes, attachments that a whole-note overwrite could remove, and provider/protocol failures without partial adapter mutation. Added portable CLI operations and reference rendering that does not launch Bear. Bear's immutable declaration now advertises the complete common record contract. Shared and Bear-specific tests cover every record type, operations, pagination, framing, collisions including archived records, external and in-flight races, stable encoded links, malformed state, portable errors, and the absence of an issue extension. Updated backend and configuration documentation. A live read-only preflight still passes; no live Bear record mutation was performed. `scripts/verify.sh` passes with 127 tests.

@@ -1,7 +1,13 @@
 {
   "backend_type": "bear",
   "issue_operations": [],
-  "record_operations": [],
+  "record_operations": [
+    "archive",
+    "create",
+    "list",
+    "read",
+    "update"
+  ],
   "record_types": [
     "arps",
     "domain",
