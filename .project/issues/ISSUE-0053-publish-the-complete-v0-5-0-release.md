@@ -2,7 +2,7 @@
 id: ISSUE-0053
 title: "Publish the complete v0.5.0 release"
 kind: "implementation"
-status: claimed
+status: resolved
 created: 2026-08-25
 assignee: "pi"
 parent: "ISSUE-0050-streamline-deterministic-consumer-configuration.md"
@@ -29,7 +29,7 @@ Publish one immutable release containing schema-3 routing, Bear non-issue suppor
 - [x] Changelog and active documentation accurately describe all v0.5.0 behavior, approval boundaries, non-migrating route behavior, and limitations.
 - [x] The complete repository suite, source-checkout-free configuration scenarios, fresh local smoke, and approved read-only provider checks pass.
 - [x] Release metadata identifies exactly `v0.5.0` and all committed release assets are canonical.
-- [ ] After separate final publication approval, the release commit is tagged, pushed, and published as an immutable GitHub release without patching any consumer installation.
+- [x] After separate final publication approval, the release commit is tagged, pushed, and published as an immutable GitHub release without patching any consumer installation.
 
 ## Blocked by
 
@@ -44,5 +44,6 @@ Unapproved provider mutation, skill installation or replacement, record migratio
 ### 2026-08-27T19:09:29Z — pi
 
 Release verification passed: `scripts/verify.sh` ran 164 tests; the source-checkout-free `skills@latest` and Pi fresh-install smoke passed; GitHub preflight confirmed `synthlike/agent-workflows` as `synthlike` with ADMIN permission and complete contracts; Bear CLI 2.9.3 scoped preflight passed read-only for `agent-workflows/preflight`. No provider mutation was performed.
-
 ## Resolution
+
+Published immutable `v0.5.0` from commit `6e1a2948263da68986181ba018d14cfb23829c6e`. The annotated tag and `main` were pushed, and the non-draft, non-prerelease GitHub release was verified at the provider-returned release URL. The release contains schema-3 routing, Local Markdown/GitHub/Bear backend support, corrected discovery semantics, canonical templates, and deterministic transactional consumer plan/apply. Record migration remains outside the core scope under ARP-0011.
