@@ -1,6 +1,6 @@
 # Updating
 
-Skills are vendored and versioned with the consumer repository. The installed lifecycle automates fresh-project dependency completion and verification, but does not provide reusable update planning, replacement, rollback, interruption recovery, configuration migration, or artifact migration.
+Skills are vendored and versioned with the consumer repository. An external installer or reviewed intact copy installs the complete distribution; the installed lifecycle verifies integrity, selection, and dependency closure but never installs or replaces skill directories. It does not provide reusable update planning, replacement, rollback, interruption recovery, configuration migration, or artifact migration.
 
 ## Ownership boundary
 

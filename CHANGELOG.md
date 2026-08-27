@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-- Replace schema 2 with explicit schema-3 routing for all twelve semantic record types across local Markdown and GitHub backends.
+## 0.5.0 - 2026-08-27
+
+- Replace schema 2 with explicit schema-3 routing for all twelve semantic record types across local Markdown and GitHub backends without moving or rewriting existing records.
 - Validate routes against immutable adapter-owned capability declarations so future note-only and issue-only backends cannot claim unsupported behavior.
 - Add scoped Bear configuration, read-only MCP provider preflight, complete non-issue record operations while keeping `issues` on another backend, and separately gated live preflight/CRUD smoke paths with explicit retained cleanup reporting.
 - Distinguish integrity-checked discovery from model invocation eligibility and defer GitHub or Bear inspection until each backend is considered.

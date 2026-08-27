@@ -4,7 +4,7 @@
 
 ## Schema 3
 
-Schema 3 records named backend instances and exactly twelve explicit record routes. Every route retains `enabled`, `backend`, and a complete typed `destination`, including disabled routes.
+Schema 3 records named backend instances and exactly twelve explicit record routes. Every route retains `enabled`, `backend`, and a complete typed `destination`, including disabled routes. The installation inventory below is abbreviated for readability; a supported configuration maps every installed skill from the complete distribution.
 
 ```yaml
 schema_version: 3
@@ -18,6 +18,7 @@ installation:
   skills:
     clarify-intent: .claude/skills/clarify-intent
     configure-workflows: .claude/skills/configure-workflows
+    # Every other installed distribution skill is also mapped.
 
 backends:
   local:
