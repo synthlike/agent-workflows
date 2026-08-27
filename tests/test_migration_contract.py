@@ -49,7 +49,7 @@ class MigrationContractTests(unittest.TestCase):
             journal["properties"]["recovery_direction"]["enum"],
         )
 
-    def test_capability_schema_2_is_bundled_and_does_not_claim_implementation(self) -> None:
+    def test_capability_schema_2_is_bundled_and_claims_only_conformant_implementation(self) -> None:
         expected_fields = {
             "backend_type", "issue_migration_operations", "issue_operations",
             "record_migration_operations", "record_operations", "record_types",
@@ -63,8 +63,13 @@ class MigrationContractTests(unittest.TestCase):
                 declaration = json.loads(source.read_text())
                 self.assertEqual(expected_fields, set(declaration))
                 self.assertEqual(2, declaration["schema_version"])
-                self.assertEqual([], declaration["record_migration_operations"])
-                self.assertEqual([], declaration["issue_migration_operations"])
+                expected = (
+                    ["export-history", "import", "retire", "verify"]
+                    if backend_type == "local-markdown"
+                    else []
+                )
+                self.assertEqual(expected, declaration["record_migration_operations"])
+                self.assertEqual(expected, declaration["issue_migration_operations"])
 
     def test_specification_records_fidelity_stages_matrix_and_exclusions(self) -> None:
         text = SPECIFICATION.read_text()

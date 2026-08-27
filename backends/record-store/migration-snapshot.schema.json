@@ -52,7 +52,7 @@
       "required": ["state", "archived"],
       "properties": {
         "state": {
-          "enum": ["active", "archived", "open", "resolved", "cancelled"]
+          "enum": ["active", "archived", "open", "claimed", "resolved", "cancelled"]
         },
         "archived": {"type": "boolean"}
       }
@@ -142,7 +142,7 @@
       ],
       "properties": {
         "kind": {"$ref": "#/$defs/nonempty"},
-        "status": {"enum": ["open", "resolved", "cancelled"]},
+        "status": {"enum": ["open", "claimed", "resolved", "cancelled"]},
         "assignee": {"type": ["string", "null"]},
         "labels": {
           "type": "array",

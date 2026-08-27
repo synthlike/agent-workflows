@@ -2,9 +2,9 @@
 id: ISSUE-0060
 title: "Implement local Markdown migration operations"
 kind: "implementation"
-status: open
+status: resolved
 created: 2026-08-25
-assignee: 
+assignee: "pi"
 parent: "ISSUE-0058-implement-strict-cross-backend-record-migration.md"
 blocked_by:
   - "ISSUE-0059-specify-portable-migration-snapshots-and-capabilities.md"
@@ -22,11 +22,11 @@ Implement complete issue and non-issue migration export, import, semantic verifi
 
 ## Acceptance criteria
 
-- [ ] Export enumerates active and retained historical records with exact revision-bound snapshots and complete portable issue/non-issue state.
-- [ ] Import is idempotent, collision-safe, preserves non-issue IDs and exact content, and records canonical provenance where needed.
-- [ ] Issue import/retirement preserves relationships, comments, labels, assignee meaning, terminal state, and destination mappings without rewriting source content.
-- [ ] Non-issue retirement archives; active issue retirement cancels with a tombstone; terminal issues retain state and receive provenance.
-- [ ] Repeated operations and stale revisions fail safely and satisfy shared migration conformance tests.
+- [x] Export enumerates active and retained historical records with exact revision-bound snapshots and complete portable issue/non-issue state.
+- [x] Import is idempotent, collision-safe, preserves non-issue IDs and exact content, and records canonical provenance where needed.
+- [x] Issue import/retirement preserves relationships, comments, labels, assignee meaning, terminal state, and destination mappings without rewriting source content.
+- [x] Non-issue retirement archives; active issue retirement cancels with a tombstone; terminal issues retain state and receive provenance.
+- [x] Repeated operations and stale revisions fail safely and satisfy shared migration conformance tests.
 
 ## Blocked by
 
@@ -37,6 +37,6 @@ Portable migration specification and capabilities.
 GitHub, Bear, configuration cutover, and workflow orchestration.
 
 ## Comments
-
-
 ## Resolution
+
+Implemented local Markdown migration export, lossless/idempotent import, semantic verification, collision handling, revision-gated retirement, durable provenance, and CLI access for issues and all non-issue record types. Added conformance coverage for exact content, relationships, comments, lifecycle state, replays, collisions, and stale writes. `scripts/verify.sh` passes with 176 tests.

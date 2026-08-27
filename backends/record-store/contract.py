@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import hashlib
+import json
 from typing import Any, Protocol
 
 
 OPERATIONS = {"archive", "create", "list", "read", "update"}
+MIGRATION_OPERATIONS = {"export-history", "import", "retire", "verify"}
 ISSUE_OPERATIONS = {
     "block",
     "cancel",
@@ -21,6 +23,15 @@ ISSUE_OPERATIONS = {
     "resolve",
     "update",
 }
+
+
+def canonical_json(value: Any) -> bytes:
+    return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode()
+
+
+def migration_reference_key(reference: "RecordReference | dict[str, Any]") -> str:
+    value = reference.as_dict() if isinstance(reference, RecordReference) else reference
+    return "sha256:" + hashlib.sha256(canonical_json(value)).hexdigest()
 
 
 class RecordError(RuntimeError):
@@ -263,6 +274,72 @@ class RecordAdapter(Protocol):
 
     def render_reference(self, reference: RecordReference) -> str:
         """Render one opaque reference for content owned by this adapter."""
+
+
+@dataclass(frozen=True)
+class MigrationRequest:
+    operation: str
+    backend: str
+    backend_type: str
+    record_type: str
+    destination: dict[str, Any]
+    snapshot: dict[str, Any] | None = None
+    destination_reference: RecordReference | None = None
+    reference_map: dict[str, RecordReference] = field(default_factory=dict)
+
+    def validate(self) -> None:
+        if self.operation not in MIGRATION_OPERATIONS:
+            raise RecordError(
+                "unsupported_operation", f"unsupported migration operation: {self.operation}"
+            )
+        if not self.backend or not self.backend_type or not self.record_type:
+            raise RecordError(
+                "invalid_request", "migration backend, backend type, and record type are required"
+            )
+        if not isinstance(self.destination, dict) or not self.destination:
+            raise RecordError("invalid_destination", "migration destination must be a mapping")
+        if self.operation != "export-history" and not isinstance(self.snapshot, dict):
+            raise RecordError("invalid_request", f"migration {self.operation} requires a snapshot")
+        if self.operation in {"retire", "verify"} and self.destination_reference is None:
+            raise RecordError(
+                "invalid_request",
+                f"migration {self.operation} requires a destination reference",
+            )
+        if not isinstance(self.reference_map, dict) or any(
+            not isinstance(key, str) or not key or not isinstance(value, RecordReference)
+            for key, value in self.reference_map.items()
+        ):
+            raise RecordError("invalid_request", "migration reference map is invalid")
+
+
+@dataclass(frozen=True)
+class MigrationResponse:
+    snapshot: dict[str, Any] | None = None
+    snapshots: tuple[dict[str, Any], ...] = ()
+    reference: RecordReference | None = None
+    revision: str | None = None
+    verified: bool | None = None
+
+    def as_dict(self) -> dict[str, Any]:
+        result: dict[str, Any] = {"ok": True}
+        if self.snapshot is not None:
+            result["snapshot"] = self.snapshot
+        if self.snapshots:
+            result["snapshots"] = list(self.snapshots)
+        elif self.snapshot is None:
+            result["snapshots"] = []
+        if self.reference is not None:
+            result["reference"] = self.reference.as_dict()
+        if self.revision is not None:
+            result["revision"] = self.revision
+        if self.verified is not None:
+            result["verified"] = self.verified
+        return result
+
+
+class MigrationAdapter(Protocol):
+    def execute_migration(self, request: MigrationRequest) -> MigrationResponse:
+        """Execute one capability-gated migration operation."""
 
 
 class IssueAdapter(Protocol):

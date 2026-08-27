@@ -13,7 +13,7 @@ REFERENCES = ROOT / "skills/configure-workflows/references"
 sys.path.insert(0, str(RECORD_STORE))
 sys.path.insert(0, str(REFERENCES))
 import consumer  # noqa: E402
-from contract import ISSUE_OPERATIONS, OPERATIONS  # noqa: E402
+from contract import ISSUE_OPERATIONS, MIGRATION_OPERATIONS, OPERATIONS  # noqa: E402
 
 
 def load_module(name: str, filename: str):
@@ -44,8 +44,13 @@ class BackendCapabilityTests(unittest.TestCase):
                 self.assertEqual(record_types, set(declaration["record_types"]))
                 self.assertEqual(OPERATIONS, set(declaration["record_operations"]))
                 self.assertEqual(ISSUE_OPERATIONS, set(declaration["issue_operations"]))
-                self.assertEqual(frozenset(), declaration["record_migration_operations"])
-                self.assertEqual(frozenset(), declaration["issue_migration_operations"])
+                expected_migration = (
+                    frozenset(MIGRATION_OPERATIONS)
+                    if backend_type == "local-markdown"
+                    else frozenset()
+                )
+                self.assertEqual(expected_migration, declaration["record_migration_operations"])
+                self.assertEqual(expected_migration, declaration["issue_migration_operations"])
                 self.assertEqual(declaration, consumer.BACKEND_CAPABILITIES[backend_type])
 
     def test_partial_backend_declarations_are_valid_but_do_not_gain_capabilities(self) -> None:
