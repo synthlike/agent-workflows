@@ -1,11 +1,5 @@
 {
   "backend_type": "local-markdown",
-  "issue_migration_operations": [
-    "export-history",
-    "import",
-    "retire",
-    "verify"
-  ],
   "issue_operations": [
     "block",
     "cancel",
@@ -18,12 +12,6 @@
     "read",
     "resolve",
     "update"
-  ],
-  "record_migration_operations": [
-    "export-history",
-    "import",
-    "retire",
-    "verify"
   ],
   "record_operations": [
     "archive",
@@ -46,5 +34,5 @@
     "specs",
     "technical_baselines"
   ],
-  "schema_version": 2
+  "schema_version": 1
 }

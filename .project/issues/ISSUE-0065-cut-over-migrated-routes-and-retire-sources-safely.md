@@ -2,7 +2,7 @@
 id: ISSUE-0065
 title: "Cut over migrated routes and retire sources safely"
 kind: "implementation"
-status: open
+status: cancelled
 created: 2026-08-25
 assignee: 
 parent: "ISSUE-0058-implement-strict-cross-backend-record-migration.md"
@@ -39,6 +39,6 @@ Verified resumable destination copy.
 Source deletion, post-cutover rollback, and provider provisioning without separate approval.
 
 ## Comments
-
-
 ## Resolution
+
+Cancelled in the core repository after ARP-0011 externalized record migration as a possible separate optional project. The implementation is not part of v0.5.0 or assigned to a later core release. Historical commits and issue context are retained for future reference.

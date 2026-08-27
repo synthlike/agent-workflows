@@ -198,19 +198,11 @@ records:
 65. Distribution updates MUST NOT rewrite those consumer-owned files automatically. A changed bundled adapter requires a separate reviewed consumer update.
 66. Verification MUST reject schema 2, partial route maps, unknown backends, unsupported routes, mismatched generated assets, escaping local paths, malformed references, and stale writes.
 
-### Explicit route migration
-
-67. Configuration, installation, and ordinary route changes MUST NOT move existing records implicitly.
-68. Explicit cross-backend movement MUST follow the [strict record migration specification](strict-record-migration.md), preserve one semantic type, include retained history, and use separately approved copy/verify, route-cutover, and source-retirement stages.
-69. Migration eligibility MUST derive only from schema-2 adapter-owned `record_migration_operations` and `issue_migration_operations`; project configuration MUST NOT declare support.
-70. Migration plans and journals MUST be canonical, digest-bound, project-contained, stale-safe, resumable, and honest about cooperative freeze and non-atomic cross-provider recovery.
-71. Route cutover MUST reuse deterministic `configure-workflows` plan/apply. After verified cutover, recovery MUST roll forward.
-
 ## Constraints and decisions
 
 - RFC-0006 selects named backends and explicit per-record routing.
 - ARP-0009 supersedes ARP-0008 while retaining its incorporated GitHub identity and native-relationship constraints.
-- Schema 3 was an atomic configuration-schema replacement rather than a schema migration. Later explicit record migration does not restore schema-2 compatibility.
+- This repository has no external consumers, so schema 3 is an atomic replacement rather than a migration.
 - Backend contracts describe semantic behavior; backend documents and helpers own concrete provider tools and storage.
 - Bear uses a project `workspace` and nested record `tag` destinations in a later phase. Initial Bear configuration does not include `exclude_tags`.
 - MCP configuration remains harness-independent; no universal MCP client file is mandated.
@@ -226,16 +218,16 @@ records:
 - **Reference behavior:** Link local and GitHub records in both directions and verify adapters preserve backend, native ID, title, and href while workflows remain provider-neutral.
 - **Generated assets:** Verify exactly the helpers required by configured backend types, exact bundled content, matching guidance, and no obsolete issue-tracker guidance.
 - **Installed lifecycle:** Copy installed assets without the source checkout and verify complete schema-3 inspection and conformance entrypoints.
-- **No implicit migration:** Verify configuration alone does not rename, move, copy, or rewrite existing records or labels. Explicit migration uses the separately approved strict migration contract.
+- **No migration:** Verify configuration does not rename, move, copy, or rewrite existing records or labels.
 
 ## Out of scope
 
 - Bear MCP implementation.
 - Things MCP implementation.
 - Schema-2 compatibility or automated migration.
-- Implicit record or GitHub label migration during configuration.
-- Cross-backend mirroring or synchronization.
-- Atomic distributed transactions across backends.
+- Existing record or GitHub label migration.
+- Cross-backend mirroring, synchronization, or route-change movement.
+- Distributed transactions across backends.
 - Initializing, migrating, or configuring a version-control system.
 - Atomic claiming where the provider has no compare-and-set operation.
 - Harness-specific MCP configuration management.
@@ -251,8 +243,6 @@ records:
 
 - [RFC-0006: Route record types across storage backends](../rfcs/RFC-0006-route-record-types-across-storage-backends.md)
 - [ARP-0009: Route semantic records across backends](../decisions/ARP-0009-route-semantic-records-across-backends.md)
-- [ARP-0010: Migrate one semantic record route through a resumable staged move](../decisions/ARP-0010.md)
-- [Strict cross-backend record migration](strict-record-migration.md)
 - [ARP-0008: Use native GitHub issue relationships](../decisions/ARP-0008-use-native-github-issue-relationships.md)
 - [Bear MCP scoping and record storage](../research/2026-08-25-bear-mcp-scoping.md)
 - [Artifact model](../artifact-model.md)

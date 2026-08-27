@@ -25,16 +25,12 @@ except ImportError:  # pragma: no cover - Windows fallback
 from contract import (
     RecordError,
     IssueRecord,
-    MigrationRequest,
-    MigrationResponse,
     IssueRequest,
     IssueResponse,
     RecordReference,
     RecordRequest,
     RecordResponse,
     StoredRecord,
-    canonical_json,
-    migration_reference_key,
     revision_token,
 )
 
@@ -169,734 +165,6 @@ class LocalMarkdownAdapter:
             return IssueResponse(issue=self._mutate_issue(request, root, self._block_issue))
         raise RecordError("unsupported_operation", request.operation)
 
-    def execute_migration(self, request: MigrationRequest) -> MigrationResponse:
-        request.validate()
-        if request.backend != self.backend or request.backend_type != "local-markdown":
-            raise RecordError("backend_mismatch", "migration request targets another backend")
-        if request.record_type == "issues":
-            root = self._issue_root(request.destination)
-            if request.operation == "export-history":
-                snapshots = tuple(
-                    self._issue_snapshot(path, root) for path in self._issue_candidates(root)
-                )
-                return MigrationResponse(
-                    snapshots=tuple(sorted(snapshots, key=self._snapshot_sort_key))
-                )
-            if request.operation == "import":
-                return self._migration_import_issue(request, root)
-            if request.operation == "verify":
-                return self._migration_verify_issue(request, root)
-            return self._migration_retire_issue(request, root)
-        if request.record_type not in SUPPORTED_RECORD_TYPES:
-            raise RecordError(
-                "unsupported_record_type",
-                f"local adapter does not support {request.record_type}",
-            )
-        destination = self._destination(request.destination, request.record_type)
-        if request.operation == "export-history":
-            snapshots = tuple(self._record_snapshots(request.record_type, destination))
-            return MigrationResponse(snapshots=snapshots)
-        if request.operation == "import":
-            return self._migration_import_record(request, destination)
-        if request.operation == "verify":
-            return self._migration_verify_record(request, destination)
-        return self._migration_retire_record(request, destination)
-
-    @staticmethod
-    def _sha256(data: bytes) -> str:
-        return "sha256:" + hashlib.sha256(data).hexdigest()
-
-    @staticmethod
-    def _snapshot_sort_key(snapshot: dict[str, Any]) -> tuple[str, str, str]:
-        return (
-            snapshot["identity"]["semantic_id"],
-            snapshot["source"]["reference"]["backend"],
-            snapshot["source"]["reference"]["id"],
-        )
-
-    @staticmethod
-    def _modified(path: Path) -> str:
-        return datetime.fromtimestamp(path.stat().st_mtime, timezone.utc).isoformat()
-
-    @staticmethod
-    def _migration_metadata(snapshot: dict[str, Any]) -> dict[str, Any]:
-        return {
-            "content_sha256": snapshot["content_sha256"],
-            "created": snapshot["created"],
-            "identity": snapshot["identity"],
-            "issue": snapshot["issue"],
-            "modified": snapshot["modified"],
-            "provenance": snapshot["provenance"],
-            "source": snapshot["source"],
-        }
-
-    @staticmethod
-    def _source_key(snapshot: dict[str, Any]) -> str:
-        return migration_reference_key(snapshot["source"]["reference"])
-
-    def _validate_snapshot(self, snapshot: dict[str, Any], record_type: str) -> None:
-        required = {
-            "snapshot_version", "record_type", "source", "identity", "title",
-            "content", "content_sha256", "created", "modified", "lifecycle",
-            "provenance", "issue",
-        }
-        if not isinstance(snapshot, dict) or set(snapshot) != required:
-            raise RecordError("invalid_request", "migration snapshot fields are invalid")
-        if snapshot["snapshot_version"] != 1 or snapshot["record_type"] != record_type:
-            raise RecordError("unsupported_record_type", "migration snapshot type is invalid")
-        if not isinstance(snapshot["title"], str) or not snapshot["title"]:
-            raise RecordError("invalid_request", "migration snapshot title is invalid")
-        if not isinstance(snapshot["content"], str) or snapshot["content_sha256"] != self._sha256(
-            snapshot["content"].encode()
-        ):
-            raise RecordError("invalid_request", "migration snapshot content hash is invalid")
-        if not isinstance(snapshot["created"], str) or not isinstance(snapshot["modified"], str):
-            raise RecordError("invalid_request", "migration snapshot timestamps are invalid")
-        source = snapshot["source"]
-        identity = snapshot["identity"]
-        lifecycle = snapshot["lifecycle"]
-        if (
-            not isinstance(source, dict)
-            or set(source) != {"backend_instance", "backend_type", "reference", "revision"}
-            or not isinstance(source["revision"], str)
-            or not source["revision"]
-            or not isinstance(identity, dict)
-            or set(identity) != {"semantic_id", "provider_id"}
-            or any(not isinstance(identity[key], str) or not identity[key] for key in identity)
-            or not isinstance(lifecycle, dict)
-            or set(lifecycle) != {"state", "archived"}
-            or type(lifecycle["archived"]) is not bool
-            or not isinstance(snapshot["provenance"], list)
-        ):
-            raise RecordError("invalid_request", "migration snapshot values are invalid")
-        try:
-            source_reference = RecordReference.from_dict(source["reference"])
-        except RecordError as error:
-            raise RecordError("invalid_request", "migration source reference is invalid") from error
-        if (
-            not isinstance(source["backend_instance"], str)
-            or source["backend_instance"] != source_reference.backend
-            or not isinstance(source["backend_type"], str)
-            or not source["backend_type"]
-        ):
-            raise RecordError("invalid_request", "migration source identity is invalid")
-        classifications = {
-            "portable-native", "portable-represented", "provider-informational",
-            "provider-required", "unsupported",
-        }
-        provenance = snapshot["provenance"]
-        if any(
-            not isinstance(value, dict)
-            or set(value) != {"classification", "name", "value"}
-            or value["classification"] not in classifications
-            or not isinstance(value["name"], str)
-            or not value["name"]
-            for value in provenance
-        ) or provenance != sorted(
-            provenance,
-            key=lambda value: (
-                value["classification"], value["name"], canonical_json(value["value"])
-            ),
-        ):
-            raise RecordError("invalid_request", "migration provenance is invalid")
-        if any(value["classification"] == "unsupported" for value in provenance):
-            raise RecordError("unsupported_fidelity", "migration snapshot contains unsupported values")
-        if record_type == "issues":
-            issue = snapshot["issue"]
-            issue_required = {
-                "kind", "status", "assignee", "labels", "comments", "relationships"
-            }
-            if (
-                not isinstance(issue, dict)
-                or set(issue) != issue_required
-                or not isinstance(issue["kind"], str)
-                or not issue["kind"]
-                or issue["status"] not in ISSUE_STATUSES
-                or issue["assignee"] is not None and not isinstance(issue["assignee"], str)
-                or not isinstance(issue["labels"], list)
-                or any(not isinstance(label, str) or not label for label in issue["labels"])
-                or issue["labels"] != sorted(set(issue["labels"]))
-                or not isinstance(issue["comments"], list)
-                or not isinstance(issue["relationships"], list)
-                or lifecycle["state"] != issue["status"]
-                or lifecycle["archived"]
-            ):
-                raise RecordError("invalid_request", "migration issue state is invalid")
-            for comment in issue["comments"]:
-                if (
-                    not isinstance(comment, dict)
-                    or set(comment) != {"id", "author", "created", "body", "reference"}
-                    or any(
-                        not isinstance(comment[key], str) or not comment[key]
-                        for key in ("id", "author", "created")
-                    )
-                    or not isinstance(comment["body"], str)
-                ):
-                    raise RecordError("invalid_request", "migration issue comment is invalid")
-                if comment["reference"] is not None:
-                    try:
-                        RecordReference.from_dict(comment["reference"])
-                    except RecordError as error:
-                        raise RecordError(
-                            "invalid_request", "migration comment reference is invalid"
-                        ) from error
-            for relationship in issue["relationships"]:
-                if (
-                    not isinstance(relationship, dict)
-                    or set(relationship) != {"kind", "target"}
-                    or relationship["kind"] not in {"parent", "blocks"}
-                ):
-                    raise RecordError("invalid_request", "migration relationship is invalid")
-                try:
-                    RecordReference.from_dict(relationship["target"])
-                except RecordError as error:
-                    raise RecordError(
-                        "invalid_request", "migration relationship target is invalid"
-                    ) from error
-        elif (
-            snapshot["issue"] is not None
-            or lifecycle["state"] not in {"active", "archived"}
-            or lifecycle["archived"] != (lifecycle["state"] == "archived")
-        ):
-            raise RecordError("invalid_request", "migration record state is invalid")
-
-    def _record_snapshot(self, record: StoredRecord) -> dict[str, Any]:
-        migration = record.metadata.get("migration")
-        provenance = [
-            {
-                "classification": "provider-required",
-                "name": "local.path",
-                "value": record.reference.id,
-            }
-        ]
-        if migration is not None:
-            provenance.append(
-                {
-                    "classification": "portable-represented",
-                    "name": "migration.source",
-                    "value": migration,
-                }
-            )
-        if record.metadata.get("legacy"):
-            provenance.append(
-                {
-                    "classification": "provider-informational",
-                    "name": "local.legacy_markdown",
-                    "value": True,
-                }
-            )
-        return {
-            "snapshot_version": 1,
-            "record_type": record.record_type,
-            "source": {
-                "backend_instance": self.backend,
-                "backend_type": "local-markdown",
-                "reference": record.reference.as_dict(),
-                "revision": record.revision,
-            },
-            "identity": {
-                "semantic_id": record.id,
-                "provider_id": record.reference.id,
-            },
-            "title": record.title,
-            "content": record.content,
-            "content_sha256": self._sha256(record.content.encode()),
-            "created": record.metadata["created"],
-            "modified": record.metadata["modified"],
-            "lifecycle": {
-                "state": "archived" if record.metadata["archived"] else "active",
-                "archived": record.metadata["archived"],
-            },
-            "provenance": sorted(
-                provenance,
-                key=lambda value: (
-                    value["classification"], value["name"], canonical_json(value["value"])
-                ),
-            ),
-            "issue": None,
-        }
-
-    def _record_snapshots(self, record_type: str, destination: Path) -> list[dict[str, Any]]:
-        if not destination.exists():
-            return []
-        snapshots = []
-        for path in sorted(destination.glob("*.md")):
-            record = self._deserialize(path, path.read_bytes(), record_type)
-            if record.record_type == record_type:
-                snapshots.append(self._record_snapshot(record))
-        return sorted(snapshots, key=self._snapshot_sort_key)
-
-    @staticmethod
-    def _issue_comments(body: str) -> list[dict[str, Any]]:
-        comments_marker = "\n## Comments"
-        resolution_marker = "\n## Resolution"
-        if comments_marker not in body or resolution_marker not in body:
-            return []
-        section = body.split(comments_marker, 1)[1].split(resolution_marker, 1)[0]
-        pattern = re.compile(
-            r"(?m)^### (?P<created>.+?) — (?P<author>.+?)\n\n(?P<body>.*?)(?=\n### |\Z)",
-            re.S,
-        )
-        comments = []
-        for index, match in enumerate(pattern.finditer(section), 1):
-            created = match.group("created").strip()
-            author = match.group("author").strip()
-            content = match.group("body").strip()
-            comments.append(
-                {
-                    "id": f"comment-{index:04d}",
-                    "author": author,
-                    "created": created,
-                    "body": content,
-                    "reference": None,
-                }
-            )
-        return sorted(comments, key=lambda value: (value["created"], value["id"]))
-
-    def _issue_snapshot(self, path: Path, root: Path) -> dict[str, Any]:
-        data = path.read_bytes()
-        issue = self._issue_from_bytes(path, data, root)
-        metadata, _body = self._parse_issue_frontmatter(data, path)
-        relationships = []
-        if issue.parent:
-            relationships.append(
-                {
-                    "kind": "parent",
-                    "target": self._read_issue(issue.parent, root)[0].reference.as_dict(),
-                }
-            )
-        relationships.extend(
-            {
-                "kind": "blocks",
-                "target": self._read_issue(blocker, root)[0].reference.as_dict(),
-            }
-            for blocker in issue.blocked_by
-        )
-        relationships.sort(
-            key=lambda value: (
-                value["kind"], value["target"]["backend"], value["target"]["id"]
-            )
-        )
-        provenance = [
-            {
-                "classification": "provider-required",
-                "name": "local.path",
-                "value": issue.reference.id,
-            }
-        ]
-        if "migration" in metadata:
-            provenance.append(
-                {
-                    "classification": "portable-represented",
-                    "name": "migration.source",
-                    "value": metadata["migration"],
-                }
-            )
-        return {
-            "snapshot_version": 1,
-            "record_type": "issues",
-            "source": {
-                "backend_instance": self.backend,
-                "backend_type": "local-markdown",
-                "reference": issue.reference.as_dict(),
-                "revision": issue.revision,
-            },
-            "identity": {
-                "semantic_id": issue.id,
-                "provider_id": issue.reference.id,
-            },
-            "title": issue.title,
-            "content": issue.body,
-            "content_sha256": self._sha256(issue.body.encode()),
-            "created": issue.created,
-            "modified": self._modified(path),
-            "lifecycle": {"state": issue.status, "archived": False},
-            "provenance": sorted(
-                provenance,
-                key=lambda value: (
-                    value["classification"], value["name"], canonical_json(value["value"])
-                ),
-            ),
-            "issue": {
-                "kind": issue.kind,
-                "status": issue.status,
-                "assignee": issue.assignee,
-                "labels": sorted(issue.labels),
-                "comments": self._issue_comments(issue.body),
-                "relationships": relationships,
-            },
-        }
-
-    def _issue_by_reference(self, reference: RecordReference, root: Path) -> tuple[IssueRecord, Path]:
-        for path in self._issue_candidates(root):
-            issue = self._issue_from_bytes(path, path.read_bytes(), root)
-            if issue.reference.id == reference.id:
-                return issue, path
-        raise RecordError("not_found", f"destination issue does not exist: {reference.id}")
-
-    def _mapped_issue_id(
-        self,
-        source_reference: dict[str, Any],
-        reference_map: dict[str, RecordReference],
-        root: Path,
-    ) -> str:
-        mapped = reference_map.get(migration_reference_key(source_reference))
-        if mapped is None:
-            raise RecordError("broken_reference", "migration relationship has no destination mapping")
-        return self._issue_by_reference(mapped, root)[0].id
-
-    def _migration_import_record(
-        self, request: MigrationRequest, destination: Path
-    ) -> MigrationResponse:
-        snapshot = request.snapshot or {}
-        self._validate_snapshot(snapshot, request.record_type)
-        record_id = self._validate_id(snapshot["identity"]["semantic_id"])
-        with self._lock(destination):
-            try:
-                existing = self._read_id(record_id, destination, request.record_type)
-            except RecordError as error:
-                if error.code != "not_found":
-                    raise
-            else:
-                migration = existing.metadata.get("migration", {})
-                if migration.get("source") != snapshot["source"]:
-                    raise RecordError("duplicate_id", f"record id already exists: {record_id}")
-                return self._migration_verify_record(
-                    replace(request, operation="verify", destination_reference=existing.reference),
-                    destination,
-                )
-            destination.mkdir(parents=True, exist_ok=True)
-            path = self._path(destination, record_id)
-            metadata = {
-                "archived": snapshot["lifecycle"]["archived"],
-                "created": snapshot["created"],
-                "id": record_id,
-                "migration": self._migration_metadata(snapshot),
-                "modified": snapshot["modified"],
-                "record_type": request.record_type,
-                "title": snapshot["title"],
-            }
-            data = self._serialize(metadata, snapshot["content"])
-            try:
-                with path.open("xb") as output:
-                    output.write(data)
-                    output.flush()
-                    os.fsync(output.fileno())
-            except FileExistsError as error:
-                raise RecordError("duplicate_id", f"record id already exists: {record_id}") from error
-            imported = self._deserialize(path, data, request.record_type)
-            return MigrationResponse(
-                snapshot=self._record_snapshot(imported),
-                reference=imported.reference,
-                revision=imported.revision,
-                verified=True,
-            )
-
-    def _migration_import_issue(
-        self, request: MigrationRequest, root: Path
-    ) -> MigrationResponse:
-        snapshot = request.snapshot or {}
-        self._validate_snapshot(snapshot, "issues")
-        body = snapshot["content"]
-        if (
-            body != body.rstrip() + "\n"
-            or not body.startswith(f"# {snapshot['title']}")
-            or "\n## Comments" not in body
-            or "\n## Resolution" not in body
-        ):
-            raise RecordError(
-                "invalid_state",
-                "source issue content cannot be represented byte-for-byte in local Markdown",
-            )
-        source_key = self._source_key(snapshot)
-        with self._lock(root):
-            for path in self._issue_candidates(root):
-                metadata, _existing_body = self._parse_issue_frontmatter(path.read_bytes(), path)
-                migration = metadata.get("migration", {})
-                if migration_reference_key(migration.get("source", {}).get("reference", {})) == source_key:
-                    issue = self._issue_from_bytes(path, path.read_bytes(), root)
-                    return self._migration_verify_issue(
-                        replace(request, operation="verify", destination_reference=issue.reference),
-                        root,
-                    )
-            preferred = snapshot["identity"]["semantic_id"]
-            issue_id = preferred if ISSUE_ID.fullmatch(preferred) else ""
-            if issue_id:
-                try:
-                    self._read_issue(issue_id, root)
-                except RecordError as error:
-                    if error.code != "not_found":
-                        raise
-                else:
-                    raise RecordError("duplicate_id", f"issue id already exists: {issue_id}")
-            issue_dir = root / "issues"
-            issue_dir.mkdir(parents=True, exist_ok=True)
-            if not issue_id:
-                numbers = [
-                    int(match.group(1))
-                    for path in self._issue_candidates(root)
-                    if (match := re.search(r"ISSUE-([0-9]+)", path.name))
-                ]
-                issue_id = f"ISSUE-{max(numbers, default=0) + 1:04d}"
-            parent = None
-            blockers = []
-            for relationship in snapshot["issue"]["relationships"]:
-                mapped = self._mapped_issue_id(
-                    relationship["target"], request.reference_map, root
-                )
-                if relationship["kind"] == "parent":
-                    if parent is not None:
-                        raise RecordError("invalid_relationship", "issue has several parents")
-                    parent = mapped
-                elif relationship["kind"] == "blocks":
-                    blockers.append(mapped)
-                else:
-                    raise RecordError("invalid_relationship", "migration relationship kind is invalid")
-            path = issue_dir / f"{issue_id}-{self._slug(snapshot['title'])}.md"
-            issue = IssueRecord(
-                id=issue_id,
-                title=snapshot["title"],
-                body=body,
-                kind=snapshot["issue"]["kind"],
-                status=snapshot["issue"]["status"],
-                created=snapshot["created"],
-                assignee=snapshot["issue"]["assignee"],
-                parent=parent,
-                blocked_by=tuple(sorted(blockers)),
-                labels=tuple(sorted(snapshot["issue"]["labels"])),
-                revision="",
-                reference=RecordReference(self.backend, "", snapshot["title"], None),
-            )
-            data = self._serialize_issue(
-                issue, path, root, self._migration_metadata(snapshot)
-            )
-            try:
-                with path.open("xb") as output:
-                    output.write(data)
-                    output.flush()
-                    os.fsync(output.fileno())
-            except FileExistsError as error:
-                raise RecordError("duplicate_id", f"issue path already exists: {path.name}") from error
-            imported = self._issue_from_bytes(path, data, root)
-            return MigrationResponse(
-                snapshot=self._issue_snapshot(path, root),
-                reference=imported.reference,
-                revision=imported.revision,
-                verified=True,
-            )
-
-    def _migration_verify_record(
-        self, request: MigrationRequest, destination: Path
-    ) -> MigrationResponse:
-        snapshot = request.snapshot or {}
-        self._validate_snapshot(snapshot, request.record_type)
-        reference = request.destination_reference
-        assert reference is not None
-        path = (self.root / reference.id).resolve()
-        try:
-            path.relative_to(destination)
-        except ValueError as error:
-            raise RecordError("invalid_destination", "migration record reference escapes destination") from error
-        if not path.is_file():
-            raise RecordError("not_found", "migration destination record is missing")
-        record = self._deserialize(path, path.read_bytes(), request.record_type)
-        migration = record.metadata.get("migration")
-        expected = (
-            record.id == snapshot["identity"]["semantic_id"]
-            and record.title == snapshot["title"]
-            and record.content == snapshot["content"]
-            and record.metadata["archived"] == snapshot["lifecycle"]["archived"]
-            and record.metadata["created"] == snapshot["created"]
-            and record.metadata["modified"] == snapshot["modified"]
-            and migration == self._migration_metadata(snapshot)
-        )
-        if not expected:
-            raise RecordError("invalid_state", "migration destination is not semantically equal")
-        return MigrationResponse(
-            snapshot=self._record_snapshot(record),
-            reference=record.reference,
-            revision=record.revision,
-            verified=True,
-        )
-
-    def _migration_verify_issue(
-        self, request: MigrationRequest, root: Path
-    ) -> MigrationResponse:
-        snapshot = request.snapshot or {}
-        self._validate_snapshot(snapshot, "issues")
-        reference = request.destination_reference
-        assert reference is not None
-        issue, path = self._issue_by_reference(reference, root)
-        metadata, _body = self._parse_issue_frontmatter(path.read_bytes(), path)
-        migration = metadata.get("migration")
-        expected_parent = None
-        expected_blockers = []
-        for relationship in snapshot["issue"]["relationships"]:
-            mapped = self._mapped_issue_id(relationship["target"], request.reference_map, root)
-            if relationship["kind"] == "parent":
-                expected_parent = mapped
-            elif relationship["kind"] == "blocks":
-                expected_blockers.append(mapped)
-        if not (
-            issue.title == snapshot["title"]
-            and issue.body == snapshot["content"]
-            and issue.created == snapshot["created"]
-            and issue.kind == snapshot["issue"]["kind"]
-            and issue.status == snapshot["issue"]["status"]
-            and issue.assignee == snapshot["issue"]["assignee"]
-            and sorted(issue.labels) == sorted(snapshot["issue"]["labels"])
-            and issue.parent == expected_parent
-            and sorted(issue.blocked_by) == sorted(expected_blockers)
-            and migration == self._migration_metadata(snapshot)
-        ):
-            raise RecordError("invalid_state", "migration destination issue is not semantically equal")
-        return MigrationResponse(
-            snapshot=self._issue_snapshot(path, root),
-            reference=issue.reference,
-            revision=issue.revision,
-            verified=True,
-        )
-
-    def _migration_retire_record(
-        self, request: MigrationRequest, destination: Path
-    ) -> MigrationResponse:
-        with self._lock(destination):
-            return self._migration_retire_record_locked(request, destination)
-
-    def _migration_retire_record_locked(
-        self, request: MigrationRequest, destination: Path
-    ) -> MigrationResponse:
-        snapshot = request.snapshot or {}
-        self._validate_snapshot(snapshot, request.record_type)
-        current = self._read_id(
-            snapshot["identity"]["semantic_id"], destination, request.record_type
-        )
-        if current.metadata["archived"]:
-            migration = current.metadata.get("migration", {})
-            replay = (
-                migration.get("retired_to") == request.destination_reference.as_dict()
-                and migration.get("source_revision") == snapshot["source"]["revision"]
-            )
-            if not replay and current.revision != snapshot["source"]["revision"]:
-                raise RecordError("stale_revision", f"record changed since export: {current.id}")
-            return MigrationResponse(
-                snapshot=self._record_snapshot(current),
-                reference=current.reference,
-                revision=current.revision,
-                verified=True,
-            )
-        if current.revision != snapshot["source"]["revision"]:
-            raise RecordError("stale_revision", f"record changed since export: {current.id}")
-        path = self.root / current.reference.id
-        metadata = {
-            "archived": True,
-            "created": current.metadata["created"],
-            "id": current.id,
-            "migration": {
-                **(
-                    {"prior": current.metadata["migration"]}
-                    if "migration" in current.metadata
-                    else {}
-                ),
-                "retired_to": request.destination_reference.as_dict(),
-                "source_revision": current.revision,
-            },
-            "modified": self.clock(),
-            "record_type": current.record_type,
-            "title": current.title,
-        }
-        data = self._serialize(metadata, current.content)
-        with tempfile.NamedTemporaryFile(dir=destination, delete=False) as output:
-            temporary = Path(output.name)
-            output.write(data)
-            output.flush()
-            os.fsync(output.fileno())
-        try:
-            if revision_token(path.read_bytes()) != current.revision:
-                raise RecordError("stale_revision", f"record changed since export: {current.id}")
-            os.replace(temporary, path)
-        finally:
-            temporary.unlink(missing_ok=True)
-        retired = self._deserialize(path, data, request.record_type)
-        return MigrationResponse(
-            snapshot=self._record_snapshot(retired),
-            reference=retired.reference,
-            revision=retired.revision,
-            verified=True,
-        )
-
-    def _migration_retire_issue(
-        self, request: MigrationRequest, root: Path
-    ) -> MigrationResponse:
-        snapshot = request.snapshot or {}
-        self._validate_snapshot(snapshot, "issues")
-        issue, path = self._read_issue(snapshot["identity"]["semantic_id"], root)
-        rendered = self.render_reference(request.destination_reference)
-        marker = f"Migrated to {rendered}. Destination is authoritative."
-        if marker in issue.body:
-            metadata, _body = self._parse_issue_frontmatter(path.read_bytes(), path)
-            migration = metadata.get("migration", {})
-            if (
-                migration.get("retired_to") != request.destination_reference.as_dict()
-                or migration.get("source_revision") != snapshot["source"]["revision"]
-            ):
-                raise RecordError("invalid_state", "issue has a conflicting migration tombstone")
-            return MigrationResponse(
-                snapshot=self._issue_snapshot(path, root),
-                reference=issue.reference,
-                revision=issue.revision,
-                verified=True,
-            )
-        if issue.revision != snapshot["source"]["revision"]:
-            raise RecordError("stale_revision", f"issue changed since export: {issue.id}")
-        source_metadata, _body = self._parse_issue_frontmatter(path.read_bytes(), path)
-        if issue.status in {"open", "claimed"}:
-            changed = self._cancel_issue(
-                issue,
-                IssueRequest(
-                    operation="cancel", backend=self.backend,
-                    destination=request.destination, id=issue.id,
-                    expected_revision=issue.revision, body=marker,
-                ),
-                root,
-            )
-        else:
-            changed = self._comment_issue(
-                issue,
-                IssueRequest(
-                    operation="comment", backend=self.backend,
-                    destination=request.destination, id=issue.id,
-                    expected_revision=issue.revision, body=marker,
-                    assignee="migration",
-                ),
-                root,
-            )
-        retired = self._write_issue(
-            IssueRequest(
-                operation="update", backend=self.backend,
-                destination=request.destination, id=issue.id,
-                expected_revision=issue.revision, body=changed.body,
-            ),
-            root,
-            changed,
-            path,
-            {
-                **(
-                    {"prior": source_metadata["migration"]}
-                    if "migration" in source_metadata
-                    else {}
-                ),
-                "retired_to": request.destination_reference.as_dict(),
-                "source_revision": snapshot["source"]["revision"],
-            },
-        )
-        return MigrationResponse(
-            snapshot=self._issue_snapshot(path, root),
-            reference=retired.reference,
-            revision=retired.revision,
-            verified=True,
-        )
-
     def _issue_root(self, settings: dict[str, Any]) -> Path:
         if set(settings) != {"root"} or not isinstance(settings.get("root"), str):
             raise RecordError(
@@ -964,10 +232,8 @@ class LocalMarkdownAdapter:
             "status",
             "title",
         }
-        if not required.issubset(metadata) or set(metadata) - (required | {"migration"}):
+        if set(metadata) != required:
             raise RecordError("malformed_record", f"issue frontmatter fields are invalid: {path}")
-        if "migration" in metadata and not isinstance(metadata["migration"], dict):
-            raise RecordError("malformed_record", f"issue migration provenance is invalid: {path}")
         if (
             not isinstance(metadata["id"], str)
             or not ISSUE_ID.fullmatch(metadata["id"])
@@ -1081,13 +347,7 @@ class LocalMarkdownAdapter:
         _issue, target = self._read_issue(value, root)
         return Path(os.path.relpath(target, source.parent)).as_posix()
 
-    def _serialize_issue(
-        self,
-        issue: IssueRecord,
-        path: Path,
-        root: Path,
-        migration: dict[str, Any] | None = None,
-    ) -> bytes:
+    def _serialize_issue(self, issue: IssueRecord, path: Path, root: Path) -> bytes:
         parent = self._issue_link(path, issue.parent, root)
         blockers = [self._issue_link(path, value, root) for value in issue.blocked_by]
         lines = [
@@ -1103,11 +363,6 @@ class LocalMarkdownAdapter:
         ]
         lines.extend(f"  - {json.dumps(value)}" for value in blockers)
         lines.append("labels: " + json.dumps(list(issue.labels), separators=(",", ":")))
-        if migration is not None:
-            lines.append(
-                "migration: "
-                + json.dumps(migration, separators=(",", ":"), sort_keys=True)
-            )
         lines.extend(("---", issue.body.rstrip(), ""))
         return "\n".join(lines).encode()
 
@@ -1178,19 +433,11 @@ class LocalMarkdownAdapter:
         root: Path,
         issue: IssueRecord,
         path: Path,
-        migration: dict[str, Any] | None = None,
     ) -> IssueRecord:
         with self._lock(root):
-            before = path.read_bytes()
-            if revision_token(before) != request.expected_revision:
+            if revision_token(path.read_bytes()) != request.expected_revision:
                 raise RecordError("stale_revision", f"issue changed since read: {issue.id}")
-            metadata, _body = self._parse_issue_frontmatter(before, path)
-            data = self._serialize_issue(
-                issue,
-                path,
-                root,
-                migration if migration is not None else metadata.get("migration"),
-            )
+            data = self._serialize_issue(issue, path, root)
             with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as output:
                 temporary = Path(output.name)
                 output.write(data)
@@ -1403,14 +650,8 @@ class LocalMarkdownAdapter:
         except (json.JSONDecodeError, UnicodeDecodeError) as error:
             raise RecordError("malformed_record", f"record is malformed: {path}") from error
         required = {"archived", "created", "id", "modified", "record_type", "title"}
-        if (
-            not isinstance(metadata, dict)
-            or not required.issubset(metadata)
-            or set(metadata) - (required | {"migration"})
-        ):
+        if not isinstance(metadata, dict) or set(metadata) != required:
             raise RecordError("malformed_record", f"record metadata fields are invalid: {path}")
-        if "migration" in metadata and not isinstance(metadata["migration"], dict):
-            raise RecordError("malformed_record", f"record migration provenance is invalid: {path}")
         if (
             not isinstance(metadata["archived"], bool)
             or not isinstance(metadata["created"], str)
@@ -1442,7 +683,6 @@ class LocalMarkdownAdapter:
                 "archived": metadata["archived"],
                 "created": metadata["created"],
                 "modified": metadata["modified"],
-                **({"migration": metadata["migration"]} if "migration" in metadata else {}),
             },
         )
 
@@ -1581,7 +821,6 @@ class LocalMarkdownAdapter:
             "modified": self.clock(),
             "record_type": current.record_type,
             "title": request.title if request.title is not None else current.title,
-            **({"migration": current.metadata["migration"]} if "migration" in current.metadata else {}),
         }
         content = request.content if request.content is not None else current.content
         data = self._serialize(metadata, content)
@@ -1603,13 +842,6 @@ class LocalMarkdownAdapter:
 
 def _content(path: str) -> str:
     return sys.stdin.read() if path == "-" else Path(path).read_text()
-
-
-def _json_file(path: str, description: str) -> Any:
-    try:
-        return json.loads(sys.stdin.read() if path == "-" else Path(path).read_text())
-    except (OSError, json.JSONDecodeError) as error:
-        raise RecordError("invalid_request", f"cannot read {description}: {error}") from error
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -1648,16 +880,6 @@ def build_parser() -> argparse.ArgumentParser:
 
     render = commands.add_parser("render-reference")
     render.add_argument("--reference-file", required=True)
-
-    for name in ("migration-export", "migration-import", "migration-verify", "migration-retire"):
-        command = commands.add_parser(name)
-        command.add_argument("--record-type", required=True)
-        if name != "migration-export":
-            command.add_argument("--snapshot-file", required=True)
-        if name in {"migration-verify", "migration-retire"}:
-            command.add_argument("--destination-reference-file", required=True)
-        if name in {"migration-import", "migration-verify"}:
-            command.add_argument("--reference-map-file")
 
     issue_create = commands.add_parser("issue-create")
     issue_create.add_argument("--title", required=True)
@@ -1726,52 +948,7 @@ def main(arguments: list[str] | None = None) -> int:
             reference = RecordReference.from_dict(value)
             print(json.dumps({"rendered": adapter.render_reference(reference)}, indent=2, sort_keys=True))
             return 0
-        if args.operation.startswith("migration-"):
-            operation = args.operation.removeprefix("migration-")
-            if operation == "export":
-                operation = "export-history"
-            snapshot = (
-                _json_file(args.snapshot_file, "migration snapshot")
-                if getattr(args, "snapshot_file", None)
-                else None
-            )
-            reference = (
-                RecordReference.from_dict(
-                    _json_file(args.destination_reference_file, "destination reference")
-                )
-                if getattr(args, "destination_reference_file", None)
-                else None
-            )
-            raw_map = (
-                _json_file(args.reference_map_file, "migration reference map")
-                if getattr(args, "reference_map_file", None)
-                else {}
-            )
-            if not isinstance(raw_map, dict):
-                raise RecordError("invalid_request", "migration reference map must be an object")
-            reference_map = {
-                key: RecordReference.from_dict(value) for key, value in raw_map.items()
-            }
-            result = adapter.execute_migration(
-                MigrationRequest(
-                    operation=operation,
-                    backend=args.backend,
-                    backend_type="local-markdown",
-                    record_type=args.record_type,
-                    destination=(
-                        {"root": args.destination}
-                        if args.record_type == "issues"
-                        else {
-                            "path": args.destination,
-                            **({"prefix": args.prefix} if args.prefix is not None else {}),
-                        }
-                    ),
-                    snapshot=snapshot,
-                    destination_reference=reference,
-                    reference_map=reference_map,
-                )
-            )
-        elif args.operation.startswith("issue-"):
+        if args.operation.startswith("issue-"):
             operation = args.operation.removeprefix("issue-")
             labels = getattr(args, "label", None)
             request = IssueRequest(

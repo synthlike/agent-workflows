@@ -31,11 +31,9 @@ List and search return zero or more complete stored records in stable adapter or
 
 ## Backend capability declaration
 
-Each backend type owns one `<type>.capabilities.json` file beside its adapter. The schema-2 declaration contains exactly `backend_type`, `record_types`, `record_operations`, `issue_operations`, `record_migration_operations`, `issue_migration_operations`, and `schema_version`. Values are unique lists drawn from this contract. Project configuration cannot add or override capabilities.
+Each backend type owns one `<type>.capabilities.json` file beside its adapter. The schema-1 declaration contains exactly `backend_type`, `record_types`, `record_operations`, `issue_operations`, and `schema_version`. Values are unique lists drawn from this contract. Project configuration cannot add or override capabilities.
 
 Installed verification reads the declaration distributed with `configure-workflows`. A non-issue route requires its record type and every common record operation. The `issues` route requires its record type and every issue-extension operation. This permits a notes backend to support only non-issue records and a task backend to support only issues without reducing either route's semantics.
-
-Migration capability is separate from ordinary persistence. Both migration operation lists draw from `export-history`, `import`, `verify`, and `retire`. A source requires `export-history` and `retire`; a destination requires `import` and `verify`. `issue_migration_operations` applies only to `issues`; `record_migration_operations` applies to non-issue records. Empty lists explicitly declare that migration is not implemented. Planning rejects a pair before source enumeration or mutation when either side lacks the complete operations for its role. See the [strict migration specification](../../docs/specifications/strict-record-migration.md).
 
 ## Stable errors
 

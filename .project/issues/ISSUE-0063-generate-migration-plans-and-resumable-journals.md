@@ -2,7 +2,7 @@
 id: ISSUE-0063
 title: "Generate migration plans and resumable journals"
 kind: "implementation"
-status: open
+status: cancelled
 created: 2026-08-25
 assignee: 
 parent: "ISSUE-0058-implement-strict-cross-backend-record-migration.md"
@@ -38,6 +38,6 @@ Portable migration specification and capabilities.
 Destination writes, route cutover, retirement, and the skill interview.
 
 ## Comments
-
-
 ## Resolution
+
+Cancelled in the core repository after ARP-0011 externalized record migration as a possible separate optional project. The implementation is not part of v0.5.0 or assigned to a later core release. Historical commits and issue context are retained for future reference.

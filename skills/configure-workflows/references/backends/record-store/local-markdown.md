@@ -81,29 +81,6 @@ python3 "$helper" --root . --backend local --destination .project \
 
 The adapter reads the established local issue frontmatter, appends chronological comments under `## Comments`, records outcomes under `## Resolution`, and preserves `open`, `claimed`, `resolved`, and `cancelled` semantics. Claims and identifier allocation are not atomic across unsynchronized working trees.
 
-## Migration operations
-
-The adapter implements `export-history`, `import`, `verify`, and `retire` for issues and every non-issue record type. These operations consume and return the canonical migration snapshot shape. The orchestration layer, not the adapter, owns approval checkpoints and route cutover.
-
-```bash
-python3 "$helper" --root . --backend local --destination docs/research \
-  migration-export --record-type research
-python3 "$helper" --root . --backend local --destination docs/research \
-  migration-import --record-type research --snapshot-file snapshot.json
-python3 "$helper" --root . --backend local --destination docs/research \
-  migration-verify --record-type research --snapshot-file snapshot.json \
-  --destination-reference-file imported-reference.json
-python3 "$helper" --root . --backend local --destination docs/research \
-  migration-retire --record-type research --snapshot-file snapshot.json \
-  --destination-reference-file imported-reference.json
-```
-
-For issues, use the issue root as `--destination`. Imports with relationships also pass `--reference-map-file`; that JSON object maps each canonical source-reference key to the complete destination reference returned by an earlier import. Referenced issues must therefore be copied before their dependants.
-
-Import preserves exact content bytes, lifecycle state, identity where the local format can represent it, issue metadata, comments, and mapped relationships. Canonical migration provenance in frontmatter retains source/provider values. A matching replay is a no-op; an identity owned by another record fails as `duplicate_id`. Verification checks both native destination state and retained provenance.
-
-Retirement requires the exact exported source revision. Non-issues are retained as archived records with a destination mapping. Active issues are cancelled with a destination tombstone; terminal issues retain their state and receive a provenance comment. Repeating the same retirement is a no-op. A changed source or conflicting tombstone fails without mutation.
-
 ## Safety
 
 All destinations must remain inside the consumer root. Directories are created only with the first write. Exact persisted bytes produce opaque revisions. Updates write a temporary file and replace the target only after repeated revision checks. Malformed records, duplicate identities, stale revisions, broken relationship targets, and unsupported destination fields fail without an approved record mutation.
